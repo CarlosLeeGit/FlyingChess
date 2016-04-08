@@ -1,7 +1,6 @@
 #**Flying Chess**
 ##An android game
 
-
 ***
 ###**Procedure**
 if(!First)
@@ -24,6 +23,6 @@ Boot -> Login -> Choose Mode -> Display Game Information -> Play
 
 
 ***
-###**Java Class**(Beside Activity)
+###**Java Class**###(Beside Activity)
 * DataManager
 * NetServer
