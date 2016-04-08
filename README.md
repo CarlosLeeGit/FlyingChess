@@ -17,6 +17,8 @@ Boot -> Login -> Choose Mode -> Display Game Information -> Play
 * GameInfoAct
 * ChessBoardAct
 * SettingAct
+
+
 ***
 ###**Java Class**(Beside Activity)
 * DataManager
