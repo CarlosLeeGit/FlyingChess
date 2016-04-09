@@ -3,13 +3,7 @@
 
 ***
 ###**Procedure**
-if(!First)
-
 Boot -> Choose Mode -> Display Game Information -> Play
-    
-else
-
-Boot -> Login -> Choose Mode -> Display Game Information -> Play
 
 
 ***
@@ -23,7 +17,7 @@ Boot -> Login -> Choose Mode -> Display Game Information -> Play
 
 
 ***
-###**Java Class**
-(Beside Activity)
+###**Java Class**(Besides Activity)
 * DataManager
-* NetServer
+* GameManager
+* ChessBoard
