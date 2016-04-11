@@ -7,12 +7,13 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:id="@+id/chooseMode"
     tools:context="com.hy.lyx.fb.gw.wyx.lks.flyingchess.ChooseModeAct">
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Button"
+        android:text="local"
         android:id="@+id/button2"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true" />
@@ -20,7 +21,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Button"
+        android:text="lan"
         android:id="@+id/button3"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true" />
@@ -28,7 +29,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Button"
+        android:text="wlan"
         android:id="@+id/button4"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true" />

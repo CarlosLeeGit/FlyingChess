@@ -15,6 +15,8 @@ public class DataManager {//数据存储类
     private int onlineScore;//网络分数    WIFI和BT时因为是临时对决  暂定不用积分
     private byte myColor;//游戏时的颜色
 
+    private Airplane[] airplanes;//飞机数据
+
     public void init(){//初始化本地数据
 
     }
@@ -79,11 +81,23 @@ public class DataManager {//数据存储类
         return effectVolume;
     }
 
-    public void setMusiAByte(byte musicVolume){//设置音乐音量
+    public void setMusicVolume(byte musicVolume){//设置音乐音量
         this.musicVolume = musicVolume;
     }
 
     public void setEffectVolume(byte effectVolume){//设置音效音量
         this.effectVolume=effectVolume;
+    }
+}
+
+class Airplane{
+    byte[] position;
+    byte color;
+    Airplane(){
+        position=new byte[4];
+        position[0]=-1;
+        position[1]=-1;
+        position[2]=-1;
+        position[3]=-1;
     }
 }
