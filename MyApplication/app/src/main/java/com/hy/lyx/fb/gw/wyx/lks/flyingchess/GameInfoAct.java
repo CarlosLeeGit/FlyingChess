@@ -50,9 +50,9 @@ public class GameInfoAct extends AppCompatActivity {
         });
         start.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v) {//start a new game
                 Intent intent = new Intent(getApplicationContext(),ChessBoardAct.class);
-                startActivity(intent);
+                startActivity(intent);//switch wo chess board activity
                 closeTimer.schedule(new TimerTask() {
                     @Override
                     public void run() {

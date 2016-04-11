@@ -51,10 +51,10 @@ public class ChooseModeAct extends AppCompatActivity {
         });
         local.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                GameManager.getDataManager().setGameMode(DataManager.GM_LOCAL);
+            public void onClick(View v) {//choose local game
+                GameManager.getDataManager().setGameMode(DataManager.GM_LOCAL);//set game mode
                 Intent intent=new Intent(getApplicationContext(),GameInfoAct.class);
-                startActivity(intent);
+                startActivity(intent);//switch to GameInfoAct
                 closeTimer.schedule(new TimerTask() {
                     @Override
                     public void run() {

@@ -17,7 +17,7 @@ public class WelcomeAct extends AppCompatActivity {
         //UI setting
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
-        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);//Activity切换动画
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         int uiOpts = View.SYSTEM_UI_FLAG_FULLSCREEN;
         getWindow().getDecorView().setSystemUiVisibility(uiOpts);
         //initialization
@@ -26,7 +26,7 @@ public class WelcomeAct extends AppCompatActivity {
             @Override
             public void run() {
                 Intent intent = new Intent(getApplicationContext(), ChooseModeAct.class);
-                startActivity(intent);
+                startActivity(intent);//switch activity
             }
         }, 2000);
         timer2=new Timer();
@@ -38,5 +38,6 @@ public class WelcomeAct extends AppCompatActivity {
         },4000);
 
         GameManager.init();
+        //next activity is choose mode activity
     }
 }

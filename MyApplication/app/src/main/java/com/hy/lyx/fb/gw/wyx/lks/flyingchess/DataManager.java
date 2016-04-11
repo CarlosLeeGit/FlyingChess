@@ -18,7 +18,7 @@ public class DataManager {//数据存储类
     private Airplane[] airplanes;//飞机数据
 
     public void init(){//初始化本地数据
-
+        airplanes=new Airplane[4];
     }
 
     public String getUserName(){//返回用户名
@@ -53,7 +53,11 @@ public class DataManager {//数据存储类
         }
     }
 
-    public void addScore(int score){//加分 输了加负分
+    public byte getGameMode(){
+        return gameMode;
+    }
+
+    public void addScore(int score){
         switch (gameMode)
         {
             case GM_LOCAL:
@@ -69,16 +73,20 @@ public class DataManager {//数据存储类
         return  myColor;
     }
 
-    public void setMyColor(){//设置颜色
-        this.myColor=myColor;
-    }
-
     public byte getMusicVolume(){//得到音乐音量
         return musicVolume;
     }
 
     public byte getEffectVolume(){//得到音效音量
         return effectVolume;
+    }
+
+    public Airplane getAirplane(byte color){
+        return airplanes[color];
+    }
+
+    public void setMyColor(byte myColor){//设置颜色
+        this.myColor=myColor;
     }
 
     public void setMusicVolume(byte musicVolume){//设置音乐音量
@@ -88,13 +96,17 @@ public class DataManager {//数据存储类
     public void setEffectVolume(byte effectVolume){//设置音效音量
         this.effectVolume=effectVolume;
     }
+
+
 }
 
 class Airplane{
     byte[] position;
-    byte color;
     Airplane(){
         position=new byte[4];
+        init();
+    }
+    public void init(){
         position[0]=-1;
         position[1]=-1;
         position[2]=-1;

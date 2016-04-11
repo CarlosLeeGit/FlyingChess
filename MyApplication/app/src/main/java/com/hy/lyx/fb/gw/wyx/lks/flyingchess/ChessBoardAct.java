@@ -14,7 +14,7 @@ import java.util.TimerTask;
 public class ChessBoardAct extends AppCompatActivity {
     RelativeLayout frame;
     Timer screenTimer,closeTimer;
-    Button back,pause;
+    Button pause,dice;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //ui setting
@@ -28,6 +28,7 @@ public class ChessBoardAct extends AppCompatActivity {
         screenTimer=new Timer();
         closeTimer=new Timer();
         pause=(Button)findViewById(R.id.pause);
+        dice=(Button)findViewById(R.id.dice);
         //trigger
         frame.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -50,15 +51,23 @@ public class ChessBoardAct extends AppCompatActivity {
         pause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(getApplicationContext(),GameInfoAct.class);
+                Intent intent = new Intent(getApplicationContext(), GameInfoAct.class);
                 startActivity(intent);
                 closeTimer.schedule(new TimerTask() {
                     @Override
                     public void run() {
                         finish();
                     }
-                },2000);
+                }, 2000);
             }
         });
+        dice.setOnClickListener(new View.OnClickListener() {//throw dice
+            @Override
+            public void onClick(View v) {
+                GameManager.throwDice();
+            }
+        });
+        /////////////////add four plane trigger and when click a plane, we should call game manager :: choosePlane to choose plane
+        GameManager.start();
     }
 }
