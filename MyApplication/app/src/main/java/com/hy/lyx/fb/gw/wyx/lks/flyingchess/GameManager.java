@@ -5,60 +5,30 @@ import java.util.Random;
 /**
  * Created by karthur on 2016/4/9.
  */
-public class GameManager {
-    private static DataManager dataManager;
-    private static ChessBoard chessBoard;
-    private static byte dice;
-    private static boolean diceValid;
-    private static byte whichPlane;
-    private static boolean planeValid;
-    private static GameWorker gw;//thread
+public class GameManager {//game process control
+    private GameWorker gw;//thread
 
-    public static void init(){//call when app launch
-        dataManager=new DataManager();
-        chessBoard=new ChessBoard();
-        dataManager.init();
-        chessBoard.init();
+    public GameManager(){
         gw=new GameWorker();
     }
 
-    public static void start(){//call by activity when game start
-        Random r = new Random(System.currentTimeMillis());
-        dataManager.setMyColor((byte) r.nextInt(4));
+    public void newTurn(){//call by activity when game start
+        Game.getChessBoard().init();
         new Thread(gw).start();
     }
 
-    public static void throwDice(){//call by user when press dice button
-        dice = chessBoard.throwDice();
-        diceValid =true;
+    public void gameOver(){
+        gw.exit();
     }
 
-    public static void choosePlane(byte _whichPlane){//call by user when choose plane
-        whichPlane=_whichPlane;
-        planeValid =true;
-    }
-
-    public static void turnTo(byte color){//call by other thread  be careful
-        if(color==dataManager.getMyColor()){//it is my turn
+    public void turnTo(byte color){//call by other thread  be careful
+        byte dice,whichPlane;
+        if(color==Game.getDataManager().getMyColor()){//it is my turn
             //get dice
-            while(diceValid){
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-            diceValid =false;
+            dice=Game.getPlayer().roll();
             //get plane
-            while(planeValid){
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-            planeValid =false;
-            if(chessBoard.canIMove(color,dice)){//can move a plane
+            whichPlane=Game.getPlayer().choosPlane();
+            if(Game.getPlayer().canIMove(color,dice)){//can move a plane
 
             }
             else{
@@ -66,7 +36,7 @@ public class GameManager {
             }
         }
         else{//others
-            switch (dataManager.getGameMode()){
+            switch (Game.getDataManager().getGameMode()){
                 case DataManager.GM_LOCAL://local game
                 {
 
@@ -83,20 +53,27 @@ public class GameManager {
 
     }
 
-    public static DataManager getDataManager(){//common api
-        return dataManager;
-    }
-
 }
 
 class GameWorker implements Runnable{
+    private boolean run;
+
+    public GameWorker(){
+        run=true;
+    }
+
     @Override
     public void run() {
         byte i=0;
-        for (;;){//control round
-            i=(byte)(i%4);
-            GameManager.turnTo(i);
+        byte n=Game.getDataManager().getPlayerNumber();
+        while(run){//control round
+            i=(byte) (i%n);
+            Game.getGameManager().turnTo(Game.getDataManager().getPlayerOrder()[i]);
             i++;
         }
+    }
+
+    public void exit(){
+        run=false;
     }
 }

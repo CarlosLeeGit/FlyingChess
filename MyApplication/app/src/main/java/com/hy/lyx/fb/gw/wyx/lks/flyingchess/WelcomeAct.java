@@ -37,7 +37,12 @@ public class WelcomeAct extends AppCompatActivity {
             }
         },4000);
 
-        GameManager.init();
+        new Thread(new Runnable() {//init game
+            @Override
+            public void run() {
+                Game.init();
+            }
+        }).start();
         //next activity is choose mode activity
     }
 }

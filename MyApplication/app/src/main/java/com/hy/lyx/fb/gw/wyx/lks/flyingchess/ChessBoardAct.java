@@ -64,10 +64,10 @@ public class ChessBoardAct extends AppCompatActivity {
         dice.setOnClickListener(new View.OnClickListener() {//throw dice
             @Override
             public void onClick(View v) {
-                GameManager.throwDice();
+                Game.getPlayer().setDiceValid();
             }
         });
         /////////////////add four plane trigger and when click a plane, we should call game manager :: choosePlane to choose plane
-        GameManager.start();
+        Game.getGameManager().newTurn();
     }
 }
