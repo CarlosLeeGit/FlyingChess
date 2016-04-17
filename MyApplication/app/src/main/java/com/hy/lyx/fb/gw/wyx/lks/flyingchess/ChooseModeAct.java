@@ -52,7 +52,7 @@ public class ChooseModeAct extends AppCompatActivity {
         local.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {//choose local game
-                GameManager.getDataManager().setGameMode(DataManager.GM_LOCAL);//set game mode
+                Game.getDataManager().setGameMode(DataManager.GM_LOCAL);//set game mode
                 Intent intent=new Intent(getApplicationContext(),GameInfoAct.class);
                 startActivity(intent);//switch to GameInfoAct
                 closeTimer.schedule(new TimerTask() {
@@ -79,7 +79,7 @@ public class ChooseModeAct extends AppCompatActivity {
         wlan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                GameManager.getDataManager().setGameMode(DataManager.GM_WLAN);
+                Game.getDataManager().setGameMode(DataManager.GM_WLAN);
                 Intent intent=new Intent(getApplicationContext(),LoginAct.class);
                 startActivity(intent);
                 closeTimer.schedule(new TimerTask() {

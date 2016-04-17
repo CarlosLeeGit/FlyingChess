@@ -6,7 +6,7 @@ import java.util.Random;
  * Created by karthur on 2016/4/9.
  */
 public class ChessBoard {//chess board data
-    public static final byte COLOR_RED=0,COLOR_GREEN=1,COLOR_BLUE=2,COLOR_WHITE=3;//玩家颜色
+    public static final int COLOR_RED=0,COLOR_GREEN=1,COLOR_BLUE=2,COLOR_WHITE=3;//玩家颜色
 
     private Dice dice;
     private Airplane[] airplanes;
@@ -14,25 +14,31 @@ public class ChessBoard {//chess board data
     public void init(){//call in game manager when a new game start
         dice = new Dice();
         airplanes=new Airplane[4];
+        airplanes[0]=new Airplane();
         airplanes[0].init();
+        airplanes[1]=new Airplane();
         airplanes[1].init();
+        airplanes[2]=new Airplane();
         airplanes[2].init();
+        airplanes[3]=new Airplane();
         airplanes[3].init();
+
     }
 
     public Dice getDice(){//call in game manager when user throw a dice
         return dice;
     }
 
-    public Airplane getAirplane(byte color){
+    public Airplane getAirplane(int color){
         return airplanes[color];
     }
+
 }
 
 class Airplane{
-    byte[] position;
+    int[] position;
     Airplane(){
-        position=new byte[4];
+        position=new int[4];
         init();
     }
     public void init(){
@@ -48,7 +54,7 @@ class Dice{
     public Dice(){
         r=new Random(System.currentTimeMillis());
     }
-    public byte roll(){
-        return (byte)(r.nextInt(5)+1);
+    public int roll(){
+        return (r.nextInt(6)+1);
     }
 }

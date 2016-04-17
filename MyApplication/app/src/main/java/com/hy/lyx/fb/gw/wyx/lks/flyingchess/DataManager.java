@@ -4,20 +4,26 @@ package com.hy.lyx.fb.gw.wyx.lks.flyingchess;
  * Created by karthur on 2016/4/9.
  */
 public class DataManager {//数据存储类
-    public static final byte GM_LOCAL=0,GM_WIFI=1,GM_BT=2,GM_WLAN=3;//游戏模式
+    public static final int GM_LOCAL=0,GM_WIFI=1,GM_BT=2,GM_WLAN=3;//游戏模式
 
     private String userName;//用户名
     private String password;//加密后的密码字符串
-    private byte musicVolume,effectVolume;//0~255 音量
-    private byte gameMode;//游戏模式
+    private int musicVolume,effectVolume;//0~255 音量
+    private int gameMode;//游戏模式
     private int localScore;//单机分数
     private int onlineScore;//网络分数    WIFI和BT时因为是临时对决  暂定不用积分
 
-    private byte myColor;//游戏时的颜色
-    private byte playerNumber;//玩家数目
-    private byte[] playerOrder;//玩家顺序
+    private int myColor;//游戏时的颜色
+    private int playerNumber;//玩家数目
+    private int[] playerOrder;//玩家顺序
 
     public DataManager(){//加载本地数据
+        myColor=0;
+        playerOrder=new int[4];
+        playerOrder[0]=0;
+        playerOrder[1]=1;
+        playerOrder[2]=2;
+        playerOrder[3]=3;
 
     }
 
@@ -42,27 +48,27 @@ public class DataManager {//数据存储类
         }
     }
 
-    public byte getMusicVolume(){//得到音乐音量
+    public int getMusicVolume(){//得到音乐音量
         return musicVolume;
     }
 
-    public byte getEffectVolume(){//得到音效音量
+    public int getEffectVolume(){//得到音效音量
         return effectVolume;
     }
 
-    public byte getGameMode(){
+    public int getGameMode(){
         return gameMode;
     }
 
-    public byte getMyColor(){//得到颜色
+    public int getMyColor(){//得到颜色
         return  myColor;
     }
 
-    public byte[] getPlayerOrder(){
+    public int[] getPlayerOrder(){
         return playerOrder;
     }
 
-    public byte getPlayerNumber(){
+    public int getPlayerNumber(){
         return playerNumber;
     }
 
@@ -88,27 +94,27 @@ public class DataManager {//数据存储类
         }
     }
 
-    public void setMusicVolume(byte musicVolume){//设置音乐音量
+    public void setMusicVolume(int musicVolume){//设置音乐音量
         this.musicVolume = musicVolume;
     }
 
-    public void setEffectVolume(byte effectVolume){//设置音效音量
+    public void setEffectVolume(int effectVolume){//设置音效音量
         this.effectVolume=effectVolume;
     }
 
-    public void setGameMode(byte gameMode){//设置当前的游戏模式
+    public void setGameMode(int gameMode){//设置当前的游戏模式
         this.gameMode=gameMode;
     }
 
-    public void setMyColor(byte myColor){//设置颜色
+    public void setMyColor(int myColor){//设置颜色
         this.myColor=myColor;
     }
 
-    public void setPlayerNumber(byte playerNumber){
+    public void setPlayerNumber(int playerNumber){
         this.playerNumber=playerNumber;
     }
 
-    public void setPlayerOrder(byte[] playerOrder){
+    public void setPlayerOrder(int[] playerOrder){
         this.playerOrder=playerOrder;
     }
 
