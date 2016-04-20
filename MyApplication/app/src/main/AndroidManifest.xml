@@ -7,9 +7,9 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        >
-        <activity android:name=".WelcomeAct"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".WelcomeAct"
             android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -17,16 +17,22 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ChooseModeAct"
-            android:screenOrientation="landscape"/>
-        <activity android:name=".LoginAct"
-            android:screenOrientation="landscape"/>
-        <activity android:name=".GameInfoAct"
-            android:screenOrientation="landscape"/>
-        <activity android:name=".ChessBoardAct"
-            android:screenOrientation="landscape"/>
-        <activity android:name=".SettingAct"
-            android:screenOrientation="landscape"/>
+        <activity
+            android:name=".ChooseModeAct"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".LoginAct"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".GameInfoAct"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".ChessBoardAct"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".SettingAct"
+            android:screenOrientation="landscape" />
+        <activity android:name=".RoomAct"></activity>
     </application>
 
 </manifest>

@@ -20,18 +20,7 @@ public class ChessBoardAct extends AppCompatActivity {
     Timer screenTimer,closeTimer;
     Button pause,dice;
     Button r1,r2,r3,r4;
-    static TextView tv;
-    static Handler handler=new Handler() {
-        @Override
-        public void handleMessage(Message msg){
-            switch (msg.what){
-                case 1:
-                {
-                    tv.setText(msg.getData().getString("hh"));
-                }
-            }
-        }
-    };
+    TextView tv;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //ui setting
@@ -119,7 +108,7 @@ public class ChessBoardAct extends AppCompatActivity {
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
+        if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {//返回按钮
             if (event.getAction() == KeyEvent.ACTION_DOWN && event.getRepeatCount() == 0) {
                 Game.getGameManager().gameOver();
                 finish();
