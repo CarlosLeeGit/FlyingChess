@@ -10,13 +10,14 @@ import java.util.Random;
  */
 public class GameManager {//game process control
     private GameWorker gw;//thread
-
+    private ChessBoardAct board;
     public GameManager(){
         gw=new GameWorker();
     }
 
-    public void newTurn(){//call by activity when game start
+    public void newTurn(ChessBoardAct board){//call by activity when game start
         Game.getChessBoard().init();
+        this.board=board;
         new Thread(gw).start();
     }
 
@@ -29,18 +30,20 @@ public class GameManager {//game process control
         if(color==Game.getDataManager().getMyColor()){//it is my turn
             //get dice
             dice=Game.getPlayer().roll();
+
+            Message msg = new Message();
+            Bundle b = new Bundle();
+            b.putString("dice",String.format("%d",dice));
+            msg.setData(b);
+            msg.what=2;
+            board.handler.sendMessage(msg);
+
             if(Game.getPlayer().canIMove(color,dice)){//can move a plane
                 //get plane
                 do {
                     whichPlane=Game.getPlayer().choosePlane();
                 }while(!Game.getPlayer().move(color,whichPlane,dice));
                 ///UI update
-                Message msg = new Message();
-                Bundle b = new Bundle();
-                b.putString("hh",String.format("dice:%d 1:%d 2:%d 3:%d 4:%d",dice,Game.getChessBoard().getAirplane(color).position[0],Game.getChessBoard().getAirplane(color).position[1],Game.getChessBoard().getAirplane(color).position[2],Game.getChessBoard().getAirplane(color).position[3]));
-                msg.setData(b);
-                msg.what=1;
-                ChessBoardAct.handler.sendMessage(msg);
             }
             else{
 
@@ -83,10 +86,11 @@ class GameWorker implements Runnable{
     @Override
     public void run() {
         int i=0;
-        int n=Game.getDataManager().getPlayerNumber();
         while(run){//control round
             i=(i%4);
-            Game.getGameManager().turnTo(Game.getDataManager().getPlayerOrder()[i]);
+            if(Game.getDataManager().getPosition()[i]!=-1) {
+                Game.getGameManager().turnTo(i);
+            }
             i++;
         }
     }

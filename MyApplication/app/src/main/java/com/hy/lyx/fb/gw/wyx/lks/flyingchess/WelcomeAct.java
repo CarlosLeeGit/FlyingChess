@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -18,8 +19,7 @@ public class WelcomeAct extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-        int uiOpts = View.SYSTEM_UI_FLAG_FULLSCREEN;
-        getWindow().getDecorView().setSystemUiVisibility(uiOpts);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         //initialization
         timer=new Timer();
         timer.schedule(new TimerTask() {

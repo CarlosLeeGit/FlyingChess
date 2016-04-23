@@ -6,7 +6,7 @@ import java.util.Random;
  * Created by karthur on 2016/4/9.
  */
 public class ChessBoard {//chess board data
-    public static final int COLOR_RED=0,COLOR_GREEN=1,COLOR_BLUE=2,COLOR_WHITE=3;//玩家颜色
+    public static final int COLOR_RED=0,COLOR_GREEN=1,COLOR_BLUE=2,COLOR_YELLOW=3;//玩家颜色
 
     private Dice dice;
     private Airplane[] airplanes;

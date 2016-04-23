@@ -13,8 +13,17 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Start"
-        android:id="@+id/start"
+        android:text="createRoom"
+        android:id="@+id/create"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="join In"
+        android:id="@+id/join"
+        android:layout_above="@+id/create"
+        android:layout_alignParentEnd="true"
+        android:layout_alignStart="@+id/create" />
 </RelativeLayout>

@@ -8,6 +8,105 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:id="@+id/login"
-    tools:context="com.hy.lyx.fb.gw.wyx.lks.flyingchess.LoginAct">
+    tools:context="com.hy.lyx.fb.gw.wyx.lks.flyingchess.LoginAct"
+    android:background="#78b3d4">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:background="@drawable/login_middle"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/linearLayout">
+
+        <EditText
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/name"
+            android:layout_above="@+id/pw"
+            android:hint="name"
+            android:layout_alignEnd="@+id/pw"
+            android:layout_alignStart="@+id/pw"
+            android:layout_gravity="top"
+            android:layout_marginTop="10dp" />
+
+        <EditText
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"
+            android:ems="10"
+            android:id="@+id/pw"
+            android:layout_centerHorizontal="true"
+            android:layout_above="@+id/space2"
+            android:hint="password" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"
+            android:ems="10"
+            android:id="@+id/pw2"
+            android:hint="password confirm" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Login"
+                android:id="@+id/loginButton"
+                android:background="@drawable/login_login_button"
+                android:layout_marginLeft="15dp"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@+id/space3"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginRight="1dp" />
+
+            <Space
+                android:layout_width="20px"
+                android:layout_height="20px"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:id="@+id/space3" />
+
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Signin"
+                android:id="@+id/signin"
+                android:layout_marginRight="15dp"
+                android:layout_alignParentTop="true"
+                android:layout_toEndOf="@+id/loginButton"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/login_signin_button"
+                android:layout_marginLeft="1dp" />
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView2"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:background="@drawable/login_face"
+        android:layout_toRightOf="@+id/linearLayout"
+        android:layout_above="@+id/linearLayout" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Home"
+        android:id="@+id/home"
+        android:background="@drawable/login_main_button"
+        android:layout_marginLeft="5dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>

@@ -15,16 +15,11 @@ public class DataManager {//数据存储类
 
     private int myColor;//游戏时的颜色
     private int playerNumber;//玩家数目
-    private int[] playerOrder;//玩家顺序
+    private int[] pos;//玩家位置
 
     public DataManager(){//加载本地数据
         myColor=0;
-        playerOrder=new int[4];
-        playerOrder[0]=0;
-        playerOrder[1]=1;
-        playerOrder[2]=2;
-        playerOrder[3]=3;
-
+        pos=new int[4];
     }
 
     //////////////////////////////////////////////////getter
@@ -64,12 +59,12 @@ public class DataManager {//数据存储类
         return  myColor;
     }
 
-    public int[] getPlayerOrder(){
-        return playerOrder;
-    }
-
     public int getPlayerNumber(){
         return playerNumber;
+    }
+
+    public int[] getPosition(){
+        return pos;
     }
 
     /////////////////////////////////////////////////////setter
@@ -110,13 +105,13 @@ public class DataManager {//数据存储类
         this.myColor=myColor;
     }
 
-    public void setPlayerNumber(int playerNumber){
-        this.playerNumber=playerNumber;
+    public void setPosition(int[] pos){
+        this.pos=pos;
+        playerNumber=0;
+        for(int i:pos){
+            if(i!=-1)
+                playerNumber++;
+        }
     }
-
-    public void setPlayerOrder(int[] playerOrder){
-        this.playerOrder=playerOrder;
-    }
-
 }
 

@@ -11,24 +11,12 @@ public class Game {
     private static DataManager dataManager;
     private static ChessBoard chessBoard;
     private static Player player;
-    private static Handler handler;
 
     public static void init(){
         gameManager = new GameManager();
         dataManager=new DataManager();
         chessBoard=new ChessBoard();
         player=new Player();
-        handler=new Handler(){
-            @Override
-            public void handleMessage(Message msg){
-                switch (msg.what){
-                    case 1:
-                        break;
-                    default:
-                        super.handleMessage(msg);
-                }
-            }
-        };
     }
 
     public static GameManager getGameManager(){
@@ -47,7 +35,4 @@ public class Game {
         return player;
     }
 
-    public static Handler getHandler(){
-        return handler;
-    }
 }
