@@ -55,11 +55,11 @@ public class SocketRunnable extends MsgHandler implements Runnable{
              * it won't be blocked forever. thus giving it chance
              * to send out queued data packs.
              */
-            this.sock.setSoTimeout(300);
 
             this.os = new DataOutputStream(sock.getOutputStream());
             this.is = new DataInputStream(sock.getInputStream());
 
+            this.sock.setSoTimeout(200);
 
             // enter receive loop
             while(true){
