@@ -1,4 +1,4 @@
-package DataPack;
+package com.hy.lyx.fb.gw.wyx.lks.flyingchess;
 
 import java.util.Date;
 import java.util.List;

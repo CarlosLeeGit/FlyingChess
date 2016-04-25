@@ -57,19 +57,17 @@ public class LoginAct extends AppCompatActivity implements Target {
                         return;
                     }
                     //sign in
-                    Date date=new Date(System.currentTimeMillis());
-                    LinkedList<String> msgList=new LinkedList<String>();
+                    LinkedList<String> msgList=new LinkedList<>();
                     msgList.addLast(name.getText().toString());
                     msgList.addLast(pw.getText().toString());
-                    DataPack dataPack=new DataPack(DataPack.REGISTER,date,false,msgList);
+                    DataPack dataPack=new DataPack(DataPack.REGISTER,msgList);
                     Game.getSocketRunnable().send(dataPack);
                 }
                 else{// login
-                    Date date=new Date(System.currentTimeMillis());
                     LinkedList<String> msgList=new LinkedList<String>();
                     msgList.addLast(name.getText().toString());
                     msgList.addLast(pw.getText().toString());
-                    DataPack dataPack=new DataPack(DataPack.LOGIN,date,false,msgList);
+                    DataPack dataPack=new DataPack(DataPack.LOGIN,msgList);
                     Game.getSocketRunnable().send(dataPack);
                 }
             }

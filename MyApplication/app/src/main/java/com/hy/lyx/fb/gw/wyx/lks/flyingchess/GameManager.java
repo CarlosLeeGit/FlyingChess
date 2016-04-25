@@ -34,7 +34,7 @@ public class GameManager {//game process control
             for(int i=0;i<15;i++){
                 Message msg = new Message();
                 Bundle b = new Bundle();
-                b.putString("dice",String.format("%d",dice));
+                b.putString("dice",String.format("%d",Game.getChessBoard().getDice().roll()));
                 msg.setData(b);
                 msg.what=2;
                 board.handler.sendMessage(msg);
@@ -44,7 +44,7 @@ public class GameManager {//game process control
                     e.printStackTrace();
                 }
             }
-
+            System.gc();
             if(Game.getPlayer().canIMove(color,dice)){//can move a plane
                 //get plane
                 do {
@@ -62,6 +62,11 @@ public class GameManager {//game process control
             }
             else{
 
+            }
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
         else{//others
@@ -84,6 +89,7 @@ public class GameManager {//game process control
                             e.printStackTrace();
                         }
                     }
+                    System.gc();
                     Message msg = new Message();
                     Bundle b = new Bundle();
                     b.putString("dice",String.format("%d",dice));
