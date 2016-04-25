@@ -76,8 +76,8 @@
             <Button
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="Signin"
-                android:id="@+id/signin"
+                android:text="Register"
+                android:id="@+id/register"
                 android:layout_marginRight="15dp"
                 android:layout_alignParentTop="true"
                 android:layout_toEndOf="@+id/loginButton"

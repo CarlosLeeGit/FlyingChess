@@ -27,116 +27,127 @@
         android:layout_alignParentEnd="true" />
 
     <Button
-        android:layout_width="25dp"
-        android:layout_height="25dp"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:id="@+id/G1"
         android:background="@drawable/g1"
         android:layout_alignParentStart="true" />
 
     <Button
-        android:layout_width="25dp"
-        android:layout_height="25dp"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:id="@+id/G2"
         android:background="@drawable/g1"
         android:layout_alignParentStart="true" />
 
     <Button
-        android:layout_width="25dp"
-        android:layout_height="25dp"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:id="@+id/G3"
         android:background="@drawable/g1"
         android:layout_alignParentStart="true" />
 
     <Button
-        android:layout_width="25dp"
-        android:layout_height="25dp"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:id="@+id/G4"
         android:background="@drawable/g1"
         android:layout_alignParentStart="true" />
 
     <Button
-        android:layout_width="25dp"
-        android:layout_height="25dp"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:id="@+id/B3"
         android:background="@drawable/b1"
         android:layout_alignParentStart="true" />
 
     <Button
-        android:layout_width="25dp"
-        android:layout_height="25dp"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:id="@+id/B1"
         android:background="@drawable/b1"
         android:layout_alignParentStart="true" />
 
     <Button
-        android:layout_width="25dp"
-        android:layout_height="25dp"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:id="@+id/B2"
         android:background="@drawable/b1"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true" />
 
     <Button
-        android:layout_width="25dp"
-        android:layout_height="25dp"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:id="@+id/B4"
         android:background="@drawable/b1"
         android:layout_alignParentStart="true" />
 
     <Button
-        android:layout_width="25dp"
-        android:layout_height="25dp"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:id="@+id/Y4"
         android:background="@drawable/y1"
         android:layout_alignParentStart="true" />
 
     <Button
-        android:layout_width="25dp"
-        android:layout_height="25dp"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:id="@+id/Y3"
         android:background="@drawable/y1"
         android:layout_alignParentStart="true" />
 
     <Button
-        android:layout_width="25dp"
-        android:layout_height="25dp"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:id="@+id/Y1"
         android:background="@drawable/y1"
         android:layout_alignParentStart="true" />
 
     <Button
-        android:layout_width="25dp"
-        android:layout_height="25dp"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:id="@+id/Y2"
         android:background="@drawable/y1"
         android:layout_alignParentStart="true" />
 
     <Button
-        android:layout_width="25dp"
-        android:layout_height="25dp"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:id="@+id/R2"
         android:background="@drawable/r1"
         android:layout_alignParentStart="true" />
 
     <Button
-        android:layout_width="25dp"
-        android:layout_height="25dp"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:id="@+id/R1"
         android:background="@drawable/r1"
         android:layout_alignParentStart="true" />
 
     <Button
-        android:layout_width="25dp"
-        android:layout_height="25dp"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:id="@+id/R3"
         android:background="@drawable/r1"
         android:layout_alignParentStart="true" />
 
     <Button
-        android:layout_width="25dp"
-        android:layout_height="25dp"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:id="@+id/R4"
         android:background="@drawable/r1"
         android:layout_alignParentStart="true" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/map"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="false"
+        android:layout_alignParentBottom="false"
+        android:layout_alignParentLeft="false"
+        android:adjustViewBounds="true"
+        android:textAlignment="viewStart" />
 
 </RelativeLayout>

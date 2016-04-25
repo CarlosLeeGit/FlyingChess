@@ -13,6 +13,7 @@ import java.util.TimerTask;
 public class WelcomeAct extends AppCompatActivity {
     Timer timer;
     Timer timer2;
+    AppCompatActivity activity;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //UI setting
@@ -36,11 +37,11 @@ public class WelcomeAct extends AppCompatActivity {
                 finish();
             }
         },4000);
-
+        activity=this;
         new Thread(new Runnable() {//init game
             @Override
             public void run() {
-                Game.init();
+                Game.init(activity);
             }
         }).start();
         //next activity is choose mode activity

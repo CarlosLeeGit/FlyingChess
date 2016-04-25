@@ -77,7 +77,7 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
         android:background="@drawable/login_main_button"
-        android:layout_marginLeft="15dp" />
+        android:layout_marginLeft="5dp" />
 
     <Button
         android:layout_width="30dp"

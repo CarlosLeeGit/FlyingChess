@@ -4,10 +4,11 @@ package com.hy.lyx.fb.gw.wyx.lks.flyingchess;
  * Created by karthur on 2016/4/9.
  */
 public class DataManager {//数据存储类
-    public static final int GM_LOCAL=0,GM_WIFI=1,GM_BT=2,GM_WLAN=3;//游戏模式
-
+    public static final int GM_LOCAL=0,GM_LAN=1,GM_WLAN=3;//游戏模式
+    private boolean needLogin;//需要登录
     private String userName;//用户名
     private String password;//加密后的密码字符串
+    private String id;//玩家ID
     private int musicVolume,effectVolume;//0~255 音量
     private int gameMode;//游戏模式
     private int localScore;//单机分数
@@ -20,6 +21,7 @@ public class DataManager {//数据存储类
     public DataManager(){//加载本地数据
         myColor=0;
         pos=new int[4];
+        needLogin=true;
     }
 
     //////////////////////////////////////////////////getter
@@ -67,6 +69,13 @@ public class DataManager {//数据存储类
         return pos;
     }
 
+    public String getId(){
+        return id;
+    }
+
+    public boolean needLogin(){
+        return needLogin;
+    }
     /////////////////////////////////////////////////////setter
 
     public void setUserName(String userName){//设置用户名
@@ -112,6 +121,14 @@ public class DataManager {//数据存储类
             if(i!=-1)
                 playerNumber++;
         }
+    }
+
+    public void setId(String id){
+        this.id=id;
+    }
+
+    public void setLogin(boolean nl){
+        needLogin=!nl;
     }
 }
 

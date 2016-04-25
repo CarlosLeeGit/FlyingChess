@@ -41,6 +41,10 @@ public class DataPack {
 
     public void setSuccessful(boolean isSuccessful){ this.isSuccessful = isSuccessful; }
 
+    public boolean isSuccessful(){
+        return isSuccessful;
+    }
+
     public List<String> getMessageList(){
         return msgList;
     }

@@ -1,6 +1,8 @@
 package com.hy.lyx.fb.gw.wyx.lks.flyingchess;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
@@ -11,10 +13,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.InputStream;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -24,7 +28,8 @@ public class ChessBoardAct extends AppCompatActivity {
     Button[][] plane;
     int boardWidth;
     Handler handler;
-    int dx;
+    ImageView map;
+    float dx;
     int n;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,9 +65,20 @@ public class ChessBoardAct extends AppCompatActivity {
 
         handler=new Handler(){
           @Override
-            public void handleMessage(Message msg){
+            public void handleMessage(Message msg){//事件回掉
               switch (msg.what){
                   case 1://飞机
+                  {
+                      int color=msg.getData().getInt("color");
+                      int whichPlane=msg.getData().getInt("whichPlane");
+                      int pos=msg.getData().getInt("pos");
+                      if(pos!=-2){
+                          moveTo(plane[color][whichPlane],Game.getChessBoard().map[color][pos][0],Game.getChessBoard().map[color][pos][1]);
+                      }
+                      else{//消失
+                          moveTo(plane[color][whichPlane],Game.getChessBoard().map[color][55][0],Game.getChessBoard().map[color][55][1]);
+                      }
+                  }
                       break;
                   case 2://筛子
                       dice.setText(msg.getData().getString("dice"));
@@ -72,13 +88,19 @@ public class ChessBoardAct extends AppCompatActivity {
               }
           }
         };
+        map=(ImageView)findViewById(R.id.map);
         //set data
         DisplayMetrics dm=new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
         boardWidth=dm.heightPixels;
-        n=15;
-        dx=boardWidth/n;
-
+        n=19;
+        dx=boardWidth/n+0.8f;
+        BitmapFactory.Options opt= new BitmapFactory.Options();
+        opt.inPreferredConfig = Bitmap.Config.RGB_565;
+        opt.outWidth=dm.heightPixels;
+        opt.outHeight=dm.heightPixels;
+        InputStream is = getApplicationContext().getResources().openRawResource(R.raw.map);
+        map.setImageBitmap(BitmapFactory.decodeStream(is,null,opt));
         //trigger
         pause.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -214,25 +236,25 @@ public class ChessBoardAct extends AppCompatActivity {
     @Override
     public void onStart(){
         super.onStart();
-        moveTo(plane[0][0],0,n-2);
-        moveTo(plane[0][1],1,n-2);
-        moveTo(plane[0][2],0,n-1);
-        moveTo(plane[0][3],1,n-1);
+        moveTo(plane[0][0],1,n-4);
+        moveTo(plane[0][1],3,n-4);
+        moveTo(plane[0][2],1,n-2);
+        moveTo(plane[0][3],3,n-2);
 
-        moveTo(plane[1][0],n-2,n-2);
-        moveTo(plane[1][1],n-1,n-2);
-        moveTo(plane[1][2],n-2,n-1);
-        moveTo(plane[1][3],n-1,n-1);
+        moveTo(plane[1][0],n-4,n-4);
+        moveTo(plane[1][1],n-2,n-4);
+        moveTo(plane[1][2],n-4,n-2);
+        moveTo(plane[1][3],n-2,n-2);
 
-        moveTo(plane[2][0],n-2,0);
-        moveTo(plane[2][1],n-1,0);
-        moveTo(plane[2][2],n-2,1);
-        moveTo(plane[2][3],n-1,1);
+        moveTo(plane[2][0],n-4,1);
+        moveTo(plane[2][1],n-2,1);
+        moveTo(plane[2][2],n-4,3);
+        moveTo(plane[2][3],n-2,3);
 
-        moveTo(plane[3][0],0,0);
-        moveTo(plane[3][1],1,0);
-        moveTo(plane[3][2],0,1);
-        moveTo(plane[3][3],1,1);
+        moveTo(plane[3][0],1,1);
+        moveTo(plane[3][1],3,1);
+        moveTo(plane[3][2],1,3);
+        moveTo(plane[3][3],3,3);
 
         for(int i=0;i<4;i++){
             if(Game.getDataManager().getPosition()[i]==-1)

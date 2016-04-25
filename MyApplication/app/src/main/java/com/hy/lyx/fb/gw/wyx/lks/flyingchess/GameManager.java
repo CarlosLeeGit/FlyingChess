@@ -30,13 +30,20 @@ public class GameManager {//game process control
         if(color==Game.getDataManager().getMyColor()){//it is my turn
             //get dice
             dice=Game.getPlayer().roll();
-
-            Message msg = new Message();
-            Bundle b = new Bundle();
-            b.putString("dice",String.format("%d",dice));
-            msg.setData(b);
-            msg.what=2;
-            board.handler.sendMessage(msg);
+            //UI update
+            for(int i=0;i<15;i++){
+                Message msg = new Message();
+                Bundle b = new Bundle();
+                b.putString("dice",String.format("%d",dice));
+                msg.setData(b);
+                msg.what=2;
+                board.handler.sendMessage(msg);
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
 
             if(Game.getPlayer().canIMove(color,dice)){//can move a plane
                 //get plane
@@ -44,6 +51,14 @@ public class GameManager {//game process control
                     whichPlane=Game.getPlayer().choosePlane();
                 }while(!Game.getPlayer().move(color,whichPlane,dice));
                 ///UI update
+                Message msg2 = new Message();
+                Bundle b2 = new Bundle();
+                b2.putInt("color",color);
+                b2.putInt("whichPlane",whichPlane);
+                b2.putInt("pos",Game.getChessBoard().getAirplane(color).position[whichPlane]);
+                msg2.setData(b2);
+                msg2.what=1;
+                board.handler.sendMessage(msg2);
             }
             else{
 
@@ -55,17 +70,55 @@ public class GameManager {//game process control
                 {
                     Random r=new Random(System.currentTimeMillis());
                     dice=r.nextInt(6)+1;
+                    //UI
+                    for(int i=0;i<15;i++){
+                        Message msg = new Message();
+                        Bundle b = new Bundle();
+                        b.putString("dice",String.format("%d",Game.getChessBoard().getDice().roll()));
+                        msg.setData(b);
+                        msg.what=2;
+                        board.handler.sendMessage(msg);
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    Message msg = new Message();
+                    Bundle b = new Bundle();
+                    b.putString("dice",String.format("%d",dice));
+                    msg.setData(b);
+                    msg.what=2;
+                    board.handler.sendMessage(msg);
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
                     if(Game.getPlayer().canIMove(color,dice)){
                         do{
                             whichPlane=r.nextInt(4);
                         }while(!Game.getPlayer().move(color,whichPlane,dice));
                         ///UI update
+                        Message msg2 = new Message();
+                        Bundle b2 = new Bundle();
+                        b2.putInt("color",color);
+                        b2.putInt("whichPlane",whichPlane);
+                        b2.putInt("pos",Game.getChessBoard().getAirplane(color).position[whichPlane]);
+                        msg2.setData(b2);
+                        msg2.what=1;
+                        board.handler.sendMessage(msg2);
+                        //
+                        try {
+                            Thread.sleep(2000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
                     break;
-                case DataManager.GM_BT:
-                    break;
-                case DataManager.GM_WIFI:
+                case DataManager.GM_LAN:
                     break;
                 case DataManager.GM_WLAN:
                     break;

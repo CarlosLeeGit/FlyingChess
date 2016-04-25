@@ -3,25 +3,21 @@ package com.hy.lyx.fb.gw.wyx.lks.flyingchess;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.MotionEvent;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.Date;
+import java.util.LinkedList;
 
 
-public class LoginAct extends AppCompatActivity {
-    Button login,home,signin;
+public class LoginAct extends AppCompatActivity implements Target {
+    Button login,home, register;
     EditText name,pw,pw2;
-    boolean bSignin;
+    boolean bRegister;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //ui setting
@@ -33,10 +29,10 @@ public class LoginAct extends AppCompatActivity {
         login = (Button)findViewById(R.id.loginButton);
         name=(EditText)findViewById(R.id.name);
         pw = (EditText)findViewById(R.id.pw);
-        signin=(Button)findViewById(R.id.signin);
+        register =(Button)findViewById(R.id.register);
         home=(Button)findViewById(R.id.home);
         pw2=(EditText)findViewById(R.id.pw2);
-        bSignin=false;
+        bRegister =false;
         name.setY(name.getY()+50);
         pw.setY(pw.getY()+70);
         //trigger
@@ -51,7 +47,7 @@ public class LoginAct extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(),"please input you password",Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if(bSignin){// sign in
+                if(bRegister){// sign in
                     if(pw2.getText().length()==0){
                         Toast.makeText(getApplicationContext(),"please confirm you password",Toast.LENGTH_SHORT).show();
                         return;
@@ -60,19 +56,31 @@ public class LoginAct extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(),"password you input is not same",Toast.LENGTH_SHORT).show();
                         return;
                     }
+                    //sign in
+                    Date date=new Date(System.currentTimeMillis());
+                    LinkedList<String> msgList=new LinkedList<String>();
+                    msgList.addLast(name.getText().toString());
+                    msgList.addLast(pw.getText().toString());
+                    DataPack dataPack=new DataPack(DataPack.REGISTER,date,false,msgList);
+                    Game.getSocketRunnable().send(dataPack);
                 }
                 else{// login
-
+                    Date date=new Date(System.currentTimeMillis());
+                    LinkedList<String> msgList=new LinkedList<String>();
+                    msgList.addLast(name.getText().toString());
+                    msgList.addLast(pw.getText().toString());
+                    DataPack dataPack=new DataPack(DataPack.LOGIN,date,false,msgList);
+                    Game.getSocketRunnable().send(dataPack);
                 }
             }
         });
-        signin.setOnClickListener(new View.OnClickListener() {
+        register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(bSignin){
+                if(bRegister){
                     login.setText("Login");
-                    signin.setText("Signin");
-                    bSignin=false;
+                    register.setText("Register");
+                    bRegister =false;
                     pw2.setVisibility(View.INVISIBLE);
                     name.setY(name.getY()+50);
                     pw.setY(pw.getY()+70);
@@ -85,9 +93,9 @@ public class LoginAct extends AppCompatActivity {
                     pw2.setVisibility(View.VISIBLE);
                     name.setY(name.getY()-50);
                     pw.setY(pw.getY()-70);
-                    login.setText("Signin");
-                    signin.setText("Back");
-                    bSignin=true;
+                    login.setText("Register");
+                    register.setText("Back");
+                    bRegister =true;
                 }
             }
         });
@@ -97,18 +105,49 @@ public class LoginAct extends AppCompatActivity {
                 startActivity(new Intent(getApplicationContext(),ChooseModeAct.class));
             }
         });
+        Game.getSocketRunnable().registerActivity(DataPack.LOGIN,this);
     }
     @Override
     public void onStart(){
         super.onStart();
         pw2.setVisibility(View.INVISIBLE);
         login.setText("Login");
-        signin.setText("Signin");
+        register.setText("Register");
         pw2.setText("");
-        if(bSignin){
+        if(bRegister){
             name.setY(name.getY()+50);
             pw.setY(pw.getY()+70);
-            bSignin=false;
+            bRegister =false;
         }
+    }
+
+    @Override
+    public void processDataPack(DataPack dataPack) {
+        if(dataPack.getCommand()== DataPack.LOGIN){
+            if(dataPack.isSuccessful()){
+                Game.getDataManager().setId(dataPack.getMessage(0));
+                startActivity(new Intent(getApplicationContext(),GameInfoAct.class));
+                Game.getDataManager().setLogin(true);
+            }
+            else{
+                name.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(),"login failed!",Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        }
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {//返回按钮
+            if (event.getAction() == KeyEvent.ACTION_DOWN && event.getRepeatCount() == 0) {
+                startActivity(new Intent(getApplicationContext(),ChooseModeAct.class));
+            }
+            return true;
+        }
+        return super.dispatchKeyEvent(event);
     }
 }
