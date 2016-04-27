@@ -4,13 +4,15 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.RelativeLayout;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -18,7 +20,10 @@ public class RoomAct extends AppCompatActivity implements Target {
     Button start,back,r,g,b,y,jr,jg,jb,jy;
     Timer closeTimer;
     int me;
-    int[] pos;
+    int[] pos;// -1 none   0 robot    1 people
+    ListView players;
+    LinkedList<HashMap<String,String>> playerList;
+    SimpleAdapter simpleAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +43,10 @@ public class RoomAct extends AppCompatActivity implements Target {
         jb=(Button)findViewById(R.id.jb);
         jy=(Button)findViewById(R.id.jy);
         pos=new int[4];
+        players=(ListView)findViewById(R.id.playerInRoom);
+        playerList=new LinkedList<>();
+        simpleAdapter=new SimpleAdapter(getApplicationContext(),playerList,R.layout.conteng_room_player_list_item,new String[] {"name","score"},new int[] {R.id.nameInRoom,R.id.scoreInRoom});
+        players.setAdapter(simpleAdapter);
         //trigger
         start.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -45,7 +54,7 @@ public class RoomAct extends AppCompatActivity implements Target {
                 if(me==-1)
                     Toast.makeText(getApplicationContext(),"you have to choose a color",Toast.LENGTH_SHORT).show();
                 else{
-                    Game.getDataManager().setPosition(pos);
+                    Game.getDataManager().setSiteState(pos);
                     Game.getDataManager().setMyColor(me);
                     Intent intent=new Intent(getApplicationContext(),ChessBoardAct.class);
                     startActivity(intent);
@@ -258,6 +267,77 @@ public class RoomAct extends AppCompatActivity implements Target {
         pos[1] = -1;
         pos[2] = -1;
         pos[3] = -1;
+        HashMap<String,String> map=new HashMap<>();
+        map.put("name","name");
+        map.put("score","score");
+        playerList.addLast(map);
+        if(Game.getDataManager().getGameMode()==DataManager.GM_WLAN){
+            for(int i=0;i<Game.getDataManager().getPlayerNumber();i++){
+                if(Game.getDataManager().getOnlinePos()[i]==-1){
+                    map=new HashMap<>();
+                    map.put("name",Game.getDataManager().getOnlineNames()[i]);
+                    map.put("score",String.format("%d",Game.getDataManager().getOnlineScores()[i]));
+                    playerList.addLast(map);
+                }
+                else
+                {
+                    switch (Game.getDataManager().getOnlinePos()[i]) {
+                        case 0:
+                            r.setText(Game.getDataManager().getOnlineNames()[i]);
+                            if (Game.getDataManager().getOnlineIds()[i].compareTo("-1") == 0)
+                            {
+                                pos[ChessBoard.COLOR_RED] = 0;
+                                jr.setText("-");
+                            }
+                            else{
+                                pos[ChessBoard.COLOR_RED]=1;
+                            }
+                            break;
+                        case 1:
+                            g.setText(Game.getDataManager().getOnlineNames()[i]);
+                            if(Game.getDataManager().getOnlineIds()[i].compareTo("-1")==0)
+                            {
+                                pos[ChessBoard.COLOR_GREEN]=0;
+                                jg.setText("-");
+                            }
+                            else{
+                                pos[ChessBoard.COLOR_GREEN]=1;
+                            }
+                            break;
+                        case 2:
+                            b.setText(Game.getDataManager().getOnlineNames()[i]);
+                            if(Game.getDataManager().getOnlineIds()[i].compareTo("-1")==0)
+                            {
+                                pos[ChessBoard.COLOR_BLUE]=0;
+                                jb.setText("-");
+
+                            }
+                            else{
+                                pos[ChessBoard.COLOR_BLUE]=1;
+                            }
+                            break;
+                        case 3:
+                            y.setText(Game.getDataManager().getOnlineNames()[i]);
+                            if(Game.getDataManager().getOnlineIds()[i].compareTo("-1")==0)
+                            {
+                                pos[ChessBoard.COLOR_YELLOW]=0;
+                                jy.setText("-");
+                            }
+                            else{
+                                pos[ChessBoard.COLOR_YELLOW]=1;
+                            }
+                            break;
+                    }
+                }
+            }
+        }
+        else if(Game.getDataManager().getGameMode()==DataManager.GM_LOCAL){
+            map=new HashMap<>();
+            map.put("name","ME");
+            map.put("score",String.format("%d",Game.getDataManager().getScore()));
+            playerList.addLast(map);
+        }
+        simpleAdapter.notifyDataSetChanged();
     }
 
     @Override

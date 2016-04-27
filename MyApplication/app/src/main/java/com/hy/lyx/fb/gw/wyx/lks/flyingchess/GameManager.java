@@ -148,7 +148,7 @@ class GameWorker implements Runnable{
         int i=0;
         while(run){//control round
             i=(i%4);
-            if(Game.getDataManager().getPosition()[i]!=-1) {
+            if(Game.getDataManager().getSiteState()[i]!=-1) {
                 Game.getGameManager().turnTo(i);
             }
             i++;

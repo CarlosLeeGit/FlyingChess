@@ -16,17 +16,17 @@ public class DataManager {//数据存储类
     private int onlineScore;//网络分数    WIFI和BT时因为是临时对决  暂定不用积分
     //房间内控制
     private int myColor;//游戏时的颜色
-    private int playerNumber;//玩家数目
-    private int[] pos;//玩家位置
+    private int[] siteState;//房间位置信息
     ///网络玩家位置
     private String[] onlineNames;
     private String[] onlineIds;
     private String[] onlineScores;
     private int[] onlinePos;
+    private int playerNumber;
 
     public DataManager(){//加载本地数据
         myColor=0;
-        pos=new int[4];
+        siteState =new int[4];
         needLogin=true;
         onlineNames=new String[4];
         onlineIds=new String[4];
@@ -75,8 +75,8 @@ public class DataManager {//数据存储类
         return playerNumber;
     }
 
-    public int[] getPosition(){
-        return pos;
+    public int[] getSiteState(){
+        return siteState;
     }
 
     public String getId(){
@@ -106,6 +106,7 @@ public class DataManager {//数据存储类
     public int[] getOnlinePos(){
         return onlinePos;
     }
+
     /////////////////////////////////////////////////////setter
 
     public void setUserName(String userName){//设置用户名
@@ -144,13 +145,8 @@ public class DataManager {//数据存储类
         this.myColor=myColor;
     }
 
-    public void setPosition(int[] pos){
-        this.pos=pos;
-        playerNumber=0;
-        for(int i:pos){
-            if(i!=-1)
-                playerNumber++;
-        }
+    public void setSiteState(int[] pos){
+        this.siteState =pos;
     }
 
     public void setId(String id){
@@ -165,16 +161,24 @@ public class DataManager {//数据存储类
         needLogin=!nl;
     }
 
-    public void setOnlineScores(int pos,String scores){
-        onlineScores[pos]=scores;
+    public void setOnlineScores(int n,String scores){
+        onlineScores[n]=scores;
     }
 
-    public void setOnlineNames(int pos,String name){
-        onlineNames[pos]=name;
+    public void setOnlineNames(int n,String name){
+        onlineNames[n]=name;
     }
 
-    public void setOnlineIds(int pos,String id){
-        onlineIds[pos]=id;
+    public void setOnlineIds(int n,String id){
+        onlineIds[n]=id;
+    }
+
+    public void setOnlinePos(int n,String pos){
+        this.onlinePos[n]=Integer.valueOf(pos);
+    }
+
+    public void setPlayerNumber(int playerNumber){
+        this.playerNumber=playerNumber;
     }
 
 }

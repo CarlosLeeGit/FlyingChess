@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:text="name"
+        android:id="@+id/nameInRoom"
+        android:layout_weight="1"
+        android:background="@drawable/list_item"
+        android:layout_margin="1dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:text="score"
+        android:id="@+id/scoreInRoom"
+        android:layout_weight="1"
+        android:background="@drawable/list_item"
+        android:layout_margin="1dp" />
+</LinearLayout>

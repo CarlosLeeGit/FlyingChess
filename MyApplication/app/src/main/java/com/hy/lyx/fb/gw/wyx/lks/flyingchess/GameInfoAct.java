@@ -83,11 +83,16 @@ public class GameInfoAct extends AppCompatActivity implements Target{
         join.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LinkedList<String> msgs=new LinkedList<>();
-                msgs.addLast(Game.getDataManager().getId());
-                msgs.addLast(roomList.get(lastSelection).get("id"));
-                DataPack dataPack = new DataPack(DataPack.ROOM_ENTER,msgs);
-                Game.getSocketManager().send(dataPack);
+                if(roomList.get(lastSelection).get("state").compareTo("waiting")==0){
+                    LinkedList<String> msgs=new LinkedList<>();
+                    msgs.addLast(Game.getDataManager().getId());
+                    msgs.addLast(roomList.get(lastSelection).get("id"));
+                    DataPack dataPack = new DataPack(DataPack.ROOM_ENTER,msgs);
+                    Game.getSocketManager().send(dataPack);
+                }
+                else{
+                    Toast.makeText(getApplicationContext(),"they are flying!",Toast.LENGTH_SHORT).show();
+                }
             }
         });
         //network init
@@ -132,7 +137,12 @@ public class GameInfoAct extends AppCompatActivity implements Target{
                 data.put("room",dataPack.getMessage(i+1));
                 data.put("id",dataPack.getMessage(i));
                 data.put("player",dataPack.getMessage(i+2));
-                data.put("state",dataPack.getMessage(i+3));
+                if(dataPack.getMessage(i+3).compareTo("0")==0){
+                    data.put("state","flying");
+                }
+                else{
+                    data.put("state","waiting");
+                }
                 roomList.addLast(data);
                 i+=4;
                 if(data.get("id").compareTo(id)==0){
@@ -164,14 +174,15 @@ public class GameInfoAct extends AppCompatActivity implements Target{
         }
         else if(dataPack.getCommand()==DataPack.ROOM_ENTER){
             if(dataPack.isSuccessful()){
-                int pos;
-                for(int i=0;i<dataPack.getMessageList().size();){
-                    pos=Integer.valueOf(dataPack.getMessage(i+2));
-                    Game.getDataManager().setOnlineIds(pos,dataPack.getMessage(i));
-                    Game.getDataManager().setOnlineNames(pos,dataPack.getMessage(i+1));
-                    Game.getDataManager().setOnlineScores(pos,dataPack.getMessage(i+3));
+                int i = 0;
+                for(i=0;i<dataPack.getMessageList().size();){
+                    Game.getDataManager().setOnlineIds(i/4,dataPack.getMessage(i));
+                    Game.getDataManager().setOnlineNames(i/4,dataPack.getMessage(i+1));
+                    Game.getDataManager().setOnlinePos(i/4,dataPack.getMessage(i+2));
+                    Game.getDataManager().setOnlineScores(i/4,dataPack.getMessage(i+3));
                     i+=4;
                 }
+                Game.getDataManager().setPlayerNumber(i/4);
                 Game.getDataManager().setRoomId(roomList.get(lastSelection).get("id"));
                 Intent intent = new Intent(getApplicationContext(), RoomAct.class);
                 startActivity(intent);//switch wo chess board activity

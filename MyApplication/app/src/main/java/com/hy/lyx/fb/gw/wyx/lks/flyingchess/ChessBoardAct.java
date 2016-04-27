@@ -9,18 +9,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.InputStream;
 import java.util.Timer;
-import java.util.TimerTask;
 
 public class ChessBoardAct extends AppCompatActivity {
     Timer closeTimer;
@@ -257,7 +252,7 @@ public class ChessBoardAct extends AppCompatActivity {
         moveTo(plane[3][3],3,3);
 
         for(int i=0;i<4;i++){
-            if(Game.getDataManager().getPosition()[i]==-1)
+            if(Game.getDataManager().getSiteState()[i]==-1)
             {
                 plane[i][0].setVisibility(View.INVISIBLE);
                 plane[i][1].setVisibility(View.INVISIBLE);
