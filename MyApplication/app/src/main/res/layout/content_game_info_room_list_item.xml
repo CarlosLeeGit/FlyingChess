@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_weight="1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Room"
+        android:id="@+id/roomName"
+        android:textColor="#ffffff"
+        android:layout_marginBottom="1dp"
+        android:textAlignment="textStart"
+        android:background="@drawable/room_list_item"
+        android:layout_marginTop="1dp"
+        android:layout_marginRight="1dp" />
+
+    <TextView
+        android:layout_weight="1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="ID"
+        android:id="@+id/roomId"
+        android:textColor="#ffffff"
+        android:layout_marginTop="1dp"
+        android:layout_marginBottom="1dp"
+        android:textAlignment="textStart"
+        android:background="@drawable/room_list_item"
+        android:layout_marginRight="1dp" />
+
+    <TextView
+        android:layout_weight="1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Player"
+        android:id="@+id/player"
+        android:textColor="#ffffff"
+        android:layout_marginTop="1dp"
+        android:layout_marginBottom="1dp"
+        android:textAlignment="textStart"
+        android:background="@drawable/room_list_item"
+        android:layout_marginRight="1dp" />
+
+    <TextView
+        android:layout_weight="1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="State"
+        android:id="@+id/roomState"
+        android:textColor="#ffffff"
+        android:layout_marginTop="1dp"
+        android:layout_marginBottom="1dp"
+        android:textAlignment="textStart"
+        android:background="@drawable/room_list_item"
+        android:layout_marginRight="1dp" />
+</LinearLayout>

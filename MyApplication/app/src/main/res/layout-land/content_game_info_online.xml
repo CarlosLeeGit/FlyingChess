@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:id="@+id/onlineLayout"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_weight="1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Room"
+            android:id="@+id/textView"
+            android:textColor="#ffffff"
+            android:layout_marginRight="1dp"
+            android:background="#82a8d0" />
+
+        <TextView
+            android:layout_weight="1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="ID"
+            android:id="@+id/textView2"
+            android:textColor="#ffffff"
+            android:layout_marginRight="1dp"
+            android:background="#82a8d0" />
+
+        <TextView
+            android:layout_weight="1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Player"
+            android:id="@+id/textView3"
+            android:textColor="#ffffff"
+            android:layout_marginRight="1dp"
+            android:background="#82a8d0" />
+
+        <TextView
+            android:layout_weight="1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="State"
+            android:id="@+id/textView4"
+            android:textColor="#ffffff"
+            android:background="#82a8d0" />
+    </LinearLayout>
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/roomList"
+        android:choiceMode="singleChoice"
+        android:background="#c8d5e3"
+        android:headerDividersEnabled="true" />
+</LinearLayout>

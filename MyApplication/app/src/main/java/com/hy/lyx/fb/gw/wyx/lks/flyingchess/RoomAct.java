@@ -14,7 +14,7 @@ import android.widget.Toast;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class RoomAct extends AppCompatActivity {
+public class RoomAct extends AppCompatActivity implements Target {
     Button start,back,r,g,b,y,jr,jg,jb,jy;
     Timer closeTimer;
     int me;
@@ -244,23 +244,20 @@ public class RoomAct extends AppCompatActivity {
                 }
             }
         });
-    }
-    @Override
-    public void onStart() {
-        super.onStart();
+        //internet init
+        if(Game.getDataManager().getGameMode()==DataManager.GM_WLAN){
+            Game.getSocketManager().registerActivity(DataPack.ROOM_SELECT_POSITION,this);
+            Game.getSocketManager().registerActivity(DataPack.GAME_START,this);
+            Game.getSocketManager().registerActivity(DataPack.ROOM_USER_ENTERED,this);
+            Game.getSocketManager().registerActivity(DataPack.ROOM_USER_LEFT,this);
+            Game.getSocketManager().registerActivity(DataPack.ROOM_USER_PICK_POSITION,this);
+        }
+        //setting
         me = -1;
         pos[0] = -1;
         pos[1] = -1;
         pos[2] = -1;
         pos[3] = -1;
-        r.setText("");
-        g.setText("");
-        b.setText("");
-        y.setText("");
-        jr.setText("+");
-        jg.setText("+");
-        jb.setText("+");
-        jy.setText("+");
     }
 
     @Override
@@ -273,5 +270,10 @@ public class RoomAct extends AppCompatActivity {
             return true;
         }
         return super.dispatchKeyEvent(event);
+    }
+
+    @Override
+    public void processDataPack(DataPack dataPack) {
+
     }
 }

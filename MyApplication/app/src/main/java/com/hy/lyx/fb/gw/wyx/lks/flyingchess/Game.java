@@ -1,26 +1,29 @@
 package com.hy.lyx.fb.gw.wyx.lks.flyingchess;
 
-import android.os.Handler;
-import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
+
+import java.security.KeyStore;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.TrustManagerFactory;
 
 /**
  * Created by karthur on 2016/4/16.
  */
-public class Game {
+public class Game{
     private static GameManager gameManager;
     private static DataManager dataManager;
     private static ChessBoard chessBoard;
     private static Player player;
-    private static SocketRunnable socketRunnable;
+    private static SocketManager socketManager;
 
     public static void init(AppCompatActivity activity){
         gameManager = new GameManager();
         dataManager=new DataManager();
         chessBoard=new ChessBoard();
         player=new Player();
-        socketRunnable=new SocketRunnable(activity);
-        new Thread(socketRunnable).start();
+        socketManager = new SocketManager(activity);
     }
 
     public static GameManager getGameManager(){
@@ -39,8 +42,11 @@ public class Game {
         return player;
     }
 
-    public static SocketRunnable getSocketRunnable(){
-        return socketRunnable;
+    public static SocketManager getSocketManager(){
+        return socketManager;
     }
+
+
+
 
 }

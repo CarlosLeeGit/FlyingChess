@@ -9,19 +9,29 @@ public class DataManager {//数据存储类
     private String userName;//用户名
     private String password;//加密后的密码字符串
     private String id;//玩家ID
+    private String roomId;//房间ID
     private int musicVolume,effectVolume;//0~255 音量
     private int gameMode;//游戏模式
     private int localScore;//单机分数
     private int onlineScore;//网络分数    WIFI和BT时因为是临时对决  暂定不用积分
-
+    //房间内控制
     private int myColor;//游戏时的颜色
     private int playerNumber;//玩家数目
     private int[] pos;//玩家位置
+    ///网络玩家位置
+    private String[] onlineNames;
+    private String[] onlineIds;
+    private String[] onlineScores;
+    private int[] onlinePos;
 
     public DataManager(){//加载本地数据
         myColor=0;
         pos=new int[4];
         needLogin=true;
+        onlineNames=new String[4];
+        onlineIds=new String[4];
+        onlineScores=new String[4];
+        onlinePos=new int[4];
     }
 
     //////////////////////////////////////////////////getter
@@ -73,8 +83,28 @@ public class DataManager {//数据存储类
         return id;
     }
 
+    public String getRoomId(){
+        return roomId;
+    }
+
     public boolean needLogin(){
         return needLogin;
+    }
+
+    public String[] getOnlineNames(){
+        return onlineNames;
+    }
+
+    public String[] getOnlineIds(){
+        return onlineIds;
+    }
+
+    public String[] getOnlineScores(){
+        return onlineScores;
+    }
+
+    public int[] getOnlinePos(){
+        return onlinePos;
     }
     /////////////////////////////////////////////////////setter
 
@@ -127,8 +157,25 @@ public class DataManager {//数据存储类
         this.id=id;
     }
 
+    public void setRoomId(String roomId){
+        this.roomId=roomId;
+    }
+
     public void setLogin(boolean nl){
         needLogin=!nl;
     }
+
+    public void setOnlineScores(int pos,String scores){
+        onlineScores[pos]=scores;
+    }
+
+    public void setOnlineNames(int pos,String name){
+        onlineNames[pos]=name;
+    }
+
+    public void setOnlineIds(int pos,String id){
+        onlineIds[pos]=id;
+    }
+
 }
 

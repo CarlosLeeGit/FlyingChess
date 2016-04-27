@@ -68,7 +68,7 @@ public class Player {//user behavior
         canRoll=true;
         while(!diceValid) {
             try {
-                Thread.sleep(100);
+                Thread.sleep(500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -82,7 +82,7 @@ public class Player {//user behavior
         canChoosePlane=true;
         while(!planeValid){
             try {
-                Thread.sleep(100);
+                Thread.sleep(500);
             }catch (InterruptedException e){
                 e.printStackTrace();
             }

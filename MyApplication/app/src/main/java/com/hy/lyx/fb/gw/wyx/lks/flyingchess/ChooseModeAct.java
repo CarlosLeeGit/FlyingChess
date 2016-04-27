@@ -4,17 +4,15 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class ChooseModeAct extends AppCompatActivity {
+public class ChooseModeAct extends AppCompatActivity implements Target{
     Button local,lan,wlan;
     boolean exit;
     Timer closeTimer;
@@ -31,6 +29,7 @@ public class ChooseModeAct extends AppCompatActivity {
         wlan=(Button)findViewById(R.id.button4);
         exit=false;
         closeTimer=new Timer();
+        exit=false;
         //trigger
         local.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -51,21 +50,11 @@ public class ChooseModeAct extends AppCompatActivity {
         wlan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Game.getDataManager().setGameMode(DataManager.GM_WLAN);
-                if(Game.getDataManager().needLogin()){
-                    startActivity(new Intent(getApplicationContext(),LoginAct.class));
-                }
-                else{
-                    startActivity(new Intent(getApplicationContext(),GameInfoAct.class));
-                }
+                Game.getSocketManager().connectToServer();
             }
         });
-    }
-
-    @Override
-    public void onStart(){
-        super.onStart();
-        exit=false;
+        //internet init
+        Game.getSocketManager().registerActivity(DataPack.CONNECTED,this);
     }
 
     @Override
@@ -89,5 +78,27 @@ public class ChooseModeAct extends AppCompatActivity {
             return true;
         }
         return super.dispatchKeyEvent(event);
+    }
+
+    @Override
+    public void processDataPack(DataPack dataPack) {
+        if(dataPack.getCommand()==DataPack.CONNECTED) {
+            if (dataPack.isSuccessful()) {
+                Game.getDataManager().setGameMode(DataManager.GM_WLAN);
+                if (Game.getDataManager().needLogin()) {
+                    startActivity(new Intent(getApplicationContext(), LoginAct.class));
+                } else {
+                    startActivity(new Intent(getApplicationContext(), GameInfoAct.class));
+                }
+            }
+            else {
+                wlan.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(), "sorry,i can not connect to server now!", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        }
     }
 }

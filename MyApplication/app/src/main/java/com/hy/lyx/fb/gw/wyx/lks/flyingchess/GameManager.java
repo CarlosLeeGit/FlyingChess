@@ -64,7 +64,7 @@ public class GameManager {//game process control
 
             }
             try {
-                Thread.sleep(1000);
+                Thread.sleep(2000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -116,11 +116,12 @@ public class GameManager {//game process control
                         msg2.what=1;
                         board.handler.sendMessage(msg2);
                         //
-                        try {
-                            Thread.sleep(2000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+                    }
+
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
                 }
                     break;

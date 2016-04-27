@@ -10,7 +10,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import java.util.Date;
 import java.util.LinkedList;
 
 
@@ -61,14 +60,16 @@ public class LoginAct extends AppCompatActivity implements Target {
                     msgList.addLast(name.getText().toString());
                     msgList.addLast(pw.getText().toString());
                     DataPack dataPack=new DataPack(DataPack.REGISTER,msgList);
-                    Game.getSocketRunnable().send(dataPack);
+                    Game.getSocketManager().send(dataPack);
                 }
                 else{// login
                     LinkedList<String> msgList=new LinkedList<String>();
                     msgList.addLast(name.getText().toString());
                     msgList.addLast(pw.getText().toString());
                     DataPack dataPack=new DataPack(DataPack.LOGIN,msgList);
-                    Game.getSocketRunnable().send(dataPack);
+                    Game.getSocketManager().send(dataPack);
+                    Game.getDataManager().setUserName(name.getText().toString());
+                    Game.getDataManager().setPassword(pw.getText().toString());
                 }
             }
         });
@@ -103,20 +104,10 @@ public class LoginAct extends AppCompatActivity implements Target {
                 startActivity(new Intent(getApplicationContext(),ChooseModeAct.class));
             }
         });
-        Game.getSocketRunnable().registerActivity(DataPack.LOGIN,this);
-    }
-    @Override
-    public void onStart(){
-        super.onStart();
+        Game.getSocketManager().registerActivity(DataPack.LOGIN,this);
+        Game.getSocketManager().registerActivity(DataPack.REGISTER,this);
+        //setting
         pw2.setVisibility(View.INVISIBLE);
-        login.setText("Login");
-        register.setText("Register");
-        pw2.setText("");
-        if(bRegister){
-            name.setY(name.getY()+50);
-            pw.setY(pw.getY()+70);
-            bRegister =false;
-        }
     }
 
     @Override
@@ -132,6 +123,31 @@ public class LoginAct extends AppCompatActivity implements Target {
                     @Override
                     public void run() {
                         Toast.makeText(getApplicationContext(),"login failed!",Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        }
+        else if(dataPack.getCommand()==DataPack.REGISTER){
+            if(dataPack.isSuccessful()){
+                name.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        login.setText("Login");
+                        register.setText("Register");
+                        bRegister =false;
+                        pw2.setVisibility(View.INVISIBLE);
+                        name.setY(name.getY()+50);
+                        pw.setY(pw.getY()+70);
+                        pw2.setText("");
+                        Toast.makeText(getApplicationContext(),"register successful!",Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+            else{
+                name.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(),"register failed!",Toast.LENGTH_SHORT).show();
                     }
                 });
             }
