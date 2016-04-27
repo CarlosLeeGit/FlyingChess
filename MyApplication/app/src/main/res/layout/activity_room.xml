@@ -164,7 +164,7 @@
         android:layout_height="wrap_content"
         android:text="Start"
         android:id="@+id/start"
-        android:background="@drawable/room_start_button"
+        android:background="@drawable/normal_button"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_marginRight="15dp"
@@ -177,7 +177,7 @@
         android:id="@+id/back"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        android:background="@drawable/login_main_button"
+        android:background="@drawable/back_button"
         android:layout_marginLeft="5dp" />
 
 </RelativeLayout>

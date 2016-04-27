@@ -58,31 +58,7 @@ public class ChessBoardAct extends AppCompatActivity {
         plane[3][2]=(Button)findViewById(R.id.Y3);
         plane[3][3]=(Button)findViewById(R.id.Y4);
 
-        handler=new Handler(){
-          @Override
-            public void handleMessage(Message msg){//事件回掉
-              switch (msg.what){
-                  case 1://飞机
-                  {
-                      int color=msg.getData().getInt("color");
-                      int whichPlane=msg.getData().getInt("whichPlane");
-                      int pos=msg.getData().getInt("pos");
-                      if(pos!=-2){
-                          moveTo(plane[color][whichPlane],Game.getChessBoard().map[color][pos][0],Game.getChessBoard().map[color][pos][1]);
-                      }
-                      else{//消失
-                          moveTo(plane[color][whichPlane],Game.getChessBoard().map[color][55][0],Game.getChessBoard().map[color][55][1]);
-                      }
-                  }
-                      break;
-                  case 2://筛子
-                      dice.setText(msg.getData().getString("dice"));
-                      break;
-                  default:
-                      super.handleMessage(msg);
-              }
-          }
-        };
+        handler=new MyHandler(this);
         map=(ImageView)findViewById(R.id.map);
         //set data
         DisplayMetrics dm=new DisplayMetrics();
@@ -283,5 +259,36 @@ public class ChessBoardAct extends AppCompatActivity {
     public void moveTo(Button plane,int x,int y){
         plane.setX(x*dx);
         plane.setY(y*dx);
+    }
+}
+
+
+class MyHandler extends Handler{
+    ChessBoardAct parent;
+    public MyHandler(ChessBoardAct parent){
+        this.parent=parent;
+    }
+    @Override
+    public void handleMessage(Message msg){//事件回掉
+        switch (msg.what){
+            case 1://飞机
+            {
+                int color=msg.getData().getInt("color");
+                int whichPlane=msg.getData().getInt("whichPlane");
+                int pos=msg.getData().getInt("pos");
+                if(pos!=-2){
+                    parent.moveTo(parent.plane[color][whichPlane],Game.getChessBoard().map[color][pos][0],Game.getChessBoard().map[color][pos][1]);
+                }
+                else{//消失
+                    parent.moveTo(parent.plane[color][whichPlane],Game.getChessBoard().map[color][55][0],Game.getChessBoard().map[color][55][1]);
+                }
+            }
+            break;
+            case 2://筛子
+                parent.dice.setText(msg.getData().getString("dice"));
+                break;
+            default:
+                super.handleMessage(msg);
+        }
     }
 }

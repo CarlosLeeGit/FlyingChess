@@ -272,7 +272,7 @@ public class RoomAct extends AppCompatActivity implements Target {
         map.put("score","score");
         playerList.addLast(map);
         if(Game.getDataManager().getGameMode()==DataManager.GM_WLAN){
-            for(int i=0;i<Game.getDataManager().getPlayerNumber();i++){
+            for(int i=0;i<Game.getDataManager().getPlayerNumber();i++){//添加玩家到指定的位置
                 if(Game.getDataManager().getOnlinePos()[i]==-1){
                     map=new HashMap<>();
                     map.put("name",Game.getDataManager().getOnlineNames()[i]);

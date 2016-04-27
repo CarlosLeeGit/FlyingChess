@@ -8,7 +8,8 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:id="@+id/chooseMode"
-    tools:context="com.hy.lyx.fb.gw.wyx.lks.flyingchess.ChooseModeAct">
+    tools:context="com.hy.lyx.fb.gw.wyx.lks.flyingchess.ChooseModeAct"
+    android:background="#6ac6dd">
 
     <Button
         android:layout_width="wrap_content"
@@ -16,7 +17,12 @@
         android:text="local"
         android:id="@+id/button2"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:alpha="0.9"
+        android:allowUndo="false"
+        android:background="@drawable/choosemod_local_button"
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="10dp" />
 
     <Button
         android:layout_width="wrap_content"
@@ -24,7 +30,10 @@
         android:text="lan"
         android:id="@+id/button3"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:alpha="0.9"
+        android:background="@drawable/choosemod_lan_button"
+        android:layout_marginBottom="10dp" />
 
     <Button
         android:layout_width="wrap_content"
@@ -32,6 +41,28 @@
         android:text="wlan"
         android:id="@+id/button4"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:alpha="0.9"
+        android:background="@drawable/choosemod_wlan_button"
+        android:layout_marginBottom="10dp"
+        android:layout_marginRight="10dp" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/backgroud"
+        android:layout_alignParentEnd="true"
+        android:layout_above="@+id/button2"
+        android:layout_centerHorizontal="true" />
+
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/backgroud2"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:translationZ="-1dp"
+        android:scaleType="fitXY"
+        android:layout_below="@+id/backgroud" />
 
 </RelativeLayout>

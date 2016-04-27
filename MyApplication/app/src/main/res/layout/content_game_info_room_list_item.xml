@@ -15,7 +15,8 @@
         android:textAlignment="textStart"
         android:background="@drawable/list_item"
         android:layout_marginTop="1dp"
-        android:layout_marginRight="1dp" />
+        android:layout_marginRight="1dp"
+        android:layout_marginLeft="1dp" />
 
     <TextView
         android:layout_weight="1"

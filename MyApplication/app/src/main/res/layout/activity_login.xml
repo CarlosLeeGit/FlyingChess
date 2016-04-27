@@ -104,7 +104,7 @@
         android:layout_height="wrap_content"
         android:text="Home"
         android:id="@+id/home"
-        android:background="@drawable/login_main_button"
+        android:background="@drawable/back_button"
         android:layout_marginLeft="5dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true" />

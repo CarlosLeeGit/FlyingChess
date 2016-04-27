@@ -1,6 +1,7 @@
 package com.hy.lyx.fb.gw.wyx.lks.flyingchess;
 
 import android.content.Intent;
+import android.graphics.Matrix;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -20,6 +21,7 @@ import java.util.Map;
 public class GameInfoAct extends AppCompatActivity implements Target{
     Button create;
     Button join;
+    Button back;
     ListView room;
     LinearLayout onlineLayout;
     SimpleAdapter roomListAdapter;
@@ -40,10 +42,7 @@ public class GameInfoAct extends AppCompatActivity implements Target{
         roomList=new LinkedList<>();
         String[] t={"room","id","player","state"};
         int[] t2={R.id.roomName,R.id.roomId,R.id.player,R.id.roomState};
-
-        //////////test
-
-        //////////
+        back=(Button)findViewById(R.id.back);
 
         roomListAdapter=new SimpleAdapter(getApplicationContext(),roomList,R.layout.content_game_info_room_list_item,t,t2);
         room.setAdapter(roomListAdapter);
@@ -70,10 +69,16 @@ public class GameInfoAct extends AppCompatActivity implements Target{
                 }
             }
         });
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(),ChooseModeAct.class));
+            }
+        });
         room.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if(lastSelection!=-1&&lastSelection!=position)
+                if(lastSelection!=-1&&lastSelection!=position&&lastSelection<room.getChildCount())
                     room.getChildAt(lastSelection).setSelected(false);
                 view.setSelected(true);
                 lastSelection=position;
@@ -83,15 +88,17 @@ public class GameInfoAct extends AppCompatActivity implements Target{
         join.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(roomList.get(lastSelection).get("state").compareTo("waiting")==0){
-                    LinkedList<String> msgs=new LinkedList<>();
-                    msgs.addLast(Game.getDataManager().getId());
-                    msgs.addLast(roomList.get(lastSelection).get("id"));
-                    DataPack dataPack = new DataPack(DataPack.ROOM_ENTER,msgs);
-                    Game.getSocketManager().send(dataPack);
-                }
-                else{
-                    Toast.makeText(getApplicationContext(),"they are flying!",Toast.LENGTH_SHORT).show();
+                synchronized (roomList){
+                    if(roomList.get(lastSelection).get("state").compareTo("waiting")==0){
+                        LinkedList<String> msgs=new LinkedList<>();
+                        msgs.addLast(Game.getDataManager().getId());
+                        msgs.addLast(roomList.get(lastSelection).get("id"));
+                        DataPack dataPack = new DataPack(DataPack.ROOM_ENTER,msgs);
+                        Game.getSocketManager().send(dataPack);
+                    }
+                    else{
+                        Toast.makeText(getApplicationContext(),"they are flying!",Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
@@ -130,32 +137,37 @@ public class GameInfoAct extends AppCompatActivity implements Target{
     @Override
     public void processDataPack(DataPack dataPack) {
         if(dataPack.getCommand()==DataPack.ROOM_LOOKUP){
-            String id = roomList.get(lastSelection).get("id");
-            roomList.clear();
-            for(int i=0;i<dataPack.getMessageList().size();){
-                HashMap<String,String> data=new HashMap<>();
-                data.put("room",dataPack.getMessage(i+1));
-                data.put("id",dataPack.getMessage(i));
-                data.put("player",dataPack.getMessage(i+2));
-                if(dataPack.getMessage(i+3).compareTo("0")==0){
-                    data.put("state","flying");
+            synchronized(roomList){
+                String id="-1";
+                if(lastSelection!=-1){
+                    id = roomList.get(lastSelection).get("id");
                 }
-                else{
-                    data.put("state","waiting");
+                roomList.clear();
+                for(int i=0;i<dataPack.getMessageList().size();){
+                    HashMap<String,String> data=new HashMap<>();
+                    data.put("room",dataPack.getMessage(i+1));
+                    data.put("id",dataPack.getMessage(i));
+                    data.put("player",dataPack.getMessage(i+2));
+                    if(dataPack.getMessage(i+3).compareTo("0")==0){
+                        data.put("state","waiting");
+                    }
+                    else{
+                        data.put("state","flying");
+                    }
+                    roomList.addLast(data);
+                    i+=4;
+                    if(data.get("id").compareTo(id)==0){
+                        lastSelection=i/4;
+                    }
                 }
-                roomList.addLast(data);
-                i+=4;
-                if(data.get("id").compareTo(id)==0){
-                    lastSelection=i/4;
-                }
+                room.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        roomListAdapter.notifyDataSetChanged();
+                        room.setSelection(lastSelection);
+                    }
+                });
             }
-            room.post(new Runnable() {
-                @Override
-                public void run() {
-                    roomListAdapter.notifyDataSetChanged();
-                    room.setSelection(lastSelection);
-                }
-            });
         }
         else if(dataPack.getCommand()==DataPack.ROOM_CREATE){
             if(dataPack.isSuccessful()) {
@@ -208,13 +220,13 @@ class Worker implements Runnable{
     public void run() {
         exit=false;
         while(!exit){
+            DataPack dataPack= new DataPack(DataPack.ROOM_LOOKUP,null);
+            Game.getSocketManager().send(dataPack);
             try {
                 Thread.sleep(3000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            DataPack dataPack= new DataPack(DataPack.ROOM_LOOKUP,null);
-            Game.getSocketManager().send(dataPack);
         }
     }
 }

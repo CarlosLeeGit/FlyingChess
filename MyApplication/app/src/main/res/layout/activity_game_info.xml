@@ -8,29 +8,47 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:id="@+id/gameInfo"
-    tools:context="com.hy.lyx.fb.gw.wyx.lks.flyingchess.GameInfoAct">
+    tools:context="com.hy.lyx.fb.gw.wyx.lks.flyingchess.GameInfoAct"
+    android:background="#78b3d4">
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="HOME"
+        android:background="@drawable/back_button"
+        android:id="@+id/back"
+        android:layout_marginLeft="5dp" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="createRoom"
         android:id="@+id/create"
+        android:background="@drawable/normal_button"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginRight="10dp" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="join In"
         android:id="@+id/join"
-        android:layout_above="@+id/create"
-        android:layout_alignParentEnd="true"
-        android:layout_alignStart="@+id/create" />
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/normal_button"
+        android:layout_toStartOf="@+id/create"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp" />
 
     <include
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         layout="@layout/content_game_info_online"
-        android:layout_centerVertical="true"
-        android:layout_toStartOf="@+id/create" />
+        android:layout_toStartOf="@+id/create"
+        android:layout_above="@+id/join"
+        android:layout_below="@+id/back"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_alignParentEnd="true" />
 </RelativeLayout>

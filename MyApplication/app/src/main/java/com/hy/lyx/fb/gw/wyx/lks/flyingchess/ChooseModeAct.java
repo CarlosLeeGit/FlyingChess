@@ -1,14 +1,20 @@
 package com.hy.lyx.fb.gw.wyx.lks.flyingchess;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import java.io.InputStream;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -16,6 +22,7 @@ public class ChooseModeAct extends AppCompatActivity implements Target{
     Button local,lan,wlan;
     boolean exit;
     Timer closeTimer;
+    ImageView bk,bk2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //ui setting
@@ -30,6 +37,8 @@ public class ChooseModeAct extends AppCompatActivity implements Target{
         exit=false;
         closeTimer=new Timer();
         exit=false;
+        bk=(ImageView)findViewById(R.id.backgroud);
+        bk2=(ImageView)findViewById(R.id.backgroud2);
         //trigger
         local.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -55,6 +64,18 @@ public class ChooseModeAct extends AppCompatActivity implements Target{
         });
         //internet init
         Game.getSocketManager().registerActivity(DataPack.CONNECTED,this);
+        //setting
+        //back ground img
+        DisplayMetrics dm=new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(dm);
+        BitmapFactory.Options opt= new BitmapFactory.Options();
+        opt.inPreferredConfig = Bitmap.Config.RGB_565;
+        opt.outWidth=dm.widthPixels;
+        opt.outHeight=dm.heightPixels;
+        InputStream is = getApplicationContext().getResources().openRawResource(R.raw.choosemodebk);
+        bk.setImageBitmap(BitmapFactory.decodeStream(is,null,opt));
+        InputStream is2 = getApplicationContext().getResources().openRawResource(R.raw.choosemodebk2);
+        bk2.setImageBitmap(BitmapFactory.decodeStream(is2,null,opt));
     }
 
     @Override
