@@ -28,6 +28,7 @@ public class GameInfoAct extends AppCompatActivity implements Target{
     LinkedList<Map<String,String>> roomList;
     Worker worker;
     int lastSelection;
+    String roomId=null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //ui setting
@@ -92,7 +93,8 @@ public class GameInfoAct extends AppCompatActivity implements Target{
                     if(roomList.get(lastSelection).get("state").compareTo("waiting")==0){
                         LinkedList<String> msgs=new LinkedList<>();
                         msgs.addLast(Game.getDataManager().getId());
-                        msgs.addLast(roomList.get(lastSelection).get("id"));
+                        roomId=roomList.get(lastSelection).get("id");
+                        msgs.addLast(roomId);
                         DataPack dataPack = new DataPack(DataPack.ROOM_ENTER,msgs);
                         Game.getSocketManager().send(dataPack);
                     }
@@ -171,6 +173,12 @@ public class GameInfoAct extends AppCompatActivity implements Target{
         }
         else if(dataPack.getCommand()==DataPack.ROOM_CREATE){
             if(dataPack.isSuccessful()) {
+                Game.getDataManager().setOnlineIds(0,Game.getDataManager().getId());
+                Game.getDataManager().setOnlineNames(0,Game.getDataManager().getUserName());
+                Game.getDataManager().setOnlineScores(0,Game.getDataManager().getOnlineScore());
+                Game.getDataManager().setOnlinePos(0,"-1");
+                Game.getDataManager().setPlayerNumber(1);
+
                 Game.getDataManager().setRoomId(dataPack.getMessage(0));
                 Intent intent = new Intent(getApplicationContext(), RoomAct.class);
                 startActivity(intent);//switch wo chess board activity
@@ -190,12 +198,12 @@ public class GameInfoAct extends AppCompatActivity implements Target{
                 for(i=0;i<dataPack.getMessageList().size();){
                     Game.getDataManager().setOnlineIds(i/4,dataPack.getMessage(i));
                     Game.getDataManager().setOnlineNames(i/4,dataPack.getMessage(i+1));
-                    Game.getDataManager().setOnlinePos(i/4,dataPack.getMessage(i+2));
-                    Game.getDataManager().setOnlineScores(i/4,dataPack.getMessage(i+3));
+                    Game.getDataManager().setOnlineScores(i/4,dataPack.getMessage(i+2));
+                    Game.getDataManager().setOnlinePos(i/4,dataPack.getMessage(i+3));
                     i+=4;
                 }
                 Game.getDataManager().setPlayerNumber(i/4);
-                Game.getDataManager().setRoomId(roomList.get(lastSelection).get("id"));
+                Game.getDataManager().setRoomId(roomId);
                 Intent intent = new Intent(getApplicationContext(), RoomAct.class);
                 startActivity(intent);//switch wo chess board activity
             }

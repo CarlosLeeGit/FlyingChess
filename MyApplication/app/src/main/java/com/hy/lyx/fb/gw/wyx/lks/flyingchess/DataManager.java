@@ -13,7 +13,7 @@ public class DataManager {//数据存储类
     private int musicVolume,effectVolume;//0~255 音量
     private int gameMode;//游戏模式
     private int localScore;//单机分数
-    private int onlineScore;//网络分数    WIFI和BT时因为是临时对决  暂定不用积分
+    private String onlineScore;//网络分数    WIFI和BT时因为是临时对决  暂定不用积分
     //房间内控制
     private int myColor;//游戏时的颜色
     private int[] siteState;//房间位置信息
@@ -43,17 +43,6 @@ public class DataManager {//数据存储类
         return password;
     }
 
-    public int getScore(){//返回当前模式的分数  -1表示获取出错
-        switch (gameMode)
-        {
-            case GM_LOCAL:
-                return localScore;
-            case GM_WLAN:
-                return onlineScore;
-            default:
-                return -1;
-        }
-    }
 
     public int getMusicVolume(){//得到音乐音量
         return musicVolume;
@@ -107,6 +96,9 @@ public class DataManager {//数据存储类
         return onlinePos;
     }
 
+    public String getOnlineScore(){
+        return onlineScore;
+    }
     /////////////////////////////////////////////////////setter
 
     public void setUserName(String userName){//设置用户名
@@ -181,5 +173,8 @@ public class DataManager {//数据存储类
         this.playerNumber=playerNumber;
     }
 
+     void setOnlineScore(String score){
+        this.onlineScore=score;
+    }
 }
 

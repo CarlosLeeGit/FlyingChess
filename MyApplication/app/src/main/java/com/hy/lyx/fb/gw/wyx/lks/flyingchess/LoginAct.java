@@ -115,6 +115,7 @@ public class LoginAct extends AppCompatActivity implements Target {
         if(dataPack.getCommand()== DataPack.LOGIN){
             if(dataPack.isSuccessful()){
                 Game.getDataManager().setId(dataPack.getMessage(0));
+                Game.getDataManager().setOnlineScore(dataPack.getMessage(1));
                 startActivity(new Intent(getApplicationContext(),GameInfoAct.class));
                 Game.getDataManager().setLogin(true);
             }

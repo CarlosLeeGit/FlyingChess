@@ -26,6 +26,7 @@ public class SocketManager extends MsgHandler{
     private SocketReader sr;
 
     public SocketManager(AppCompatActivity activity){
+        //super();
         this.activity=activity;
         connected=false;
     }

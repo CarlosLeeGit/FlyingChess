@@ -1,6 +1,7 @@
 package com.hy.lyx.fb.gw.wyx.lks.flyingchess;
 
 import android.content.Intent;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -25,7 +26,7 @@ public class RoomAct extends AppCompatActivity implements Target {
     LinkedList<HashMap<String,String>> playerList;
     SimpleAdapter simpleAdapter;
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_room);
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);//Activity切换动画
@@ -70,6 +71,11 @@ public class RoomAct extends AppCompatActivity implements Target {
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                LinkedList<String> msgs=new LinkedList<>();
+                msgs.addLast(Game.getDataManager().getId());
+                msgs.addLast(Game.getDataManager().getRoomId());
+                DataPack dataPack = new DataPack(DataPack.ROOM_EXIT,msgs);
+                Game.getSocketManager().send(dataPack);
                 Game.getDataManager().setMyColor(-1);
                 Intent intent=new Intent(getApplicationContext(),GameInfoAct.class);
                 startActivity(intent);
@@ -276,7 +282,7 @@ public class RoomAct extends AppCompatActivity implements Target {
                 if(Game.getDataManager().getOnlinePos()[i]==-1){
                     map=new HashMap<>();
                     map.put("name",Game.getDataManager().getOnlineNames()[i]);
-                    map.put("score",String.format("%d",Game.getDataManager().getOnlineScores()[i]));
+                    map.put("score",Game.getDataManager().getOnlineScores()[i]);
                     playerList.addLast(map);
                 }
                 else
@@ -334,7 +340,7 @@ public class RoomAct extends AppCompatActivity implements Target {
         else if(Game.getDataManager().getGameMode()==DataManager.GM_LOCAL){
             map=new HashMap<>();
             map.put("name","ME");
-            map.put("score",String.format("%d",Game.getDataManager().getScore()));
+            map.put("score",String.format("%d",Game.getDataManager().getOnlineScore()));
             playerList.addLast(map);
         }
         simpleAdapter.notifyDataSetChanged();
@@ -344,6 +350,11 @@ public class RoomAct extends AppCompatActivity implements Target {
     public boolean dispatchKeyEvent(KeyEvent event) {
         if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {//返回按钮
             if (event.getAction() == KeyEvent.ACTION_DOWN && event.getRepeatCount() == 0) {
+                LinkedList<String> msgs=new LinkedList<>();
+                msgs.addLast(Game.getDataManager().getId());
+                msgs.addLast(Game.getDataManager().getRoomId());
+                DataPack dataPack = new DataPack(DataPack.ROOM_EXIT,msgs);
+                Game.getSocketManager().send(dataPack);
                 Game.getGameManager().gameOver();
                 startActivity(new Intent(getApplicationContext(),GameInfoAct.class));
             }
@@ -354,6 +365,78 @@ public class RoomAct extends AppCompatActivity implements Target {
 
     @Override
     public void processDataPack(DataPack dataPack) {
+        if(dataPack.getCommand()==DataPack.ROOM_USER_ENTERED){
+            if(dataPack.getMessage(0).compareTo("-1")==0){//加入了机器人
+                int p = Integer.valueOf(dataPack.getMessage(3));
+                pos[p]=0;
+                switch (p){
+                    case 0:
+                        r.setText("ROBOT");
+                        jr.setText("-");
+                        break;
+                    case 1:
+                        g.setText("ROBOT");
+                        jg.setText("-");
+                        break;
+                    case 2:
+                        b.setText("ROBOT");
+                        jb.setText("-");
+                        break;
+                    case 3:
+                        y.setText("ROBOT");
+                        jy.setText("-");
+                        break;
+                }
 
+            }
+            else{//加入了玩家
+                HashMap<String,String> map=new HashMap<>();
+                map.put("name",dataPack.getMessage(1));
+                map.put("score",dataPack.getMessage(2));
+                playerList.addLast(map);
+                r.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        simpleAdapter.notifyDataSetChanged();
+                    }
+                });
+            }
+        }
+        else if(dataPack.getCommand()==DataPack.ROOM_USER_LEFT){
+            if(dataPack.getMessage(0).compareTo("-1")==0){//删除机器人
+
+            }
+            else{//玩家离开
+                if(dataPack.getMessage(0).compareTo(Game.getDataManager().getOnlineIds()[0])==0)//是房主
+                {
+                    LinkedList<String> msgs=new LinkedList<>();
+                    msgs.addLast(Game.getDataManager().getId());
+                    msgs.addLast(Game.getDataManager().getRoomId());
+                    DataPack dataPack2 = new DataPack(DataPack.ROOM_EXIT,msgs);
+                    Game.getSocketManager().send(dataPack2);
+                    Game.getDataManager().setMyColor(-1);
+                    Intent intent=new Intent(getApplicationContext(),GameInfoAct.class);
+                    startActivity(intent);
+                    closeTimer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            finish();
+                        }
+                    },2000);
+                }
+                else{
+
+                }
+            }
+        }
+        else if(dataPack.getCommand()==DataPack.ROOM_USER_PICK_POSITION){
+
+        }
+        else if(dataPack.getCommand()==DataPack.ROOM_SELECT_POSITION){
+
+        }
+        else if(dataPack.getCommand()==DataPack.GAME_START){
+
+        }
     }
 }
