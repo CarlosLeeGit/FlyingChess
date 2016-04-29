@@ -3,23 +3,28 @@ package com.hy.lyx.fb.gw.wyx.lks.flyingchess;
 /**
  * Created by karthur on 2016/4/16.
  */
-public class Player {//user behavior
-    private boolean diceValid,planeValid,canRoll,canChoosePlane;
-    private int dice,whichPlane;
+public class Player {//user
+    public String id;
+    public String name;
+    public String score;
+    public int color;// -1 空闲  -2 无效
 
-    public Player(){
-        diceValid=false;
-        planeValid=false;
-        canRoll=false;
-        canChoosePlane=false;
+    private static boolean diceValid=false,planeValid=false,canRoll=false,canChoosePlane=false;
+    private static int dice,whichPlane;
+
+    public Player(String id,String name,String score,int color){
+        this.id=id;
+        this.name=name;
+        this.score=score;
+        this.color=color;
     }
 
-    public boolean canIMove(int color,int dice){//test whether i can move a plane
+    public static boolean canIMove(int color,int dice){//test whether i can move a plane
         if(dice%2==0){//dice=2 4 6
             return true;
         }
         else{
-            int[] p = Game.getChessBoard().getAirplane(color).position;
+            int[] p = Game.chessBoard.getAirplane(color).position;
             for(int i=0;i<4;i++){
                 if(p[i]>=0)//-1 means stop,-2 means over;
                     return true;
@@ -28,14 +33,14 @@ public class Player {//user behavior
         return false;
     }
 
-    public boolean move(int color,int whichPlane,int dice){
-        if((Game.getChessBoard().getAirplane(color).position[whichPlane]==-1&&dice%2!=0)||Game.getChessBoard().getAirplane(color).position[whichPlane]==-2)
+    public static boolean move(int color,int whichPlane,int dice){
+        if((Game.chessBoard.getAirplane(color).position[whichPlane]==-1&&dice%2!=0)||Game.chessBoard.getAirplane(color).position[whichPlane]==-2)
             return false;
-        if(Game.getChessBoard().getAirplane(color).position[whichPlane]==-1){
-            Game.getChessBoard().getAirplane(color).position[whichPlane]=0;
+        if(Game.chessBoard.getAirplane(color).position[whichPlane]==-1){
+            Game.chessBoard.getAirplane(color).position[whichPlane]=0;
             return true;
         }
-        int nextStep=Game.getChessBoard().getAirplane(color).position[whichPlane]+dice;
+        int nextStep=Game.chessBoard.getAirplane(color).position[whichPlane]+dice;
         if(nextStep>56)
             nextStep=56-(nextStep-56);
         else if(nextStep==56)
@@ -46,25 +51,25 @@ public class Player {//user behavior
             if((nextStep-2)%4==0)
                 nextStep+=4;
         }
-        Game.getChessBoard().getAirplane(color).position[whichPlane]=nextStep;
+        Game.chessBoard.getAirplane(color).position[whichPlane]=nextStep;
         return true;
     }
 
-    public void setDiceValid(){
+    public static void setDiceValid(){
         if(canRoll){
-            this.dice=Game.getChessBoard().getDice().roll();
+            dice=Game.chessBoard.getDice().roll();
             diceValid=true;
         }
     }
 
-    public void setPlaneValid(int whichPlane){
+    public static void setPlaneValid(int _whichPlane){
         if(canChoosePlane){
-            this.whichPlane=whichPlane;
+            whichPlane=_whichPlane;
             planeValid=true;
         }
     }
 
-    public int roll(){
+    public static int roll(){
         canRoll=true;
         while(!diceValid) {
             try {
@@ -78,7 +83,7 @@ public class Player {//user behavior
         return dice;
     }
 
-    public int choosePlane(){
+    public static int choosePlane(){
         canChoosePlane=true;
         while(!planeValid){
             try {

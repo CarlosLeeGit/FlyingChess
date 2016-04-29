@@ -38,7 +38,7 @@ public class SocketReader implements Runnable{
         connected=true;
         while(true){
                 try{
-                    Game.getSocketManager().processDataPack(receive());
+                    Game.socketManager.processDataPack(receive());
                 } catch(Exception e){
                     e.printStackTrace();
                     connected=false;

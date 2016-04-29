@@ -43,7 +43,7 @@ public class ChooseModeAct extends AppCompatActivity implements Target{
         local.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {//choose local game
-                Game.getDataManager().setGameMode(DataManager.GM_LOCAL);//set game mode
+                Game.dataManager.setGameMode(DataManager.GM_LOCAL);//set game mode
                 Intent intent=new Intent(getApplicationContext(),GameInfoAct.class);
                 startActivity(intent);//switch to GameInfoAct
             }
@@ -51,7 +51,7 @@ public class ChooseModeAct extends AppCompatActivity implements Target{
         lan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Game.getDataManager().setGameMode(DataManager.GM_LAN);
+                Game.dataManager.setGameMode(DataManager.GM_LAN);
                 Intent intent=new Intent(getApplicationContext(),GameInfoAct.class);
                 startActivity(intent);
             }
@@ -59,11 +59,11 @@ public class ChooseModeAct extends AppCompatActivity implements Target{
         wlan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Game.getSocketManager().connectToServer();
+                Game.socketManager.connectToServer();
             }
         });
         //internet init
-        Game.getSocketManager().registerActivity(DataPack.CONNECTED,this);
+        Game.socketManager.registerActivity(DataPack.CONNECTED,this);
         //setting
         //back ground img
         DisplayMetrics dm=new DisplayMetrics();
@@ -105,12 +105,9 @@ public class ChooseModeAct extends AppCompatActivity implements Target{
     public void processDataPack(DataPack dataPack) {
         if(dataPack.getCommand()==DataPack.CONNECTED) {
             if (dataPack.isSuccessful()) {
-                Game.getDataManager().setGameMode(DataManager.GM_WLAN);
-                if (Game.getDataManager().needLogin()) {
-                    startActivity(new Intent(getApplicationContext(), LoginAct.class));
-                } else {
-                    startActivity(new Intent(getApplicationContext(), GameInfoAct.class));
-                }
+                Game.dataManager.setGameMode(DataManager.GM_WLAN);
+                Intent intent=new Intent(getApplicationContext(),LoginAct.class);
+                startActivity(intent);
             }
             else {
                 wlan.post(new Runnable() {

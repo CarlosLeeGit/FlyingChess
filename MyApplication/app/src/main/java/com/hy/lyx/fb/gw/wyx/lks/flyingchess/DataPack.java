@@ -15,37 +15,44 @@ public class DataPack {
     /**
      * Commands in login process.
      */
-    public final static int LOGIN = 1000;
-    public final static int LOGOUT = 1002;
-    public final static int REGISTER = 1003;
+    public final static int R_LOGIN = 1000;
+    public final static int A_LOGIN = 1010;
+    public final static int R_LOGOUT = 1002;
+    public final static int R_REGISTER = 1003;
+    public final static int A_REGISTER = 1013;
 
     /**
      * Commands in room selecting process.
      */
-    public final static int ROOM_ENTER = 2000;
-    public final static int ROOM_CREATE = 2001;
-    public final static int ROOM_LOOKUP = 2002;
+    public final static int R_ROOM_ENTER = 2000;
+    public final static int A_ROOM_ENTER = 2010;
+    public final static int E_ROOM_ENTER = 2100;
+    public final static int R_ROOM_CREATE = 2001;
+    public final static int A_ROOM_CREATE = 2011;
+    public final static int R_ROOM_LOOKUP = 2002;
+    public final static int A_ROOM_LOOKUP = 2012;
 
     /**
      * Commands in room process.
      */
-    public final static int ROOM_EXIT = 3000;
-    public final static int ROOM_SELECT_POSITION = 3001;
-    public final static int GAME_START = 3002;
-    // notification command which is sent only from server.
-    public final static int ROOM_USER_ENTERED = 3010;
-    public final static int ROOM_USER_LEFT = 3011;
-    public final static int ROOM_USER_PICK_POSITION = 3012;
+    public final static int R_ROOM_EXIT = 3000;
+    public final static int A_ROOM_EXIT = 3010;
+    public final static int E_ROOM_EXIT = 3100;
+    public final static int R_ROOM_POSITION_SELECT = 3001;
+    public final static int E_ROOM_POSITION_SELECT = 3101;
+    public final static int R_GAME_START = 3002;
+    public final static int E_GAME_START = 3102;
 
     /**
      * Commands in gaming process.
      */
-    public final static int GAME_PROCEED = 4000;
-    public final static int GAME_FINISHED = 4001;
+    public final static int R_GAME_PROCEED = 4000;
+    public final static int E_GAME_PROCEED = 4100;
+    public final static int R_GAME_FINISHED = 4001;
+    public final static int E_GAME_FINISHED = 4101;
 
     public final static int TERMINATE = 5000;
-
-    public final static int CONNECTED = 6000;
+    public final static int CONNECTED=6000;
 
     private int command = 0;
     private Date date = null;
@@ -78,6 +85,13 @@ public class DataPack {
         this.date = new Date();
         this.msgList = null;
         this.isSuccessful = isSuccessful;
+    }
+
+    public DataPack(int command){
+        this.command = command;
+        this.date = new Date();
+        this.msgList = null;
+        this.isSuccessful = false;
     }
 
     public boolean isValid(){

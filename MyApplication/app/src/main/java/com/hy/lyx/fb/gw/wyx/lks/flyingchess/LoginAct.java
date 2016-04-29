@@ -14,8 +14,8 @@ import java.util.LinkedList;
 
 
 public class LoginAct extends AppCompatActivity implements Target {
-    Button login,home, register;
-    EditText name,pw,pw2;
+    Button login,home,register;
+    EditText myName,pw,pw2;
     boolean bRegister;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,19 +26,19 @@ public class LoginAct extends AppCompatActivity implements Target {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         //init
         login = (Button)findViewById(R.id.loginButton);
-        name=(EditText)findViewById(R.id.name);
+        myName=(EditText)findViewById(R.id.name);
         pw = (EditText)findViewById(R.id.pw);
         register =(Button)findViewById(R.id.register);
         home=(Button)findViewById(R.id.home);
         pw2=(EditText)findViewById(R.id.pw2);
         bRegister =false;
-        name.setY(name.getY()+50);
+        myName.setY(myName.getY()+50);
         pw.setY(pw.getY()+70);
         //trigger
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(name.getText().length()==0){
+                if(myName.getText().length()==0){
                     Toast.makeText(getApplicationContext(),"please input you name",Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -57,19 +57,20 @@ public class LoginAct extends AppCompatActivity implements Target {
                     }
                     //sign in
                     LinkedList<String> msgList=new LinkedList<>();
-                    msgList.addLast(name.getText().toString());
+                    msgList.addLast(myName.getText().toString());
                     msgList.addLast(pw.getText().toString());
-                    DataPack dataPack=new DataPack(DataPack.REGISTER,msgList);
-                    Game.getSocketManager().send(dataPack);
+                    DataPack dataPack=new DataPack(DataPack.R_REGISTER,msgList);
+                    Game.socketManager.send(dataPack);
                 }
                 else{// login
                     LinkedList<String> msgList=new LinkedList<String>();
-                    msgList.addLast(name.getText().toString());
+                    msgList.addLast(myName.getText().toString());
                     msgList.addLast(pw.getText().toString());
-                    DataPack dataPack=new DataPack(DataPack.LOGIN,msgList);
-                    Game.getSocketManager().send(dataPack);
-                    Game.getDataManager().setUserName(name.getText().toString());
-                    Game.getDataManager().setPassword(pw.getText().toString());
+                    DataPack dataPack=new DataPack(DataPack.R_LOGIN,msgList);
+                    Game.socketManager.send(dataPack);
+                    Game.dataManager.setMyName(myName.getText().toString());
+                    Game.dataManager.setPassword(pw.getText().toString());
+                    Game.playerMapData.get("me").name=myName.getText().toString();
                 }
             }
         });
@@ -81,16 +82,16 @@ public class LoginAct extends AppCompatActivity implements Target {
                     register.setText("Register");
                     bRegister =false;
                     pw2.setVisibility(View.INVISIBLE);
-                    name.setY(name.getY()+50);
+                    myName.setY(myName.getY()+50);
                     pw.setY(pw.getY()+70);
                     pw2.setText("");
                 }
                 else{
-                    name.setText("");
+                    myName.setText("");
                     pw.setText("");
                     pw2.setText("");
                     pw2.setVisibility(View.VISIBLE);
-                    name.setY(name.getY()-50);
+                    myName.setY(myName.getY()-50);
                     pw.setY(pw.getY()-70);
                     login.setText("Register");
                     register.setText("Back");
@@ -104,23 +105,27 @@ public class LoginAct extends AppCompatActivity implements Target {
                 startActivity(new Intent(getApplicationContext(),ChooseModeAct.class));
             }
         });
-        Game.getSocketManager().registerActivity(DataPack.LOGIN,this);
-        Game.getSocketManager().registerActivity(DataPack.REGISTER,this);
+        Game.socketManager.registerActivity(DataPack.A_LOGIN,this);
+        Game.socketManager.registerActivity(DataPack.A_REGISTER,this);
         //setting
         pw2.setVisibility(View.INVISIBLE);
+        if(Game.dataManager.autoLogin()){
+            myName.setText(Game.dataManager.getMyName());
+            pw.setText(Game.dataManager.getPassword());
+        }
     }
 
     @Override
     public void processDataPack(DataPack dataPack) {
-        if(dataPack.getCommand()== DataPack.LOGIN){
+        if(dataPack.getCommand()== DataPack.A_LOGIN){
             if(dataPack.isSuccessful()){
-                Game.getDataManager().setId(dataPack.getMessage(0));
-                Game.getDataManager().setOnlineScore(dataPack.getMessage(1));
+                Game.playerMapData.get("me").id=dataPack.getMessage(0);
+                Game.playerMapData.get("me").score=dataPack.getMessage(1);
                 startActivity(new Intent(getApplicationContext(),GameInfoAct.class));
-                Game.getDataManager().setLogin(true);
+                Game.dataManager.setAutoLogin(true);
             }
             else{
-                name.post(new Runnable() {
+                myName.post(new Runnable() {
                     @Override
                     public void run() {
                         Toast.makeText(getApplicationContext(),"login failed!",Toast.LENGTH_SHORT).show();
@@ -128,16 +133,16 @@ public class LoginAct extends AppCompatActivity implements Target {
                 });
             }
         }
-        else if(dataPack.getCommand()==DataPack.REGISTER){
+        else if(dataPack.getCommand()==DataPack.A_REGISTER){
             if(dataPack.isSuccessful()){
-                name.post(new Runnable() {
+                myName.post(new Runnable() {
                     @Override
                     public void run() {
                         login.setText("Login");
                         register.setText("Register");
                         bRegister =false;
                         pw2.setVisibility(View.INVISIBLE);
-                        name.setY(name.getY()+50);
+                        myName.setY(myName.getY()+50);
                         pw.setY(pw.getY()+70);
                         pw2.setText("");
                         Toast.makeText(getApplicationContext(),"register successful!",Toast.LENGTH_SHORT).show();
@@ -145,7 +150,7 @@ public class LoginAct extends AppCompatActivity implements Target {
                 });
             }
             else{
-                name.post(new Runnable() {
+                myName.post(new Runnable() {
                     @Override
                     public void run() {
                         Toast.makeText(getApplicationContext(),"register failed!",Toast.LENGTH_SHORT).show();

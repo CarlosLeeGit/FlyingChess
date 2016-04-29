@@ -82,126 +82,126 @@ public class ChessBoardAct extends AppCompatActivity {
         dice.setOnClickListener(new View.OnClickListener() {//throw dice
             @Override
             public void onClick(View v) {
-                Game.getPlayer().setDiceValid();
+                Player.setDiceValid();
             }
         });
         /////////////////add four plane trigger and when click a plane, we should call game manager :: choosePlane to choose plane
         plane[0][0].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Game.getDataManager().getMyColor()==ChessBoard.COLOR_RED)
-                    Game.getPlayer().setPlaneValid(0);
+                if (Game.playerMapData.get("me").color==ChessBoard.COLOR_RED)
+                    Player.setPlaneValid(0);
             }
         });
         plane[0][1].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Game.getDataManager().getMyColor()==ChessBoard.COLOR_RED)
-                    Game.getPlayer().setPlaneValid(1);
+                if (Game.playerMapData.get("me").color==ChessBoard.COLOR_RED)
+                    Player.setPlaneValid(1);
             }
         });
         plane[0][2].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Game.getDataManager().getMyColor()==ChessBoard.COLOR_RED)
-                    Game.getPlayer().setPlaneValid(2);
+                if (Game.playerMapData.get("me").color==ChessBoard.COLOR_RED)
+                    Player.setPlaneValid(2);
             }
         });
         plane[0][3].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Game.getDataManager().getMyColor()==ChessBoard.COLOR_RED)
-                    Game.getPlayer().setPlaneValid(3);
+                if (Game.playerMapData.get("me").color==ChessBoard.COLOR_RED)
+                    Player.setPlaneValid(3);
             }
         });
 
         plane[1][0].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Game.getDataManager().getMyColor()==ChessBoard.COLOR_GREEN)
-                    Game.getPlayer().setPlaneValid(0);
+                if (Game.playerMapData.get("me").color==ChessBoard.COLOR_GREEN)
+                    Player.setPlaneValid(0);
             }
         });
         plane[1][1].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Game.getDataManager().getMyColor()==ChessBoard.COLOR_GREEN)
-                    Game.getPlayer().setPlaneValid(1);
+                if (Game.playerMapData.get("me").color==ChessBoard.COLOR_GREEN)
+                    Player.setPlaneValid(1);
             }
         });
         plane[1][2].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Game.getDataManager().getMyColor()==ChessBoard.COLOR_GREEN)
-                    Game.getPlayer().setPlaneValid(2);
+                if (Game.playerMapData.get("me").color==ChessBoard.COLOR_GREEN)
+                    Player.setPlaneValid(2);
             }
         });
         plane[1][3].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Game.getDataManager().getMyColor()==ChessBoard.COLOR_GREEN)
-                    Game.getPlayer().setPlaneValid(3);
+                if (Game.playerMapData.get("me").color==ChessBoard.COLOR_GREEN)
+                    Player.setPlaneValid(3);
             }
         });
 
         plane[2][0].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Game.getDataManager().getMyColor()==ChessBoard.COLOR_BLUE)
-                    Game.getPlayer().setPlaneValid(0);
+                if (Game.playerMapData.get("me").color==ChessBoard.COLOR_BLUE)
+                    Player.setPlaneValid(0);
             }
         });
         plane[2][1].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Game.getDataManager().getMyColor()==ChessBoard.COLOR_BLUE)
-                    Game.getPlayer().setPlaneValid(1);
+                if (Game.playerMapData.get("me").color==ChessBoard.COLOR_BLUE)
+                    Player.setPlaneValid(1);
             }
         });
         plane[2][2].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Game.getDataManager().getMyColor()==ChessBoard.COLOR_BLUE)
-                    Game.getPlayer().setPlaneValid(2);
+                if (Game.playerMapData.get("me").color==ChessBoard.COLOR_BLUE)
+                    Player.setPlaneValid(2);
             }
         });
         plane[2][3].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Game.getDataManager().getMyColor()==ChessBoard.COLOR_BLUE)
-                    Game.getPlayer().setPlaneValid(3);
+                if (Game.playerMapData.get("me").color==ChessBoard.COLOR_BLUE)
+                    Player.setPlaneValid(3);
             }
         });
 
         plane[3][0].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Game.getDataManager().getMyColor()==ChessBoard.COLOR_YELLOW)
-                    Game.getPlayer().setPlaneValid(0);
+                if (Game.playerMapData.get("me").color==ChessBoard.COLOR_YELLOW)
+                    Player.setPlaneValid(0);
             }
         });
         plane[3][1].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Game.getDataManager().getMyColor()==ChessBoard.COLOR_YELLOW)
-                    Game.getPlayer().setPlaneValid(1);
+                if (Game.playerMapData.get("me").color==ChessBoard.COLOR_YELLOW)
+                    Player.setPlaneValid(1);
             }
         });
         plane[3][2].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Game.getDataManager().getMyColor()==ChessBoard.COLOR_YELLOW)
-                    Game.getPlayer().setPlaneValid(2);
+                if (Game.playerMapData.get("me").color==ChessBoard.COLOR_YELLOW)
+                    Player.setPlaneValid(2);
             }
         });
         plane[3][3].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Game.getDataManager().getMyColor()==ChessBoard.COLOR_YELLOW)
-                    Game.getPlayer().setPlaneValid(3);
+                if (Game.playerMapData.get("me").color==ChessBoard.COLOR_YELLOW)
+                    Player.setPlaneValid(3);
             }
         });
-        Game.getGameManager().newTurn(this);
+        Game.gameManager.newTurn(this);
     }
 
     @Override
@@ -227,14 +227,28 @@ public class ChessBoardAct extends AppCompatActivity {
         moveTo(plane[3][2],1,3);
         moveTo(plane[3][3],3,3);
 
-        for(int i=0;i<4;i++){
-            if(Game.getDataManager().getSiteState()[i]==-1)
-            {
-                plane[i][0].setVisibility(View.INVISIBLE);
-                plane[i][1].setVisibility(View.INVISIBLE);
-                plane[i][2].setVisibility(View.INVISIBLE);
-                plane[i][3].setVisibility(View.INVISIBLE);
-            }
+        plane[0][0].setVisibility(View.INVISIBLE);
+        plane[0][1].setVisibility(View.INVISIBLE);
+        plane[0][2].setVisibility(View.INVISIBLE);
+        plane[0][3].setVisibility(View.INVISIBLE);
+        plane[1][0].setVisibility(View.INVISIBLE);
+        plane[1][1].setVisibility(View.INVISIBLE);
+        plane[1][2].setVisibility(View.INVISIBLE);
+        plane[1][3].setVisibility(View.INVISIBLE);
+        plane[2][0].setVisibility(View.INVISIBLE);
+        plane[2][1].setVisibility(View.INVISIBLE);
+        plane[2][2].setVisibility(View.INVISIBLE);
+        plane[2][3].setVisibility(View.INVISIBLE);
+        plane[3][0].setVisibility(View.INVISIBLE);
+        plane[3][1].setVisibility(View.INVISIBLE);
+        plane[3][2].setVisibility(View.INVISIBLE);
+        plane[3][3].setVisibility(View.INVISIBLE);
+
+        for(String key:Game.playerMapData.keySet()){
+            plane[Game.playerMapData.get(key).color][0].setVisibility(View.VISIBLE);
+            plane[Game.playerMapData.get(key).color][1].setVisibility(View.VISIBLE);
+            plane[Game.playerMapData.get(key).color][2].setVisibility(View.VISIBLE);
+            plane[Game.playerMapData.get(key).color][3].setVisibility(View.VISIBLE);
         }
     }
 
@@ -242,7 +256,7 @@ public class ChessBoardAct extends AppCompatActivity {
     public boolean dispatchKeyEvent(KeyEvent event) {
         if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {//返回按钮
             if (event.getAction() == KeyEvent.ACTION_DOWN && event.getRepeatCount() == 0) {
-                Game.getGameManager().gameOver();
+                Game.gameManager.gameOver();
                 startActivity(new Intent(getApplicationContext(),GameInfoAct.class));
             }
             return true;
@@ -251,9 +265,9 @@ public class ChessBoardAct extends AppCompatActivity {
     }
 
     @Override
-    public void onDestroy(){
-        Game.getGameManager().gameOver();
-        super.onDestroy();
+    public void onStop(){
+        Game.gameManager.gameOver();
+        super.onStop();
     }
 
     public void moveTo(Button plane,int x,int y){
@@ -277,10 +291,10 @@ class MyHandler extends Handler{
                 int whichPlane=msg.getData().getInt("whichPlane");
                 int pos=msg.getData().getInt("pos");
                 if(pos!=-2){
-                    parent.moveTo(parent.plane[color][whichPlane],Game.getChessBoard().map[color][pos][0],Game.getChessBoard().map[color][pos][1]);
+                    parent.moveTo(parent.plane[color][whichPlane],Game.chessBoard.map[color][pos][0],Game.chessBoard.map[color][pos][1]);
                 }
                 else{//消失
-                    parent.moveTo(parent.plane[color][whichPlane],Game.getChessBoard().map[color][55][0],Game.getChessBoard().map[color][55][1]);
+                    parent.moveTo(parent.plane[color][whichPlane],Game.chessBoard.map[color][55][0],Game.chessBoard.map[color][55][1]);
                 }
             }
             break;

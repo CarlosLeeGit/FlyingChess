@@ -16,7 +16,7 @@ public class GameManager {//game process control
     }
 
     public void newTurn(ChessBoardAct board){//call by activity when game start
-        Game.getChessBoard().init();
+        Game.chessBoard.init();
         this.board=board;
         new Thread(gw).start();
     }
@@ -27,14 +27,14 @@ public class GameManager {//game process control
 
     public void turnTo(int color){//call by other thread  be careful
         int dice,whichPlane;
-        if(color==Game.getDataManager().getMyColor()){//it is my turn
+        if(color==Game.playerMapData.get("me").color){//it is my turn
             //get dice
-            dice=Game.getPlayer().roll();
+            dice=Player.roll();
             //UI update
             for(int i=0;i<15;i++){
                 Message msg = new Message();
                 Bundle b = new Bundle();
-                b.putString("dice",String.format("%d",Game.getChessBoard().getDice().roll()));
+                b.putString("dice",String.format("%d",Game.chessBoard.getDice().roll()));
                 msg.setData(b);
                 msg.what=2;
                 board.handler.sendMessage(msg);
@@ -45,17 +45,17 @@ public class GameManager {//game process control
                 }
             }
             System.gc();
-            if(Game.getPlayer().canIMove(color,dice)){//can move a plane
+            if(Player.canIMove(color,dice)){//can move a plane
                 //get plane
                 do {
-                    whichPlane=Game.getPlayer().choosePlane();
-                }while(!Game.getPlayer().move(color,whichPlane,dice));
+                    whichPlane=Player.choosePlane();
+                }while(!Player.move(color,whichPlane,dice));
                 ///UI update
                 Message msg2 = new Message();
                 Bundle b2 = new Bundle();
                 b2.putInt("color",color);
                 b2.putInt("whichPlane",whichPlane);
-                b2.putInt("pos",Game.getChessBoard().getAirplane(color).position[whichPlane]);
+                b2.putInt("pos",Game.chessBoard.getAirplane(color).position[whichPlane]);
                 msg2.setData(b2);
                 msg2.what=1;
                 board.handler.sendMessage(msg2);
@@ -70,7 +70,7 @@ public class GameManager {//game process control
             }
         }
         else{//others
-            switch (Game.getDataManager().getGameMode()){
+            switch (Game.dataManager.getGameMode()){
                 case DataManager.GM_LOCAL://local game
                 {
                     Random r=new Random(System.currentTimeMillis());
@@ -79,7 +79,7 @@ public class GameManager {//game process control
                     for(int i=0;i<15;i++){
                         Message msg = new Message();
                         Bundle b = new Bundle();
-                        b.putString("dice",String.format("%d",Game.getChessBoard().getDice().roll()));
+                        b.putString("dice",String.format("%d",Game.chessBoard.getDice().roll()));
                         msg.setData(b);
                         msg.what=2;
                         board.handler.sendMessage(msg);
@@ -102,16 +102,16 @@ public class GameManager {//game process control
                         e.printStackTrace();
                     }
 
-                    if(Game.getPlayer().canIMove(color,dice)){
+                    if(Player.canIMove(color,dice)){
                         do{
                             whichPlane=r.nextInt(4);
-                        }while(!Game.getPlayer().move(color,whichPlane,dice));
+                        }while(!Player.move(color,whichPlane,dice));
                         ///UI update
                         Message msg2 = new Message();
                         Bundle b2 = new Bundle();
                         b2.putInt("color",color);
                         b2.putInt("whichPlane",whichPlane);
-                        b2.putInt("pos",Game.getChessBoard().getAirplane(color).position[whichPlane]);
+                        b2.putInt("pos",Game.chessBoard.getAirplane(color).position[whichPlane]);
                         msg2.setData(b2);
                         msg2.what=1;
                         board.handler.sendMessage(msg2);
@@ -148,8 +148,11 @@ class GameWorker implements Runnable{
         int i=0;
         while(run){//control round
             i=(i%4);
-            if(Game.getDataManager().getSiteState()[i]!=-1) {
-                Game.getGameManager().turnTo(i);
+            for(String key:Game.playerMapData.keySet()){
+                if(Game.playerMapData.get(key).color==i){
+                    Game.gameManager.turnTo(i);
+                    break;
+                }
             }
             i++;
         }

@@ -7,7 +7,7 @@ import java.util.Random;
  */
 public class ChessBoard {//chess board data
     public static final int COLOR_RED=0,COLOR_GREEN=1,COLOR_BLUE=2,COLOR_YELLOW=3;//玩家颜色
-
+    public static final int COLOR_Z=-1,COLOR_X=-2;
     private Dice dice;
     private Airplane[] airplanes;
     public int[][][] map={

@@ -14,21 +14,19 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
 public class GameInfoAct extends AppCompatActivity implements Target{
-    Button create;
-    Button join;
-    Button back;
-    ListView room;
+    Button createButton,joinButton,backButton;
+    ListView roomListView;
     LinearLayout onlineLayout;
     SimpleAdapter roomListAdapter;
-    LinkedList<Map<String,String>> roomList;
+    LinkedList<HashMap<String,String>> roomListData;
     Worker worker;
-    int lastSelection;
-    String roomId=null;
+    String roomId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //ui setting
@@ -37,86 +35,94 @@ public class GameInfoAct extends AppCompatActivity implements Target{
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);//Activity切换动画
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         //init
-        create=(Button)findViewById(R.id.create);
-        join = (Button)findViewById(R.id.join);
-        room=(ListView)findViewById(R.id.roomList);
-        roomList=new LinkedList<>();
+        createButton=(Button)findViewById(R.id.create);
+        backButton=(Button)findViewById(R.id.back);
+        joinButton = (Button)findViewById(R.id.join);
+        roomListView=(ListView)findViewById(R.id.roomList);
+        roomListData=new LinkedList<>();
         String[] t={"room","id","player","state"};
         int[] t2={R.id.roomName,R.id.roomId,R.id.player,R.id.roomState};
-        back=(Button)findViewById(R.id.back);
-
-        roomListAdapter=new SimpleAdapter(getApplicationContext(),roomList,R.layout.content_game_info_room_list_item,t,t2);
-        room.setAdapter(roomListAdapter);
+        roomListAdapter=new SimpleAdapter(getApplicationContext(),roomListData,R.layout.content_game_info_room_list_item,t,t2);
+        roomListView.setAdapter(roomListAdapter);
         worker=new Worker();
-        lastSelection=-1;
         onlineLayout=(LinearLayout)findViewById(R.id.onlineLayout);
+        roomId="";
         //trigger
-        create.setOnClickListener(new View.OnClickListener() {
+        createButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {//start a new game
-                if(Game.getDataManager().getGameMode()==DataManager.GM_WLAN){
+                if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
                     LinkedList<String> msgs=new LinkedList<String>();
-                    msgs.addLast(Game.getDataManager().getId());
-                    msgs.addLast(Game.getDataManager().getUserName()+"'s Room");
-                    DataPack dataPack=new DataPack(DataPack.ROOM_CREATE,msgs);
-                    Game.getSocketManager().send(dataPack);
+                    msgs.addLast(Game.playerMapData.get("me").id);
+                    msgs.addLast(Game.dataManager.getMyName()+"'s Room");
+                    DataPack dataPack=new DataPack(DataPack.R_ROOM_CREATE,msgs);
+                    Game.socketManager.send(dataPack);
                 }
-                else if(Game.getDataManager().getGameMode()==DataManager.GM_LAN){
+                else if(Game.dataManager.getGameMode()==DataManager.GM_LAN){
 
                 }
                 else{//local
                     Intent intent = new Intent(getApplicationContext(), RoomAct.class);
+                    LinkedList<String> msgs=new LinkedList<>();
+                    msgs.addLast(Game.playerMapData.get("me").id);
+                    msgs.addLast(Game.dataManager.getMyName());
+                    msgs.addLast(Game.playerMapData.get("me").score);
+                    msgs.addLast("-1");
+                    intent.putExtra("msgs",msgs.toArray());
                     startActivity(intent);//switch wo chess board activity
                 }
             }
         });
-        back.setOnClickListener(new View.OnClickListener() {
+        backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(),ChooseModeAct.class));
+                goBack();
             }
         });
-        room.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        roomListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if(lastSelection!=-1&&lastSelection!=position&&lastSelection<room.getChildCount())
-                    room.getChildAt(lastSelection).setSelected(false);
+                roomId=roomListData.get(position).get("id");
                 view.setSelected(true);
-                lastSelection=position;
-                join.setEnabled(true);
             }
         });
-        join.setOnClickListener(new View.OnClickListener() {
+        joinButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                synchronized (roomList){
-                    if(roomList.get(lastSelection).get("state").compareTo("waiting")==0){
-                        LinkedList<String> msgs=new LinkedList<>();
-                        msgs.addLast(Game.getDataManager().getId());
-                        roomId=roomList.get(lastSelection).get("id");
-                        msgs.addLast(roomId);
-                        DataPack dataPack = new DataPack(DataPack.ROOM_ENTER,msgs);
-                        Game.getSocketManager().send(dataPack);
+                boolean find=false;
+                synchronized (roomListData){
+                    for(HashMap<String,String> map:roomListData){
+                        if(map.get("id").compareTo(roomId)==0){
+                            if(map.get("state").compareTo("waiting")==0) {
+                                LinkedList<String> msgs=new LinkedList<>();
+                                msgs.addLast(Game.playerMapData.get("me").id);
+                                msgs.addLast(roomId);
+                                DataPack dataPack = new DataPack(DataPack.R_ROOM_ENTER,msgs);
+                                Game.socketManager.send(dataPack);
+                                find=true;
+                            }
+                            break;
+                        }
                     }
-                    else{
-                        Toast.makeText(getApplicationContext(),"they are flying!",Toast.LENGTH_SHORT).show();
-                    }
+                    if(!find)
+                        Toast.makeText(getApplicationContext(),"join room failed",Toast.LENGTH_SHORT).show();
                 }
             }
         });
         //network init
-        if(Game.getDataManager().getGameMode()==DataManager.GM_WLAN){
-            Game.getSocketManager().registerActivity(DataPack.ROOM_LOOKUP,this);
-            Game.getSocketManager().registerActivity(DataPack.ROOM_CREATE,this);
-            Game.getSocketManager().registerActivity(DataPack.ROOM_ENTER,this);
+        if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
+            Game.socketManager.registerActivity(DataPack.A_ROOM_LOOKUP,this);
+            Game.socketManager.registerActivity(DataPack.A_ROOM_CREATE,this);
+            Game.socketManager.registerActivity(DataPack.A_ROOM_ENTER,this);
             new Thread(worker).start();
         }
         // setting
-        if(Game.getDataManager().getGameMode()==DataManager.GM_LOCAL) {
-            join.setVisibility(View.INVISIBLE);
+        if(Game.dataManager.getGameMode()==DataManager.GM_LOCAL) {
+            joinButton.setVisibility(View.INVISIBLE);
             onlineLayout.setVisibility(View.INVISIBLE);
+            Game.dataManager.setMyName("ME");
+            Game.playerMapData.get("me").name="ME";
         }
-        join.setEnabled(false);
     }
 
     @Override
@@ -129,22 +135,26 @@ public class GameInfoAct extends AppCompatActivity implements Target{
     public boolean dispatchKeyEvent(KeyEvent event) {
         if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {//返回按钮
             if (event.getAction() == KeyEvent.ACTION_DOWN && event.getRepeatCount() == 0) {
-                startActivity(new Intent(getApplicationContext(),ChooseModeAct.class));
+                goBack();
             }
             return true;
         }
         return super.dispatchKeyEvent(event);
     }
 
+    private void goBack(){
+        LinkedList<String> msgs=new LinkedList<>();
+        msgs.addLast(Game.playerMapData.get("me").id);
+        DataPack dataPack=new DataPack(DataPack.R_LOGOUT,msgs);
+        Game.socketManager.send(dataPack);
+        startActivity(new Intent(getApplicationContext(),ChooseModeAct.class));
+    }
+
     @Override
     public void processDataPack(DataPack dataPack) {
-        if(dataPack.getCommand()==DataPack.ROOM_LOOKUP){
-            synchronized(roomList){
-                String id="-1";
-                if(lastSelection!=-1){
-                    id = roomList.get(lastSelection).get("id");
-                }
-                roomList.clear();
+        if(dataPack.getCommand()==DataPack.A_ROOM_LOOKUP){
+            synchronized(roomListData){
+                roomListData.clear();
                 for(int i=0;i<dataPack.getMessageList().size();){
                     HashMap<String,String> data=new HashMap<>();
                     data.put("room",dataPack.getMessage(i+1));
@@ -156,35 +166,31 @@ public class GameInfoAct extends AppCompatActivity implements Target{
                     else{
                         data.put("state","flying");
                     }
-                    roomList.addLast(data);
+                    roomListData.addLast(data);
                     i+=4;
-                    if(data.get("id").compareTo(id)==0){
-                        lastSelection=i/4;
-                    }
                 }
-                room.post(new Runnable() {
+                roomListView.post(new Runnable() {
                     @Override
                     public void run() {
                         roomListAdapter.notifyDataSetChanged();
-                        room.setSelection(lastSelection);
                     }
                 });
             }
         }
-        else if(dataPack.getCommand()==DataPack.ROOM_CREATE){
+        else if(dataPack.getCommand()==DataPack.A_ROOM_CREATE){
             if(dataPack.isSuccessful()) {
-                Game.getDataManager().setOnlineIds(0,Game.getDataManager().getId());
-                Game.getDataManager().setOnlineNames(0,Game.getDataManager().getUserName());
-                Game.getDataManager().setOnlineScores(0,Game.getDataManager().getOnlineScore());
-                Game.getDataManager().setOnlinePos(0,"-1");
-                Game.getDataManager().setPlayerNumber(1);
-
-                Game.getDataManager().setRoomId(dataPack.getMessage(0));
+                Game.dataManager.setRoomId(dataPack.getMessage(0));
                 Intent intent = new Intent(getApplicationContext(), RoomAct.class);
+                ArrayList<String> msgs=new ArrayList<>();
+                msgs.add(Game.playerMapData.get("me").id);
+                msgs.add(Game.playerMapData.get("me").name);
+                msgs.add(Game.playerMapData.get("me").score);
+                msgs.add("-1");
+                intent.putStringArrayListExtra("msgs",msgs);
                 startActivity(intent);//switch wo chess board activity
             }
             else{
-                create.post(new Runnable() {
+                createButton.post(new Runnable() {
                     @Override
                     public void run() {
                         Toast.makeText(getApplicationContext(),"create room failed!",Toast.LENGTH_SHORT).show();
@@ -192,23 +198,16 @@ public class GameInfoAct extends AppCompatActivity implements Target{
                 });
             }
         }
-        else if(dataPack.getCommand()==DataPack.ROOM_ENTER){
+        else if(dataPack.getCommand()==DataPack.A_ROOM_ENTER){
             if(dataPack.isSuccessful()){
-                int i = 0;
-                for(i=0;i<dataPack.getMessageList().size();){
-                    Game.getDataManager().setOnlineIds(i/4,dataPack.getMessage(i));
-                    Game.getDataManager().setOnlineNames(i/4,dataPack.getMessage(i+1));
-                    Game.getDataManager().setOnlineScores(i/4,dataPack.getMessage(i+2));
-                    Game.getDataManager().setOnlinePos(i/4,dataPack.getMessage(i+3));
-                    i+=4;
-                }
-                Game.getDataManager().setPlayerNumber(i/4);
-                Game.getDataManager().setRoomId(roomId);
+                Game.dataManager.setRoomId(roomId);
                 Intent intent = new Intent(getApplicationContext(), RoomAct.class);
+                ArrayList<String> msgs = new ArrayList<>(dataPack.getMessageList());
+                intent.putStringArrayListExtra("msgs",msgs);
                 startActivity(intent);//switch wo chess board activity
             }
             else{
-                create.post(new Runnable() {
+                createButton.post(new Runnable() {
                     @Override
                     public void run() {
                         Toast.makeText(getApplicationContext(),"join room failed!",Toast.LENGTH_SHORT).show();
@@ -228,8 +227,8 @@ class Worker implements Runnable{
     public void run() {
         exit=false;
         while(!exit){
-            DataPack dataPack= new DataPack(DataPack.ROOM_LOOKUP,null);
-            Game.getSocketManager().send(dataPack);
+            DataPack dataPack= new DataPack(DataPack.R_ROOM_LOOKUP,null);
+            Game.socketManager.send(dataPack);
             try {
                 Thread.sleep(3000);
             } catch (InterruptedException e) {
