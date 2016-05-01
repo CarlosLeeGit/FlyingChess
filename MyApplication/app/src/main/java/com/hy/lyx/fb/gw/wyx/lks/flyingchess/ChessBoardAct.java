@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.io.InputStream;
 import java.util.Timer;
@@ -300,6 +301,9 @@ class MyHandler extends Handler{
             break;
             case 2://筛子
                 parent.dice.setText(msg.getData().getString("dice"));
+                break;
+            case 3://msg
+                Toast.makeText(parent.getApplicationContext(),msg.getData().getString("msg"),Toast.LENGTH_SHORT).show();
                 break;
             default:
                 super.handleMessage(msg);

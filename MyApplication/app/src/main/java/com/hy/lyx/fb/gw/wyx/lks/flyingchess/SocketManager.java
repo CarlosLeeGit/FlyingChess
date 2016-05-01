@@ -44,7 +44,7 @@ public class SocketManager extends MsgHandler{
                     trustKeyStore.load(activity.getBaseContext().getResources().openRawResource(R.raw.flyingchess), "hustcs1307".toCharArray());
                     trustManagerFactory.init(trustKeyStore);
                     sslContext.init(null, trustManagerFactory.getTrustManagers(), null);
-                    sock = (SSLSocket) sslContext.getSocketFactory().createSocket("10.12.54.229", 6666);
+                    sock = (SSLSocket) sslContext.getSocketFactory().createSocket("115.159.183.72", 6666);
                     sock.setSoTimeout(2000);
                     sock.setTcpNoDelay(true);
                     sw=new SocketWriter(sock.getOutputStream());

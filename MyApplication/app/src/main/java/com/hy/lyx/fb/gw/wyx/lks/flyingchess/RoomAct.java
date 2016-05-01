@@ -222,7 +222,6 @@ public class RoomAct extends AppCompatActivity implements Target {
     @Override
     public void processDataPack(final DataPack dataPack) {
         if(dataPack.getCommand()==DataPack.E_ROOM_ENTER){
-            System.out.println(dataPack.toString());
             HashMap<String,String> map=new HashMap<>();
             map.put("name",dataPack.getMessage(1));
             map.put("score",dataPack.getMessage(2));
@@ -236,7 +235,6 @@ public class RoomAct extends AppCompatActivity implements Target {
             });
         }
         else if(dataPack.getCommand()==DataPack.E_ROOM_EXIT){
-            System.out.println(dataPack.toString());
             if(dataPack.getMessage(0).compareTo(Game.playerMapData.get("host").id)==0)//是房主
             {
                 Intent intent=new Intent(getApplicationContext(),GameInfoAct.class);
@@ -282,12 +280,11 @@ public class RoomAct extends AppCompatActivity implements Target {
             }
         }
         else if(dataPack.getCommand()==DataPack.E_ROOM_POSITION_SELECT) {
-            System.out.println(dataPack.toString());
             if(dataPack.isSuccessful()){
                 final int id = Integer.valueOf(dataPack.getMessage(0));
                 final int np = Integer.valueOf(dataPack.getMessage(3));
                 if (id < 0) {//robot choose
-                    if(np!=-1){//如果不消除
+                    if(np!=-1){//如果添加机器人
                         siteState[np]=0;
                         site[0].post(new Runnable() {
                             @Override

@@ -21,10 +21,10 @@ public class Game{
     public static HashMap<String,Player> playerMapData;//me host z x c
 
     public static void init(AppCompatActivity activity){
+        socketManager = new SocketManager(activity);
         gameManager = new GameManager();
         dataManager=new DataManager();
         chessBoard=new ChessBoard();
-        socketManager = new SocketManager(activity);
         playerMapData=new HashMap<>();
         playerMapData.put("me",new Player("0","ME","0",0));
     }
