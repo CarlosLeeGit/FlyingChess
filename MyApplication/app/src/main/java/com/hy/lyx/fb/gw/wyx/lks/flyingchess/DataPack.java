@@ -1,5 +1,6 @@
 package com.hy.lyx.fb.gw.wyx.lks.flyingchess;
 
+
 import java.util.Date;
 import java.util.List;
 
@@ -18,6 +19,7 @@ public class DataPack {
     public final static int R_LOGIN = 1000;
     public final static int A_LOGIN = 1010;
     public final static int R_LOGOUT = 1002;
+    public final static int A_LOGOUT = 1012;
     public final static int R_REGISTER = 1003;
     public final static int A_REGISTER = 1013;
 
@@ -46,13 +48,14 @@ public class DataPack {
     /**
      * Commands in gaming process.
      */
-    public final static int R_GAME_PROCEED = 4000;
-    public final static int E_GAME_PROCEED = 4100;
-    public final static int R_GAME_FINISHED = 4001;
-    public final static int E_GAME_FINISHED = 4101;
+    public final static int R_GAME_PROCEED_DICE = 4000;
+    public final static int E_GAME_PROCEED_DICE = 4100;
+    public final static int R_GAME_PROCEED_PLANE = 4001;
+    public final static int E_GAME_PROCEED_PLANE = 4101;
+    public final static int R_GAME_FINISHED = 4009;
+    public final static int E_GAME_FINISHED = 4109;
 
     public final static int TERMINATE = 5000;
-    public final static int CONNECTED=6000;
 
     private int command = 0;
     private Date date = null;
