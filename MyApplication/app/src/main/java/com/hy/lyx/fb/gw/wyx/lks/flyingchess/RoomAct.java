@@ -30,6 +30,7 @@ public class RoomAct extends AppCompatActivity implements Target {
         setContentView(R.layout.activity_room);
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);//Activity切换动画
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        Game.activityManager.add(this);
         //init
         closeTimer=new Timer();
         startButton=(Button)findViewById(R.id.start);
@@ -83,12 +84,14 @@ public class RoomAct extends AppCompatActivity implements Target {
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LinkedList<String> msgs=new LinkedList<>();
-                msgs.addLast(Game.playerMapData.get("me").id);
-                msgs.addLast(Game.dataManager.getRoomId());
-                msgs.addLast(String.format("%d",Game.playerMapData.get("me").color));
-                DataPack dataPack = new DataPack(DataPack.R_ROOM_EXIT,msgs);
-                Game.socketManager.send(dataPack);
+                if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
+                    LinkedList<String> msgs=new LinkedList<>();
+                    msgs.addLast(Game.playerMapData.get("me").id);
+                    msgs.addLast(Game.dataManager.getRoomId());
+                    msgs.addLast(String.format("%d",Game.playerMapData.get("me").color));
+                    DataPack dataPack = new DataPack(DataPack.R_ROOM_EXIT,msgs);
+                    Game.socketManager.send(dataPack);
+                }
                 Intent intent=new Intent(getApplicationContext(),GameInfoAct.class);
                 startActivity(intent);
                 closeTimer.schedule(new TimerTask() {
@@ -379,13 +382,32 @@ public class RoomAct extends AppCompatActivity implements Target {
 
     private void chooseSite(int color){
         if(siteState[color]==-1) {
-            LinkedList<String> msgs = new LinkedList<>();
-            msgs.addLast(Game.playerMapData.get("me").id);
-            msgs.addLast(Game.dataManager.getRoomId());
-            msgs.addLast(Game.playerMapData.get("me").name);
-            msgs.addLast(Game.playerMapData.get("me").score);
-            msgs.addLast(String.format("%d", color));
-            Game.socketManager.send(new DataPack(DataPack.R_ROOM_POSITION_SELECT,msgs));
+            if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
+                LinkedList<String> msgs = new LinkedList<>();
+                msgs.addLast(Game.playerMapData.get("me").id);
+                msgs.addLast(Game.dataManager.getRoomId());
+                msgs.addLast(Game.playerMapData.get("me").name);
+                msgs.addLast(Game.playerMapData.get("me").score);
+                msgs.addLast(String.format("%d", color));
+                Game.socketManager.send(new DataPack(DataPack.R_ROOM_POSITION_SELECT,msgs));
+            }
+            else if(Game.dataManager.getGameMode()==DataManager.GM_LOCAL){
+                if(Game.playerMapData.get("me").color==ChessBoard.COLOR_Z){
+                    idlePlayerListData.removeLast();
+                    idlePlayerListAdapter.notifyDataSetChanged();
+                }
+                else{
+                    site[Game.playerMapData.get("me").color].setText("");
+                    siteState[Game.playerMapData.get("me").color]=-1;
+                }
+                for(String key:Game.playerMapData.keySet()){
+                    if(Game.playerMapData.get(key).name.compareTo(Game.dataManager.getMyName())==0){
+                        Game.playerMapData.get(key).color=color;
+                    }
+                }
+                site[color].setText("ME");
+                siteState[color]=1;
+            }
         }
         else{
             Toast.makeText(getApplicationContext(),"select position failed!",Toast.LENGTH_SHORT).show();
@@ -394,18 +416,39 @@ public class RoomAct extends AppCompatActivity implements Target {
 
     private void addRobot(int color){
         if(Game.playerMapData.get("host").id.compareTo(Game.playerMapData.get("me").id)==0){
-            LinkedList<String> msgs=new LinkedList<>();
-            msgs.addLast(String.format("%d",-color-1));
-            msgs.addLast(Game.dataManager.getRoomId());
-            msgs.addLast("ROBOT");
-            msgs.addLast("0");
-            if(siteState[color]==-1){
-                msgs.addLast(String.format("%d",color));
+            if(siteState[color]==1){
+                Toast.makeText(getApplicationContext(),"add robot failed!",Toast.LENGTH_SHORT).show();
             }
-            else{
-                msgs.addLast("-1");
+            else {
+                if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
+                    LinkedList<String> msgs=new LinkedList<>();
+                    msgs.addLast(String.format("%d",-color-1));
+                    msgs.addLast(Game.dataManager.getRoomId());
+                    msgs.addLast("ROBOT");
+                    msgs.addLast("0");
+                    if(siteState[color]==-1){
+                        msgs.addLast(String.format("%d",color));
+                    }
+                    else{
+                        msgs.addLast("-1");
+                    }
+                    Game.socketManager.send(new DataPack(DataPack.R_ROOM_POSITION_SELECT,msgs));
+                }
+                else if(Game.dataManager.getGameMode()==DataManager.GM_LOCAL){
+                    if(siteState[color]==-1){
+                        site[color].setText("ROBOT");
+                        siteState[color]=0;
+                        addRobotButton[color].setText("-");
+                        Game.playerMapData.put(String.format("%d",-color-1),new Player(String.format("%d",-color-1),"robot","0",color));
+                    }
+                    else{
+                        site[color].setText("");
+                        siteState[color]=-1;
+                        addRobotButton[color].setText("+");
+                        Game.playerMapData.remove(String.format("%d",-color-1));
+                    }
+                }
             }
-            Game.socketManager.send(new DataPack(DataPack.R_ROOM_POSITION_SELECT,msgs));
         }
         else{
             Toast.makeText(getApplicationContext(),"only host can add robot",Toast.LENGTH_SHORT).show();
@@ -413,12 +456,14 @@ public class RoomAct extends AppCompatActivity implements Target {
     }
 
     private void exit(){
-        LinkedList<String> msgs=new LinkedList<>();
-        msgs.addLast(Game.playerMapData.get("me").id);
-        msgs.addLast(Game.dataManager.getRoomId());
-        msgs.addLast(String.format("%d",Game.playerMapData.get("me").color));
-        DataPack dataPack2 = new DataPack(DataPack.R_ROOM_EXIT,msgs);
-        Game.socketManager.send(dataPack2);
+        if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
+            LinkedList<String> msgs=new LinkedList<>();
+            msgs.addLast(Game.playerMapData.get("me").id);
+            msgs.addLast(Game.dataManager.getRoomId());
+            msgs.addLast(String.format("%d",Game.playerMapData.get("me").color));
+            DataPack dataPack2 = new DataPack(DataPack.R_ROOM_EXIT,msgs);
+            Game.socketManager.send(dataPack2);
+        }
         Intent intent=new Intent(getApplicationContext(),GameInfoAct.class);
         startActivity(intent);
         closeTimer.schedule(new TimerTask() {

@@ -40,16 +40,22 @@ public class Player {//user
             Game.chessBoard.getAirplane(color).position[whichPlane]=0;
             return true;
         }
+        Game.chessBoard.getAirplane(color).lastPosition[whichPlane]=Game.chessBoard.getAirplane(color).position[whichPlane];
         int nextStep=Game.chessBoard.getAirplane(color).position[whichPlane]+dice;
-        if(nextStep>56)
-            nextStep=56-(nextStep-56);
+        if(nextStep>56) {
+            nextStep = 56 - (nextStep - 56);
+            Game.chessBoard.setOverflow(true);
+        }
         else if(nextStep==56)
             nextStep=-2;
         else if(nextStep==18)
-            nextStep=30;
+            nextStep=34;
         else if(nextStep<50){
-            if((nextStep-2)%4==0)
-                nextStep+=4;
+            if((nextStep-2) % 4==0) {
+                nextStep += 4;
+                if(nextStep == 18)
+                    nextStep = 30;
+            }
         }
         Game.chessBoard.getAirplane(color).position[whichPlane]=nextStep;
         return true;

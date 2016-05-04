@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Timer;
 
 public class ChessBoardAct extends AppCompatActivity {
@@ -77,7 +78,7 @@ public class ChessBoardAct extends AppCompatActivity {
         pause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                startActivity(new Intent(getApplicationContext(),PauseAct.class));
             }
         });
         dice.setOnClickListener(new View.OnClickListener() {//throw dice
@@ -203,6 +204,7 @@ public class ChessBoardAct extends AppCompatActivity {
             }
         });
         Game.gameManager.newTurn(this);
+        Game.activityManager.add(this);
     }
 
     @Override
@@ -257,23 +259,29 @@ public class ChessBoardAct extends AppCompatActivity {
     public boolean dispatchKeyEvent(KeyEvent event) {
         if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {//返回按钮
             if (event.getAction() == KeyEvent.ACTION_DOWN && event.getRepeatCount() == 0) {
-                Game.gameManager.gameOver();
-                startActivity(new Intent(getApplicationContext(),GameInfoAct.class));
+                exit();
             }
             return true;
         }
         return super.dispatchKeyEvent(event);
     }
 
-    @Override
-    public void onStop(){
+    public void exit(){
+        if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
+
+        }
         Game.gameManager.gameOver();
-        super.onStop();
+        startActivity(new Intent(getApplicationContext(),GameInfoAct.class));
     }
 
     public void moveTo(Button plane,int x,int y){
         plane.setX(x*dx);
         plane.setY(y*dx);
+    }
+    public void animMoveTo(Button plane, int x, int y) {
+        plane.animate().setDuration(500);
+        plane.animate().translationX(x * dx);
+        plane.animate().translationY(y * dx);
     }
 }
 
@@ -292,10 +300,10 @@ class MyHandler extends Handler{
                 int whichPlane=msg.getData().getInt("whichPlane");
                 int pos=msg.getData().getInt("pos");
                 if(pos!=-2){
-                    parent.moveTo(parent.plane[color][whichPlane],Game.chessBoard.map[color][pos][0],Game.chessBoard.map[color][pos][1]);
+                    parent.animMoveTo(parent.plane[color][whichPlane], Game.chessBoard.map[color][pos][0], Game.chessBoard.map[color][pos][1]);
                 }
                 else{//消失
-                    parent.moveTo(parent.plane[color][whichPlane],Game.chessBoard.map[color][55][0],Game.chessBoard.map[color][55][1]);
+                    parent.animMoveTo(parent.plane[color][whichPlane], Game.chessBoard.map[color][55][0], Game.chessBoard.map[color][55][1]);
                 }
             }
             break;
@@ -305,6 +313,47 @@ class MyHandler extends Handler{
             case 3://msg
                 Toast.makeText(parent.getApplicationContext(),msg.getData().getString("msg"),Toast.LENGTH_SHORT).show();
                 break;
+            case 4: // crash
+            {
+                int color=msg.getData().getInt("color");
+                int whichPlane=msg.getData().getInt("whichPlane");
+                parent.animMoveTo(parent.plane[color][whichPlane],Game.chessBoard.mapStart[color][whichPlane][0],Game.chessBoard.mapStart[color][whichPlane][1]);
+            }
+            case 5://finished
+            {
+                Intent intent = new Intent(parent.getApplicationContext(), RoomAct.class);
+                ArrayList<String> msgs=new ArrayList<>();
+                if(Game.dataManager.getGameMode()==DataManager.GM_LOCAL){
+                    Game.playerMapData.get("me").color=-1;
+                    msgs.add(Game.playerMapData.get("me").id);
+                    msgs.add(Game.playerMapData.get("me").name);
+                    msgs.add(Game.playerMapData.get("me").score);
+                    msgs.add("-1");
+                }
+                else if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
+                    msgs.add(Game.playerMapData.get("host").id);
+                    msgs.add(Game.playerMapData.get("host").name);
+                    msgs.add(Game.playerMapData.get("host").score);
+                    msgs.add("-1");
+                    for(String key:Game.playerMapData.keySet()){
+                        Game.playerMapData.get(key).color=-1;
+                        if(Game.playerMapData.get("me").id.compareTo(Game.playerMapData.get(key).id)!=0&&Game.playerMapData.get("host").id.compareTo(Game.playerMapData.get(key).id)!=0){
+                            msgs.add(Game.playerMapData.get(key).id);
+                            msgs.add(Game.playerMapData.get(key).name);
+                            msgs.add(Game.playerMapData.get(key).score);
+                            msgs.add("-1");
+                        }
+                    }
+                    if(Game.playerMapData.get("me").id.compareTo(Game.playerMapData.get("host").id)!=0){
+                        msgs.add(Game.playerMapData.get("me").id);
+                        msgs.add(Game.playerMapData.get("me").name);
+                        msgs.add(Game.playerMapData.get("me").score);
+                        msgs.add("-1");
+                    }
+                }
+                intent.putStringArrayListExtra("msgs",msgs);
+                parent.startActivity(intent);
+            }
             default:
                 super.handleMessage(msg);
         }

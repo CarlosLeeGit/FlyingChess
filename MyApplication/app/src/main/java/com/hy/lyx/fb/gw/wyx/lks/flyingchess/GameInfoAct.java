@@ -34,6 +34,7 @@ public class GameInfoAct extends AppCompatActivity implements Target{
         setContentView(R.layout.activity_game_info);
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);//Activity切换动画
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        Game.activityManager.add(this);
         //init
         createButton=(Button)findViewById(R.id.create);
         backButton=(Button)findViewById(R.id.back);
@@ -63,12 +64,12 @@ public class GameInfoAct extends AppCompatActivity implements Target{
                 }
                 else{//local
                     Intent intent = new Intent(getApplicationContext(), RoomAct.class);
-                    LinkedList<String> msgs=new LinkedList<>();
-                    msgs.addLast(Game.playerMapData.get("me").id);
-                    msgs.addLast(Game.dataManager.getMyName());
-                    msgs.addLast(Game.playerMapData.get("me").score);
-                    msgs.addLast("-1");
-                    intent.putExtra("msgs",msgs.toArray());
+                    ArrayList<String> msgs=new ArrayList<String>();
+                    msgs.add(Game.playerMapData.get("me").id);
+                    msgs.add(Game.dataManager.getMyName());
+                    msgs.add(Game.playerMapData.get("me").score);
+                    msgs.add("-1");
+                    intent.putStringArrayListExtra("msgs",msgs);
                     startActivity(intent);//switch wo chess board activity
                 }
             }
@@ -121,14 +122,7 @@ public class GameInfoAct extends AppCompatActivity implements Target{
             joinButton.setVisibility(View.INVISIBLE);
             onlineLayout.setVisibility(View.INVISIBLE);
             Game.dataManager.setMyName("ME");
-            Game.playerMapData.get("me").name="ME";
         }
-    }
-
-    @Override
-    public void onStop(){
-        super.onStop();
-        worker.exit();
     }
 
     @Override
@@ -143,10 +137,12 @@ public class GameInfoAct extends AppCompatActivity implements Target{
     }
 
     private void goBack(){
-        LinkedList<String> msgs=new LinkedList<>();
-        msgs.addLast(Game.playerMapData.get("me").id);
-        DataPack dataPack=new DataPack(DataPack.R_LOGOUT,msgs);
-        Game.socketManager.send(dataPack);
+        if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
+            LinkedList<String> msgs=new LinkedList<>();
+            msgs.addLast(Game.playerMapData.get("me").id);
+            DataPack dataPack=new DataPack(DataPack.R_LOGOUT,msgs);
+            Game.socketManager.send(dataPack);
+        }
         startActivity(new Intent(getApplicationContext(),ChooseModeAct.class));
     }
 
@@ -220,20 +216,9 @@ public class GameInfoAct extends AppCompatActivity implements Target{
 ///////////////////////////////////////////////////////////////////////////////////
 class Worker implements Runnable{
     private boolean exit;
-    public void exit(){
-        exit=true;
-    }
     @Override
     public void run() {
-        exit=false;
-        while(!exit){
-            DataPack dataPack= new DataPack(DataPack.R_ROOM_LOOKUP,null);
-            Game.socketManager.send(dataPack);
-            try {
-                Thread.sleep(3000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+        DataPack dataPack= new DataPack(DataPack.R_ROOM_LOOKUP,null);
+        Game.socketManager.send(dataPack);
     }
 }

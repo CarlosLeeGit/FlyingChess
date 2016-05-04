@@ -56,6 +56,7 @@ public class DataPack {
     public final static int E_GAME_FINISHED = 4109;
 
     public final static int TERMINATE = 5000;
+    public final static int CONNECTED=6000;
 
     private int command = 0;
     private Date date = null;

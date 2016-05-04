@@ -18,14 +18,16 @@ public class Game{
     public static DataManager dataManager;
     public static ChessBoard chessBoard;
     public static SocketManager socketManager;
-    public static HashMap<String,Player> playerMapData;//me host z x c
+    public static HashMap<String,Player> playerMapData;//me host
+    public static ActivityManager activityManager;
 
     public static void init(AppCompatActivity activity){
+        dataManager=new DataManager();
         socketManager = new SocketManager(activity);
         gameManager = new GameManager();
-        dataManager=new DataManager();
         chessBoard=new ChessBoard();
         playerMapData=new HashMap<>();
         playerMapData.put("me",new Player("0","ME","0",0));
+        activityManager=new ActivityManager();
     }
 }

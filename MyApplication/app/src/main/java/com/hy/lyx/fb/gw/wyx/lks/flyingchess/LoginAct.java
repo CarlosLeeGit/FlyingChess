@@ -24,6 +24,7 @@ public class LoginAct extends AppCompatActivity implements Target {
         setContentView(R.layout.activity_login);
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);//Activity切换动画
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        Game.activityManager.add(this);
         //init
         login = (Button)findViewById(R.id.loginButton);
         myName=(EditText)findViewById(R.id.name);

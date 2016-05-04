@@ -14,6 +14,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+
 import java.io.InputStream;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -65,6 +67,7 @@ public class ChooseModeAct extends AppCompatActivity implements Target{
         //internet init
         Game.socketManager.registerActivity(DataPack.CONNECTED,this);
         //setting
+        Game.activityManager.add(this);
         //back ground img
         DisplayMetrics dm=new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
@@ -83,7 +86,8 @@ public class ChooseModeAct extends AppCompatActivity implements Target{
         if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {//返回按钮
             if (event.getAction() == KeyEvent.ACTION_DOWN && event.getRepeatCount() == 0) {
                 if(exit){
-                    System.exit(0);
+                    //System.exit(0);
+                    Game.activityManager.closeAll();
                 }
                 else{
                     exit=true;
