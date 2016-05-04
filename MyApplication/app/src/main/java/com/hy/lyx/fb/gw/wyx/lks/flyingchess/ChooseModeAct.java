@@ -45,6 +45,7 @@ public class ChooseModeAct extends AppCompatActivity implements Target{
         local.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {//choose local game
+                Game.sound.button();
                 Game.dataManager.setGameMode(DataManager.GM_LOCAL);//set game mode
                 Intent intent=new Intent(getApplicationContext(),GameInfoAct.class);
                 startActivity(intent);//switch to GameInfoAct
@@ -53,6 +54,7 @@ public class ChooseModeAct extends AppCompatActivity implements Target{
         lan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Game.sound.button();
                 Game.dataManager.setGameMode(DataManager.GM_LAN);
                 Intent intent=new Intent(getApplicationContext(),GameInfoAct.class);
                 startActivity(intent);
@@ -61,6 +63,7 @@ public class ChooseModeAct extends AppCompatActivity implements Target{
         wlan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Game.sound.button();
                 Game.socketManager.connectToServer();
             }
         });

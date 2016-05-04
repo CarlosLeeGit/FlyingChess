@@ -52,6 +52,7 @@ public class GameInfoAct extends AppCompatActivity implements Target{
         createButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {//start a new game
+                Game.sound.button();
                 if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
                     LinkedList<String> msgs=new LinkedList<String>();
                     msgs.addLast(Game.playerMapData.get("me").id);
@@ -77,6 +78,7 @@ public class GameInfoAct extends AppCompatActivity implements Target{
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Game.sound.returnButton();
                 goBack();
             }
         });
@@ -90,6 +92,7 @@ public class GameInfoAct extends AppCompatActivity implements Target{
         joinButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Game.sound.button();
                 boolean find=false;
                 synchronized (roomListData){
                     for(HashMap<String,String> map:roomListData){

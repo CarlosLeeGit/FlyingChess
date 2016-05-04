@@ -54,6 +54,7 @@ public class RoomAct extends AppCompatActivity implements Target {
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Game.sound.button();
                 if(idlePlayerListData.size()>1)
                     Toast.makeText(getApplicationContext(),"some one is not ready!",Toast.LENGTH_SHORT).show();
                 else{
@@ -84,6 +85,7 @@ public class RoomAct extends AppCompatActivity implements Target {
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Game.sound.returnButton();
                 if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
                     LinkedList<String> msgs=new LinkedList<>();
                     msgs.addLast(Game.playerMapData.get("me").id);

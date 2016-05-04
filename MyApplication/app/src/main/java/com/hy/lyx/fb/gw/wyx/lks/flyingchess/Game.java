@@ -20,6 +20,7 @@ public class Game{
     public static SocketManager socketManager;
     public static HashMap<String,Player> playerMapData;//me host
     public static ActivityManager activityManager;
+    public static Sound sound;
 
     public static void init(AppCompatActivity activity){
         dataManager=new DataManager();
@@ -29,5 +30,7 @@ public class Game{
         playerMapData=new HashMap<>();
         playerMapData.put("me",new Player("0","ME","0",0));
         activityManager=new ActivityManager();
+        sound = new Sound();
+        sound.init(activity.getApplicationContext());
     }
 }
