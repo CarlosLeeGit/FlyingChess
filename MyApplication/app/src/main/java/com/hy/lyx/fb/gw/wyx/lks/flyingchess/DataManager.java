@@ -20,6 +20,7 @@ public class DataManager {//数据存储类
     private boolean autoLogin;//需要登录
     private String roomId;//房间ID
     private int gameMode;//游戏模式
+    private int lastWinner;
     Data data;
 
     public DataManager(){//加载本地数据
@@ -93,6 +94,10 @@ public class DataManager {//数据存储类
     public int getScore(){
         return (data.score);
     }
+
+    public int getLastWinner(){
+        return lastWinner;
+    }
     /////////////////////////////////////////////////////setter
 
     public void setMyName(String myName){//设置用户名
@@ -125,6 +130,10 @@ public class DataManager {//数据存储类
 
     public void setScore(int score){
         data.score=score;
+    }
+
+    public void setWinner(int winner){
+        lastWinner=winner;
     }
     //////////////////////////////////
     public void saveData(){

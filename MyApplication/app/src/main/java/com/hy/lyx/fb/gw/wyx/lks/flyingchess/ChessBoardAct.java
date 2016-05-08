@@ -324,13 +324,23 @@ class MyHandler extends Handler{
                 Intent intent = new Intent(parent.getApplicationContext(), RoomAct.class);
                 ArrayList<String> msgs=new ArrayList<>();
                 if(Game.dataManager.getGameMode()==DataManager.GM_LOCAL){
+                    if(Game.dataManager.getLastWinner()==Game.playerMapData.get("me").color)
+                        Game.dataManager.setScore(Game.dataManager.getScore()+10);
                     Game.playerMapData.get("me").color=-1;
                     msgs.add(Game.playerMapData.get("me").id);
                     msgs.add(Game.playerMapData.get("me").name);
-                    msgs.add(Game.playerMapData.get("me").score);
+                    msgs.add(String.valueOf(Game.dataManager.getScore()));
                     msgs.add("-1");
                 }
                 else if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
+                    for(String key:Game.playerMapData.keySet()){//更新分数
+                        if(Game.playerMapData.get(key).color!=Game.dataManager.getLastWinner()){
+                            Game.playerMapData.get(key).score=String.valueOf(Integer.valueOf(Game.playerMapData.get(key).score)-5);
+                        }
+                        else{
+                            Game.playerMapData.get(key).score=String.valueOf(Integer.valueOf(Game.playerMapData.get(key).score)+10);
+                        }
+                    }
                     msgs.add(Game.playerMapData.get("host").id);
                     msgs.add(Game.playerMapData.get("host").name);
                     msgs.add(Game.playerMapData.get("host").score);
@@ -353,6 +363,9 @@ class MyHandler extends Handler{
                 }
                 intent.putStringArrayListExtra("msgs",msgs);
                 parent.startActivity(intent);
+                Intent intent2 = new Intent(parent.getApplicationContext(),GameEndAct.class);
+                intent2.putStringArrayListExtra("msgs",msgs);
+                parent.startActivity(intent2);
             }
             default:
                 super.handleMessage(msg);

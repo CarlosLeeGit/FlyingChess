@@ -44,7 +44,10 @@
             android:name=".WaitingAct"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.Light.Dialog.Alert" />
-        <activity android:name=".GameEndAct"></activity>
+        <activity
+            android:name=".GameEndAct"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.AppCompat.Light.Dialog.Alert" />
     </application>
 
 </manifest>
