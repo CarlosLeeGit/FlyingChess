@@ -353,7 +353,7 @@ class MyHandler extends Handler{
                         if(Game.playerMapData.get("me").id.compareTo(Game.playerMapData.get(key).id)!=0&&Game.playerMapData.get("host").id.compareTo(Game.playerMapData.get(key).id)!=0&&Integer.valueOf(Game.playerMapData.get(key).id)>=0){
                             msgs.add(Game.playerMapData.get(key).id);
                             msgs.add(Game.playerMapData.get(key).name);
-                            msgs.add(Game.playerMapData.get(key).score);
+                            msgs.add(Game.playerMapData.get(key).score); 
                             msgs.add("-1");
                         }
                     }
