@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Name"
+        android:id="@+id/name"
+        android:textSize="30sp"
+        android:layout_weight="1"
+        android:background="@drawable/list_item"
+        android:textColor="#ffffff" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="state"
+        android:id="@+id/state"
+        android:textSize="30sp"
+        android:layout_weight="1"
+        android:background="@drawable/list_item"
+        android:textColor="#ffffff" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="action"
+        android:id="@+id/action"
+        android:textSize="30sp"
+        android:layout_weight="1"
+        android:background="@drawable/list_item"
+        android:textColor="#ffffff" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="score"
+        android:id="@+id/score"
+        android:textSize="30sp"
+        android:layout_weight="1"
+        android:background="@drawable/list_item"
+        android:textColor="#ffffff" />
+</LinearLayout>

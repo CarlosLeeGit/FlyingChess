@@ -13,7 +13,37 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Continue"
-        android:id="@+id/button5"
+        android:id="@+id/con"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true" />
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/listView"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/con"
+        android:layout_below="@+id/winner" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Result"
+        android:id="@+id/textView5"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:textColor="#e9d92e"
+        android:textSize="40sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="winner"
+        android:id="@+id/winner"
+        android:layout_below="@+id/textView5"
+        android:layout_centerHorizontal="true"
+        android:textSize="30sp"
+        android:textColor="#a30000" />
 </RelativeLayout>

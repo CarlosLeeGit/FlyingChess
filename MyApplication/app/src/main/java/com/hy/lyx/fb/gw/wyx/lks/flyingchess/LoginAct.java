@@ -42,43 +42,43 @@ public class LoginAct extends AppCompatActivity implements Target {
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(myName.getEditText().length()==0){
+                if(_myName.getText().length()==0){
                     _myName.setError("Please input you name");
                     _myName.requestFocus();
                     return;
                 }
-                if(pw.getEditText().length()==0){
+                if(_pw.getText().length()==0){
                     _pw.setError("Please input you password");
                     _pw.requestFocus();
                     return;
                 }
                 if(bRegister){// sign in
-                    if(pw2.getEditText().length()==0){
+                    if(_pw2.getText().length()==0){
                         _pw2.setError("Please confirm you password");
                         _pw2.requestFocus();
                         return;
                     }
-                    if(pw2.getEditText().toString().compareTo(_pw2.getText().toString())!=0){
+                    if(_pw2.getText().toString().compareTo(_pw2.getText().toString())!=0){
                         _pw2.setError("Password you input is not same");
                         _pw2.requestFocus();
                         return;
                     }
                     //sign in
                     LinkedList<String> msgList=new LinkedList<>();
-                    msgList.addLast(myName.getEditText().toString());
-                    msgList.addLast(pw.getEditText().toString());
+                    msgList.addLast(_myName.getText().toString());
+                    msgList.addLast(_pw.getText().toString());
                     DataPack dataPack=new DataPack(DataPack.R_REGISTER,msgList);
                     Game.socketManager.send(dataPack);
                 }
                 else{// login
                     LinkedList<String> msgList=new LinkedList<String>();
-                    msgList.addLast(myName.getEditText().toString());
-                    msgList.addLast(pw.getEditText().toString());
+                    msgList.addLast(_myName.getText().toString());
+                    msgList.addLast(_pw.getText().toString());
                     DataPack dataPack=new DataPack(DataPack.R_LOGIN,msgList);
                     Game.socketManager.send(dataPack);
-                    Game.dataManager.setMyName(myName.getEditText().toString());
-                    Game.dataManager.setPassword(pw.getEditText().toString());
-                    Game.playerMapData.get("me").name=myName.getEditText().toString();
+                    Game.dataManager.setMyName(_myName.getText().toString());
+                    Game.dataManager.setPassword(_pw.getText().toString());
+                    Game.playerMapData.get("me").name=_myName.getText().toString();
                 }
             }
         });

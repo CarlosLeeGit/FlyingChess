@@ -5,4 +5,7 @@
     <string name="register">Register</string>
     <string name="password">Password</string>
     <string name="password_confirm">Password confirm</string>
+    <string name="resume">继续</string>
+    <string name="robot">托管</string>
+    <string name="exit">退出</string>
 </resources>

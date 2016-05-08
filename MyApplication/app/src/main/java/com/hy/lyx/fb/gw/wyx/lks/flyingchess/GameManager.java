@@ -14,6 +14,7 @@ public class GameManager implements Target {//game process control
     private ChessBoardAct board;
     private boolean waitForPlane,waitForDice,finished;
     private int dice,whichPlane;
+    private String winnerId;
     private String winner;
     public GameManager(){
         gw=new GameWorker();
@@ -48,10 +49,9 @@ public class GameManager implements Target {//game process control
                 msgs.addLast(String.format("%d",dice));
                 Game.socketManager.send(new DataPack(DataPack.R_GAME_PROCEED_DICE,msgs));
             }
-            //UI update
             Game.sound.roll();
             diceAnimate(dice);
-
+            //get plane
             if(Player.canIMove(color,dice)){//can move a plane
                 //get plane
                 do {
@@ -59,22 +59,7 @@ public class GameManager implements Target {//game process control
                 }while(!Player.move(color,whichPlane,dice));
                 ///UI update
                 flyNow(color);
-                finished=true;
-                for(int i=0;i<4;i++){
-                    if(Game.chessBoard.getAirplane(color).position[i]!=-2){
-                        finished=false;
-                    }
-                }
-                if(finished){
-                    toast("I am the winner!");
-                    if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
-                        LinkedList<String> msgs=new LinkedList<>();
-                        msgs.addLast(Game.playerMapData.get("me").id);
-                        msgs.addLast(Game.dataManager.getRoomId());
-                        msgs.addLast(Game.dataManager.getMyName());
-                    }
-                    gameOver();
-                }
+                amIWin(Game.playerMapData.get("me").id,color);
             }
             else{
                 toast("i can not move");
@@ -90,7 +75,7 @@ public class GameManager implements Target {//game process control
             }
 
             try {
-                Thread.sleep(2000);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -99,9 +84,9 @@ public class GameManager implements Target {//game process control
             switch (Game.dataManager.getGameMode()){
                 case DataManager.GM_LOCAL://local game
                 {
+                    //dice
                     Random r=new Random(System.currentTimeMillis());
                     dice=r.nextInt(6)+1;
-                    //UI
                     Game.sound.roll();
                     diceAnimate(dice);
                     try {
@@ -109,7 +94,7 @@ public class GameManager implements Target {//game process control
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-
+                    //plane
                     if(Player.canIMove(color,dice)){
                         do{
                             whichPlane=r.nextInt(4);
@@ -117,10 +102,11 @@ public class GameManager implements Target {//game process control
                         ///UI update
                         flyNow(color);
                         //
+                        amIWin("-1",color);
                     }
 
                     try {
-                        Thread.sleep(2000);
+                        Thread.sleep(1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -136,14 +122,11 @@ public class GameManager implements Target {//game process control
                     {
                         Random r=new Random(System.currentTimeMillis());
                         dice=r.nextInt(6)+1;
-                        //UI
-
                         LinkedList<String> msgs=new LinkedList<>();
-                        msgs.addLast(Game.playerMapData.get("me").id);
+                        msgs.addLast(String.valueOf(-color-1));
                         msgs.addLast(Game.dataManager.getRoomId());
                         msgs.addLast(String.format("%d",dice));
                         Game.socketManager.send(new DataPack(DataPack.R_GAME_PROCEED_DICE,msgs));
-
                         Game.sound.roll();
                         diceAnimate(dice);
                         try {
@@ -152,6 +135,7 @@ public class GameManager implements Target {//game process control
                             e.printStackTrace();
                         }
 
+
                         if(Player.canIMove(color,dice)){
                             do{
                                 whichPlane=r.nextInt(4);
@@ -159,6 +143,7 @@ public class GameManager implements Target {//game process control
                             ///UI update
                             flyNow(color);
                             //
+                            amIWin("-1",color);
                         }
                         LinkedList<String> msgs2=new LinkedList<>();
                         msgs2.addLast(Game.playerMapData.get("me").id);
@@ -166,7 +151,7 @@ public class GameManager implements Target {//game process control
                         msgs2.addLast(String.format("%d",whichPlane));
                         Game.socketManager.send(new DataPack(DataPack.R_GAME_PROCEED_PLANE,msgs2));
                         try {
-                            Thread.sleep(2000);
+                            Thread.sleep(1000);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -179,7 +164,6 @@ public class GameManager implements Target {//game process control
                                 e.printStackTrace();
                             }
                         }
-                        ///////whichplane  dice;
                         Game.sound.roll();
                         diceAnimate(dice);
                         while(waitForPlane) {
@@ -192,11 +176,8 @@ public class GameManager implements Target {//game process control
                         if(Player.canIMove(color,dice)) {
                             Player.move(color, whichPlane, dice);
                             flyNow(color);
+                            amIWin("z",color);
                         }
-                    }
-                    /////////is finished?
-                    if(finished){
-                        toast("player "+ winner +" is the winner!");
                     }
                 }
                     break;
@@ -205,8 +186,49 @@ public class GameManager implements Target {//game process control
 
     }
 
+    private void amIWin(String id,int color){
+        finished=true;
+        for(int i=0;i<4;i++){
+            if(Game.chessBoard.getAirplane(color).position[i]!=-2){
+                finished=false;
+            }
+        }
+        if(finished){
+            if(id.compareTo("z")!=0){
+                if(Integer.valueOf(id)<0) {
+                    String[] s = {"Red","Green","Blue","Yellow"};
+                    toast(s[color]+" robot is the winner!");
+                }
+                else
+                    toast("I am the winner!");
+                if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
+                    LinkedList<String> msgs=new LinkedList<>();
+                    msgs.addLast(id);
+                    msgs.addLast(Game.dataManager.getRoomId());
+                    if(Integer.valueOf(id)<0)
+                        msgs.addLast("ROBOT");
+                    else
+                        msgs.addLast(Game.dataManager.getMyName());
+                }
+                Game.dataManager.setWinner(id);
+            }
+            else{
+                while(!this.finished){
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                toast("player"+winner+"is the winner!");
+                Game.dataManager.setWinner(winnerId);
+            }
+            gameOver();
+        }
+    }
+
     private void diceAnimate(int dice){
-        for(int i=0;i<15;i++){
+        for(int i=0;i<10;i++){
             Message msg = new Message();
             Bundle b = new Bundle();
             b.putString("dice",String.format("%d",Game.chessBoard.getDice().roll()));
@@ -300,6 +322,10 @@ public class GameManager implements Target {//game process control
             crash(color, toPos);
             Game.chessBoard.setOverflow(false);
         }
+        else if(toPos==-2) {
+            for(int pos = curPos+1;pos<=56;pos++)
+                planeAnimate(color,pos);
+        }
     }
 
     public void crash(int color, int pos) {
@@ -342,6 +368,7 @@ public class GameManager implements Target {//game process control
     public void processDataPack(DataPack dataPack) {
         switch (dataPack.getCommand()){
             case DataPack.E_GAME_FINISHED:
+                winnerId=dataPack.getMessage(0);
                 winner=dataPack.getMessage(2);
                 finished=true;
                 break;

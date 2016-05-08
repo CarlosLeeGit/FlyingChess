@@ -270,6 +270,7 @@ public class ChessBoardAct extends AppCompatActivity {
         if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
 
         }
+        Game.dataManager.setWinner("x");
         Game.gameManager.gameOver();
         startActivity(new Intent(getApplicationContext(),GameInfoAct.class));
     }
@@ -319,13 +320,15 @@ class MyHandler extends Handler{
                 int whichPlane=msg.getData().getInt("whichPlane");
                 parent.animMoveTo(parent.plane[color][whichPlane],Game.chessBoard.mapStart[color][whichPlane][0],Game.chessBoard.mapStart[color][whichPlane][1]);
             }
+            break;
             case 5://finished
             {
                 Intent intent = new Intent(parent.getApplicationContext(), RoomAct.class);
                 ArrayList<String> msgs=new ArrayList<>();
                 if(Game.dataManager.getGameMode()==DataManager.GM_LOCAL){
-                    if(Game.dataManager.getLastWinner()==Game.playerMapData.get("me").color)
+                    if(Game.dataManager.getLastWinner().compareTo(Game.playerMapData.get("me").id)==0)//更新分数
                         Game.dataManager.setScore(Game.dataManager.getScore()+10);
+                    Game.dataManager.saveData();
                     Game.playerMapData.get("me").color=-1;
                     msgs.add(Game.playerMapData.get("me").id);
                     msgs.add(Game.playerMapData.get("me").name);
@@ -333,8 +336,8 @@ class MyHandler extends Handler{
                     msgs.add("-1");
                 }
                 else if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
-                    for(String key:Game.playerMapData.keySet()){//更新分数
-                        if(Game.playerMapData.get(key).color!=Game.dataManager.getLastWinner()){
+                    for(String key:Game.playerMapData.keySet()){//更新玩家的分数
+                        if(Game.playerMapData.get(key).id.compareTo(Game.dataManager.getLastWinner())==0&&Integer.valueOf(Game.playerMapData.get(key).id)>=0){
                             Game.playerMapData.get(key).score=String.valueOf(Integer.valueOf(Game.playerMapData.get(key).score)-5);
                         }
                         else{
@@ -347,7 +350,7 @@ class MyHandler extends Handler{
                     msgs.add("-1");
                     for(String key:Game.playerMapData.keySet()){
                         Game.playerMapData.get(key).color=-1;
-                        if(Game.playerMapData.get("me").id.compareTo(Game.playerMapData.get(key).id)!=0&&Game.playerMapData.get("host").id.compareTo(Game.playerMapData.get(key).id)!=0){
+                        if(Game.playerMapData.get("me").id.compareTo(Game.playerMapData.get(key).id)!=0&&Game.playerMapData.get("host").id.compareTo(Game.playerMapData.get(key).id)!=0&&Integer.valueOf(Game.playerMapData.get(key).id)>=0){
                             msgs.add(Game.playerMapData.get(key).id);
                             msgs.add(Game.playerMapData.get(key).name);
                             msgs.add(Game.playerMapData.get(key).score);
@@ -363,9 +366,11 @@ class MyHandler extends Handler{
                 }
                 intent.putStringArrayListExtra("msgs",msgs);
                 parent.startActivity(intent);
-                Intent intent2 = new Intent(parent.getApplicationContext(),GameEndAct.class);
-                intent2.putStringArrayListExtra("msgs",msgs);
-                parent.startActivity(intent2);
+                if(Game.dataManager.getLastWinner().compareTo("x")!=0){
+                    Intent intent2 = new Intent(parent.getApplicationContext(),GameEndAct.class);
+                    intent2.putStringArrayListExtra("msgs",msgs);
+                    parent.startActivity(intent2);
+                }
             }
             default:
                 super.handleMessage(msg);
