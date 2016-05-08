@@ -40,7 +40,14 @@ public class GameManager implements Target {//game process control
     public void turnTo(int color){//call by other thread  be careful
         if(color==Game.playerMapData.get("me").color){//it is my turn
             //get dice
-            dice=Player.roll();
+            boolean auto=Game.dataManager.isGiveUp();
+            if(auto){//托管
+                Random r=new Random(System.currentTimeMillis());
+                dice=r.nextInt(6)+1;
+            }
+            else{
+                dice=Player.roll();
+            }
 
             if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
                 LinkedList<String> msgs=new LinkedList<>();
@@ -52,14 +59,26 @@ public class GameManager implements Target {//game process control
             Game.sound.roll();
             diceAnimate(dice);
             //get plane
+            boolean canFly=false;
             if(Player.canIMove(color,dice)){//can move a plane
                 //get plane
                 do {
-                    whichPlane=Player.choosePlane();
+                    if(auto){//托管
+                        Random r=new Random(System.currentTimeMillis());
+                        whichPlane=r.nextInt(4);
+                        for(int i=0;i<4;i++){//寻找正好到达的飞机
+                            if(56-Game.chessBoard.getAirplane(color).position[i]==dice){
+                                whichPlane=i;
+                                break;
+                            }
+                        }
+                    }
+                    else{
+                        whichPlane=Player.choosePlane();
+                    }
                 }while(!Player.move(color,whichPlane,dice));
                 ///UI update
-                flyNow(color);
-                amIWin(Game.playerMapData.get("me").id,color);
+                canFly=true;
             }
             else{
                 toast("i can not move");
@@ -73,12 +92,16 @@ public class GameManager implements Target {//game process control
                 msgs2.addLast(String.format("%d",whichPlane));
                 Game.socketManager.send(new DataPack(DataPack.R_GAME_PROCEED_PLANE,msgs2));
             }
-
+            if(canFly){
+                flyNow(color);
+                amIWin(Game.playerMapData.get("me").id,color);
+            }
             try {
-                Thread.sleep(1000);
+                Thread.sleep(200);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+
         }
         else{//others
             switch (Game.dataManager.getGameMode()){
@@ -90,7 +113,7 @@ public class GameManager implements Target {//game process control
                     Game.sound.roll();
                     diceAnimate(dice);
                     try {
-                        Thread.sleep(1000);
+                        Thread.sleep(200);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -106,7 +129,7 @@ public class GameManager implements Target {//game process control
                     }
 
                     try {
-                        Thread.sleep(1000);
+                        Thread.sleep(200);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -130,28 +153,31 @@ public class GameManager implements Target {//game process control
                         Game.sound.roll();
                         diceAnimate(dice);
                         try {
-                            Thread.sleep(1000);
+                            Thread.sleep(200);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
 
-
+                        boolean canFly=false;
                         if(Player.canIMove(color,dice)){
                             do{
                                 whichPlane=r.nextInt(4);
                             }while(!Player.move(color,whichPlane,dice));
                             ///UI update
-                            flyNow(color);
-                            //
-                            amIWin("-1",color);
+                            canFly=true;
                         }
                         LinkedList<String> msgs2=new LinkedList<>();
                         msgs2.addLast(Game.playerMapData.get("me").id);
                         msgs2.addLast(Game.dataManager.getRoomId());
                         msgs2.addLast(String.format("%d",whichPlane));
                         Game.socketManager.send(new DataPack(DataPack.R_GAME_PROCEED_PLANE,msgs2));
+
+                        if(canFly){
+                            flyNow(color);
+                            amIWin("-1",color);
+                        }
                         try {
-                            Thread.sleep(1000);
+                            Thread.sleep(200);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -187,13 +213,13 @@ public class GameManager implements Target {//game process control
     }
 
     private void amIWin(String id,int color){
-        finished=true;
+        boolean win=true;
         for(int i=0;i<4;i++){
             if(Game.chessBoard.getAirplane(color).position[i]!=-2){
-                finished=false;
+                win=false;
             }
         }
-        if(finished){
+        if(win){
             if(id.compareTo("z")!=0){
                 if(Integer.valueOf(id)<0) {
                     String[] s = {"Red","Green","Blue","Yellow"};
@@ -205,6 +231,7 @@ public class GameManager implements Target {//game process control
                     LinkedList<String> msgs=new LinkedList<>();
                     msgs.addLast(id);
                     msgs.addLast(Game.dataManager.getRoomId());
+                    Game.socketManager.send(new DataPack(DataPack.E_GAME_FINISHED,msgs));
                     if(Integer.valueOf(id)<0)
                         msgs.addLast("ROBOT");
                     else
@@ -213,7 +240,7 @@ public class GameManager implements Target {//game process control
                 Game.dataManager.setWinner(id);
             }
             else{
-                while(!this.finished){
+                while(!finished){
                     try {
                         Thread.sleep(100);
                     } catch (InterruptedException e) {

@@ -14,7 +14,8 @@
         android:layout_height="wrap_content"
         android:text="@string/resume"
         android:id="@+id/resume"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_margin="10sp" />
 
     <Button
         android:layout_width="wrap_content"
@@ -22,7 +23,8 @@
         android:text="@string/robot"
         android:id="@+id/robot"
         android:layout_below="@+id/resume"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_margin="10sp" />
 
     <Button
         android:layout_width="wrap_content"
@@ -30,5 +32,6 @@
         android:text="@string/exit"
         android:id="@+id/exit"
         android:layout_below="@+id/robot"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_margin="10sp" />
 </RelativeLayout>

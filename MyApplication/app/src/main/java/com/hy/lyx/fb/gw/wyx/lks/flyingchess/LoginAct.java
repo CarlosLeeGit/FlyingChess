@@ -69,6 +69,9 @@ public class LoginAct extends AppCompatActivity implements Target {
                     msgList.addLast(_pw.getText().toString());
                     DataPack dataPack=new DataPack(DataPack.R_REGISTER,msgList);
                     Game.socketManager.send(dataPack);
+                    Intent intent = new Intent(getApplicationContext(),WaitingAct.class);
+                    intent.putExtra("tipe","Register..");
+                    startActivity(intent);
                 }
                 else{// login
                     LinkedList<String> msgList=new LinkedList<String>();
@@ -76,6 +79,9 @@ public class LoginAct extends AppCompatActivity implements Target {
                     msgList.addLast(_pw.getText().toString());
                     DataPack dataPack=new DataPack(DataPack.R_LOGIN,msgList);
                     Game.socketManager.send(dataPack);
+                    Intent intent = new Intent(getApplicationContext(),WaitingAct.class);
+                    intent.putExtra("tipe","login..");
+                    startActivity(intent);
                     Game.dataManager.setMyName(_myName.getText().toString());
                     Game.dataManager.setPassword(_pw.getText().toString());
                     Game.playerMapData.get("me").name=_myName.getText().toString();
@@ -133,6 +139,7 @@ public class LoginAct extends AppCompatActivity implements Target {
                 myName.post(new Runnable() {
                     @Override
                     public void run() {
+                        Game.activityManager.back();
                         Toast.makeText(getApplicationContext(),"Login failed!",Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -160,6 +167,7 @@ public class LoginAct extends AppCompatActivity implements Target {
                     }
                 });
             }
+            Game.activityManager.back();
         }
     }
 

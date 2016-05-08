@@ -19,7 +19,6 @@ import java.util.TimerTask;
 
 public class RoomAct extends AppCompatActivity implements Target {
     Button startButton,backButton,site[],addRobotButton[];
-    Timer closeTimer;
     int[] siteState;// -1 none   0 robot    1 people
     ListView idlePlayerView;
     LinkedList<HashMap<String,String>> idlePlayerListData;
@@ -32,7 +31,6 @@ public class RoomAct extends AppCompatActivity implements Target {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         Game.activityManager.add(this);
         //init
-        closeTimer=new Timer();
         startButton=(Button)findViewById(R.id.start);
         backButton=(Button)findViewById(R.id.back);
         site=new Button[4];
@@ -72,12 +70,6 @@ public class RoomAct extends AppCompatActivity implements Target {
                     else if(Game.dataManager.getGameMode()==DataManager.GM_LOCAL){
                         Intent intent=new Intent(getApplicationContext(),ChessBoardAct.class);
                         startActivity(intent);
-                        closeTimer.schedule(new TimerTask() {
-                            @Override
-                            public void run() {
-                                finish();
-                            }
-                        },2000);
                     }
                 }
             }
@@ -93,15 +85,11 @@ public class RoomAct extends AppCompatActivity implements Target {
                     msgs.addLast(String.format("%d",Game.playerMapData.get("me").color));
                     DataPack dataPack = new DataPack(DataPack.R_ROOM_EXIT,msgs);
                     Game.socketManager.send(dataPack);
+                    startActivity(new Intent(getApplicationContext(),GameInfoAct.class));
                 }
-                Intent intent=new Intent(getApplicationContext(),GameInfoAct.class);
-                startActivity(intent);
-                closeTimer.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        finish();
-                    }
-                },2000);
+                else if(Game.dataManager.getGameMode()==DataManager.GM_LOCAL){
+                    startActivity(new Intent(getApplicationContext(),ChooseModeAct.class));
+                }
             }
         });
 
@@ -244,12 +232,6 @@ public class RoomAct extends AppCompatActivity implements Target {
             {
                 Intent intent=new Intent(getApplicationContext(),GameInfoAct.class);
                 startActivity(intent);
-                closeTimer.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        finish();
-                    }
-                },2000);
             }
             else{
                 for(HashMap<String,String> map:idlePlayerListData){
@@ -373,12 +355,6 @@ public class RoomAct extends AppCompatActivity implements Target {
             System.out.println(dataPack.toString());
             Intent intent=new Intent(getApplicationContext(),ChessBoardAct.class);
             startActivity(intent);
-            closeTimer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    finish();
-                }
-            },2000);
         }
     }
 
@@ -468,11 +444,5 @@ public class RoomAct extends AppCompatActivity implements Target {
         }
         Intent intent=new Intent(getApplicationContext(),GameInfoAct.class);
         startActivity(intent);
-        closeTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                finish();
-            }
-        },2000);
     }
 }

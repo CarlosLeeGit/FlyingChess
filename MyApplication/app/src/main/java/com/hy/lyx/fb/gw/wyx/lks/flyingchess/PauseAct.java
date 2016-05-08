@@ -1,6 +1,7 @@
 package com.hy.lyx.fb.gw.wyx.lks.flyingchess;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
@@ -30,15 +31,31 @@ public class PauseAct extends Activity {
         robot.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                if(!Game.dataManager.isGiveUp()){
+                    robot.setText("取消托管");
+                    Game.dataManager.giveUp(true);
+                }
+                else{
+                    robot.setText("托管");
+                    Game.dataManager.giveUp(false);
+                }
             }
         });
 
         exit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
 
+                }
+                Game.dataManager.setWinner("x");
+                Game.gameManager.gameOver();
+                startActivity(new Intent(getApplicationContext(),GameInfoAct.class));
+                Game.dataManager.giveUp(false);
             }
         });
+        if(Game.dataManager.isGiveUp()){
+            robot.setText("取消托管");
+        }
     }
 }

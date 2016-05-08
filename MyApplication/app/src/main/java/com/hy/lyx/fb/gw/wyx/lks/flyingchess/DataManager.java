@@ -22,9 +22,11 @@ public class DataManager {//数据存储类
     private int gameMode;//游戏模式
     private String lastWinner;
     Data data;
+    private boolean giveUp;
 
     public DataManager(){//加载本地数据
         autoLogin=false;
+        giveUp=false;
         File file = new File(Environment.getExternalStorageDirectory().getPath()+"/ksymphony.com/FlyingChess/data.dat");
         if(file.exists()){
             try {
@@ -49,7 +51,7 @@ public class DataManager {//数据存储类
                 data.musicVolume=255;
                 data.ip="115.159.183.72";
                 data.myName="me";
-                data.myName="x";
+                data.password="x";
                 data.score=0;
                 Gson gson=new Gson();
                 byte[] bytes = gson.toJson(data).getBytes("utf-8");
@@ -98,6 +100,10 @@ public class DataManager {//数据存储类
     public String getLastWinner(){
         return lastWinner;
     }
+
+    public boolean isGiveUp(){
+        return giveUp;
+    }
     /////////////////////////////////////////////////////setter
 
     public void setMyName(String myName){//设置用户名
@@ -134,6 +140,10 @@ public class DataManager {//数据存储类
 
     public void setWinner(String winner){
         lastWinner=winner;
+    }
+
+    public void giveUp(boolean bool){
+        giveUp=bool;
     }
     //////////////////////////////////
     public void saveData(){

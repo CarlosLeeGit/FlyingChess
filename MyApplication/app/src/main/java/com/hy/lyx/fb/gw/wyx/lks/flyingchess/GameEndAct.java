@@ -46,12 +46,14 @@ public class GameEndAct extends AppCompatActivity {
             if(Game.dataManager.getLastWinner().compareTo(msgs.get(i))==0){
                 map.put("state","Win");
                 map.put("action","+10");
+                winner.setText(msgs.get(i+1)+" win the game~");
             }
             else{
                 map.put("state","Lost");
                 map.put("action","-5");
             }
             map.put("score", msgs.get(i + 2));
+            playerListData.addLast(map);
         }
         playerListView.setAdapter(playerListAdapter);
     }

@@ -21,7 +21,7 @@ import java.util.Timer;
 
 public class ChessBoardAct extends AppCompatActivity {
     Timer closeTimer;
-    Button pause,dice;
+    Button pause,dice,test;
     Button[][] plane;
     int boardWidth;
     Handler handler;
@@ -36,6 +36,7 @@ public class ChessBoardAct extends AppCompatActivity {
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);//Activity切换动画
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         //init
+        test=(Button)findViewById(R.id.test);
         closeTimer=new Timer();
         pause=(Button)findViewById(R.id.pause);
         dice=(Button)findViewById(R.id.dice);
@@ -75,6 +76,15 @@ public class ChessBoardAct extends AppCompatActivity {
         InputStream is = getApplicationContext().getResources().openRawResource(R.raw.map);
         map.setImageBitmap(BitmapFactory.decodeStream(is,null,opt));
         //trigger
+        test.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Game.chessBoard.getAirplane(0).position[0]=51;
+                Game.chessBoard.getAirplane(0).position[1]=52;
+                Game.chessBoard.getAirplane(0).position[2]=53;
+                Game.chessBoard.getAirplane(0).position[3]=54;
+            }
+        });
         pause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -273,6 +283,7 @@ public class ChessBoardAct extends AppCompatActivity {
         Game.dataManager.setWinner("x");
         Game.gameManager.gameOver();
         startActivity(new Intent(getApplicationContext(),GameInfoAct.class));
+        Game.dataManager.giveUp(false);
     }
 
     public void moveTo(Button plane,int x,int y){
@@ -337,11 +348,11 @@ class MyHandler extends Handler{
                 }
                 else if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
                     for(String key:Game.playerMapData.keySet()){//更新玩家的分数
-                        if(Game.playerMapData.get(key).id.compareTo(Game.dataManager.getLastWinner())==0&&Integer.valueOf(Game.playerMapData.get(key).id)>=0){
-                            Game.playerMapData.get(key).score=String.valueOf(Integer.valueOf(Game.playerMapData.get(key).score)-5);
+                        if(Game.playerMapData.get(key).id.compareTo(Game.dataManager.getLastWinner())==0){
+                            Game.playerMapData.get(key).score=String.valueOf(Integer.valueOf(Game.playerMapData.get(key).score)+10);
                         }
                         else{
-                            Game.playerMapData.get(key).score=String.valueOf(Integer.valueOf(Game.playerMapData.get(key).score)+10);
+                            Game.playerMapData.get(key).score=String.valueOf(Integer.valueOf(Game.playerMapData.get(key).score)-5);
                         }
                     }
                     msgs.add(Game.playerMapData.get("host").id);
@@ -353,7 +364,7 @@ class MyHandler extends Handler{
                         if(Game.playerMapData.get("me").id.compareTo(Game.playerMapData.get(key).id)!=0&&Game.playerMapData.get("host").id.compareTo(Game.playerMapData.get(key).id)!=0&&Integer.valueOf(Game.playerMapData.get(key).id)>=0){
                             msgs.add(Game.playerMapData.get(key).id);
                             msgs.add(Game.playerMapData.get(key).name);
-                            msgs.add(Game.playerMapData.get(key).score); 
+                            msgs.add(Game.playerMapData.get(key).score);
                             msgs.add("-1");
                         }
                     }
@@ -371,6 +382,7 @@ class MyHandler extends Handler{
                     intent2.putStringArrayListExtra("msgs",msgs);
                     parent.startActivity(intent2);
                 }
+                Game.dataManager.giveUp(false);
             }
             default:
                 super.handleMessage(msg);
