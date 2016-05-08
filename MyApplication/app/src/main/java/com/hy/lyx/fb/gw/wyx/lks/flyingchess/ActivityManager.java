@@ -15,10 +15,10 @@ public class ActivityManager {
     }
     public void add(AppCompatActivity activity){
         list.addLast(activity);
-        if(list.size()>2){
-            list.getFirst().finish();
-            list.removeFirst();
-        }
+    }
+    public void back(){
+        list.getLast().finish();
+        list.removeLast();
     }
     public void closeAll(){
         for(AppCompatActivity activity: list){

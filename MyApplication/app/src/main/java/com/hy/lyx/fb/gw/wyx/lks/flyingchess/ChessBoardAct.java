@@ -302,7 +302,7 @@ class MyHandler extends Handler{
                 if(pos!=-2){
                     parent.animMoveTo(parent.plane[color][whichPlane], Game.chessBoard.map[color][pos][0], Game.chessBoard.map[color][pos][1]);
                 }
-                else{//消失
+                else{//到达
                     parent.animMoveTo(parent.plane[color][whichPlane], Game.chessBoard.map[color][55][0], Game.chessBoard.map[color][55][1]);
                 }
             }

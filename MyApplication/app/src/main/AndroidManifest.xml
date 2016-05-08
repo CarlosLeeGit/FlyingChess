@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.hy.lyx.fb.gw.wyx.lks.flyingchess">
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -33,10 +35,16 @@
             android:screenOrientation="landscape" />
         <activity
             android:name=".PauseAct"
-            android:theme="@style/Theme.AppCompat.Light.Dialog.Alert"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.AppCompat.Light.Dialog.Alert" />
+        <activity
+            android:name=".RoomAct"
             android:screenOrientation="landscape" />
-        <activity android:name=".RoomAct"
-            android:screenOrientation="landscape"/>
+        <activity
+            android:name=".WaitingAct"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.AppCompat.Light.Dialog.Alert" />
+        <activity android:name=".GameEndAct"></activity>
     </application>
 
 </manifest>

@@ -49,6 +49,7 @@ public class DataManager {//数据存储类
                 data.ip="115.159.183.72";
                 data.myName="me";
                 data.myName="x";
+                data.score=0;
                 Gson gson=new Gson();
                 byte[] bytes = gson.toJson(data).getBytes("utf-8");
                 fos.write(bytes);
@@ -89,7 +90,9 @@ public class DataManager {//数据存储类
         return autoLogin;
     }
 
-
+    public int getScore(){
+        return (data.score);
+    }
     /////////////////////////////////////////////////////setter
 
     public void setMyName(String myName){//设置用户名
@@ -119,6 +122,25 @@ public class DataManager {//数据存储类
     public void setAutoLogin(boolean autoLogin){
         this.autoLogin=autoLogin;
     }
+
+    public void setScore(int score){
+        data.score=score;
+    }
+    //////////////////////////////////
+    public void saveData(){
+        File file = new File(Environment.getExternalStorageDirectory().getPath()+"/ksymphony.com/FlyingChess/data.dat");
+        if(file.exists()){
+            try {
+                FileOutputStream fos = new FileOutputStream(file);
+                Gson gson = new Gson();
+                fos.write(gson.toJson(data).getBytes("utf-8"));
+                fos.flush();
+                fos.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }
 
 class Data{
@@ -126,11 +148,13 @@ class Data{
     String myName;
     String password;
     int musicVolume,effectVolume;//0~255 音量
+    int score;
     public Data(){
         ip=new String();
         myName=new String();
         password=new String();
         musicVolume=0;
         effectVolume=0;
+        score=0;
     }
 }

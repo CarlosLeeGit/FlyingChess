@@ -63,16 +63,6 @@ public class GameInfoAct extends AppCompatActivity implements Target{
                 else if(Game.dataManager.getGameMode()==DataManager.GM_LAN){
 
                 }
-                else{//local
-                    Intent intent = new Intent(getApplicationContext(), RoomAct.class);
-                    ArrayList<String> msgs=new ArrayList<String>();
-                    msgs.add(Game.playerMapData.get("me").id);
-                    msgs.add(Game.dataManager.getMyName());
-                    msgs.add(Game.playerMapData.get("me").score);
-                    msgs.add("-1");
-                    intent.putStringArrayListExtra("msgs",msgs);
-                    startActivity(intent);//switch wo chess board activity
-                }
             }
         });
         backButton.setOnClickListener(new View.OnClickListener() {
@@ -119,12 +109,6 @@ public class GameInfoAct extends AppCompatActivity implements Target{
             Game.socketManager.registerActivity(DataPack.A_ROOM_CREATE,this);
             Game.socketManager.registerActivity(DataPack.A_ROOM_ENTER,this);
             new Thread(worker).start();
-        }
-        // setting
-        if(Game.dataManager.getGameMode()==DataManager.GM_LOCAL) {
-            joinButton.setVisibility(View.INVISIBLE);
-            onlineLayout.setVisibility(View.INVISIBLE);
-            Game.dataManager.setMyName("ME");
         }
     }
 

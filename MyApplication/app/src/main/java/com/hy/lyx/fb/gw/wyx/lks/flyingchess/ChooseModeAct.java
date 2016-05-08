@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -47,8 +48,16 @@ public class ChooseModeAct extends AppCompatActivity implements Target{
             public void onClick(View v) {//choose local game
                 Game.sound.button();
                 Game.dataManager.setGameMode(DataManager.GM_LOCAL);//set game mode
-                Intent intent=new Intent(getApplicationContext(),GameInfoAct.class);
-                startActivity(intent);//switch to GameInfoAct
+                Game.dataManager.setMyName("ME");
+
+                Intent intent = new Intent(getApplicationContext(), RoomAct.class);
+                ArrayList<String> msgs=new ArrayList<String>();
+                msgs.add(Game.playerMapData.get("me").id);
+                msgs.add(Game.dataManager.getMyName());
+                msgs.add(String.valueOf(Game.dataManager.getScore()));
+                msgs.add("-1");
+                intent.putStringArrayListExtra("msgs",msgs);
+                startActivity(intent);//switch wo chess board activity
             }
         });
         lan.setOnClickListener(new View.OnClickListener() {
@@ -65,6 +74,9 @@ public class ChooseModeAct extends AppCompatActivity implements Target{
             public void onClick(View v) {
                 Game.sound.button();
                 Game.socketManager.connectToServer();
+                Intent intent = new Intent(getApplicationContext(),WaitingAct.class);
+                intent.putExtra("tipe","Connecting..");
+                startActivity(intent);
             }
         });
         //internet init
@@ -120,7 +132,8 @@ public class ChooseModeAct extends AppCompatActivity implements Target{
                 wlan.post(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(getApplicationContext(), "sorry,i can not connect to server now!", Toast.LENGTH_SHORT).show();
+                        Game.activityManager.back();
+                        Toast.makeText(getApplicationContext(), "Sorry,i can not connect to server now!", Toast.LENGTH_SHORT).show();
                     }
                 });
             }

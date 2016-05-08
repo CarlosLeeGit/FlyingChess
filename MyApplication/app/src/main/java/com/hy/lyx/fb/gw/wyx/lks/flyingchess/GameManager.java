@@ -49,6 +49,7 @@ public class GameManager implements Target {//game process control
                 Game.socketManager.send(new DataPack(DataPack.R_GAME_PROCEED_DICE,msgs));
             }
             //UI update
+            Game.sound.roll();
             diceAnimate(dice);
 
             if(Player.canIMove(color,dice)){//can move a plane
@@ -101,6 +102,7 @@ public class GameManager implements Target {//game process control
                     Random r=new Random(System.currentTimeMillis());
                     dice=r.nextInt(6)+1;
                     //UI
+                    Game.sound.roll();
                     diceAnimate(dice);
                     try {
                         Thread.sleep(1000);
@@ -135,7 +137,6 @@ public class GameManager implements Target {//game process control
                         Random r=new Random(System.currentTimeMillis());
                         dice=r.nextInt(6)+1;
                         //UI
-                        diceAnimate(dice);
 
                         LinkedList<String> msgs=new LinkedList<>();
                         msgs.addLast(Game.playerMapData.get("me").id);
@@ -143,6 +144,8 @@ public class GameManager implements Target {//game process control
                         msgs.addLast(String.format("%d",dice));
                         Game.socketManager.send(new DataPack(DataPack.R_GAME_PROCEED_DICE,msgs));
 
+                        Game.sound.roll();
+                        diceAnimate(dice);
                         try {
                             Thread.sleep(1000);
                         } catch (InterruptedException e) {
@@ -177,6 +180,7 @@ public class GameManager implements Target {//game process control
                             }
                         }
                         ///////whichplane  dice;
+                        Game.sound.roll();
                         diceAnimate(dice);
                         while(waitForPlane) {
                             try {
