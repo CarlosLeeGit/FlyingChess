@@ -1,5 +1,7 @@
 package com.hy.lyx.fb.gw.wyx.lks.flyingchess;
 
+import java.util.ArrayList;
+
 /**
  * Created by karthur on 2016/4/16.
  */
@@ -31,6 +33,19 @@ public class Player {//user
             }
         }
         return false;
+    }
+
+    public static ArrayList<Integer> getAvaPlaneId(int color,int dice){
+        ArrayList<Integer> arrayList=new ArrayList<>();
+        for(int i=0;i<4;i++){
+            if(Game.chessBoard.getAirplane(color).position[i]>=0){
+                arrayList.add(i);
+            }
+            else if(Game.chessBoard.getAirplane(color).position[i]==-1&&dice%2==0){
+                arrayList.add(i);
+            }
+        }
+        return arrayList;
     }
 
     public static boolean move(int color,int whichPlane,int dice){

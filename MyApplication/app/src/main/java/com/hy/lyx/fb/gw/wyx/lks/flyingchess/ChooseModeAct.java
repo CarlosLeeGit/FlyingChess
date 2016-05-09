@@ -83,6 +83,7 @@ public class ChooseModeAct extends AppCompatActivity implements Target{
         Game.socketManager.registerActivity(DataPack.CONNECTED,this);
         //setting
         Game.activityManager.add(this);
+        Game.sound.startMusic();
         //back ground img
         DisplayMetrics dm=new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);

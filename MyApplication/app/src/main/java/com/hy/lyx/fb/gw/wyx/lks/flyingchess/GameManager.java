@@ -3,6 +3,7 @@ package com.hy.lyx.fb.gw.wyx.lks.flyingchess;
 import android.os.Bundle;
 import android.os.Message;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Random;
 
@@ -16,6 +17,7 @@ public class GameManager implements Target {//game process control
     private int dice,whichPlane;
     private String winnerId;
     private String winner;
+    private ArrayList<Integer> avaPlaneId;
     public GameManager(){
         gw=new GameWorker();
         Game.socketManager.registerActivity(DataPack.E_GAME_PROCEED_PLANE,this);
@@ -49,7 +51,7 @@ public class GameManager implements Target {//game process control
                 dice=Player.roll();
             }
 
-            if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
+            if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){///发送网络信息
                 LinkedList<String> msgs=new LinkedList<>();
                 msgs.addLast(Game.playerMapData.get("me").id);
                 msgs.addLast(Game.dataManager.getRoomId());
@@ -65,7 +67,8 @@ public class GameManager implements Target {//game process control
                 do {
                     if(auto){//托管
                         Random r=new Random(System.currentTimeMillis());
-                        whichPlane=r.nextInt(4);
+                        avaPlaneId=Player.getAvaPlaneId(color,dice);
+                        whichPlane=avaPlaneId.get(r.nextInt(avaPlaneId.size()));
                         for(int i=0;i<4;i++){//寻找正好到达的飞机
                             if(56-Game.chessBoard.getAirplane(color).position[i]==dice){
                                 whichPlane=i;
@@ -120,7 +123,8 @@ public class GameManager implements Target {//game process control
                     //plane
                     if(Player.canIMove(color,dice)){
                         do{
-                            whichPlane=r.nextInt(4);
+                            avaPlaneId=Player.getAvaPlaneId(color,dice);
+                            whichPlane=avaPlaneId.get(r.nextInt(avaPlaneId.size()));
                         }while(!Player.move(color,whichPlane,dice));
                         ///UI update
                         flyNow(color);
@@ -161,7 +165,8 @@ public class GameManager implements Target {//game process control
                         boolean canFly=false;
                         if(Player.canIMove(color,dice)){
                             do{
-                                whichPlane=r.nextInt(4);
+                                avaPlaneId=Player.getAvaPlaneId(color,dice);
+                                whichPlane=avaPlaneId.get(r.nextInt(avaPlaneId.size()));
                             }while(!Player.move(color,whichPlane,dice));
                             ///UI update
                             canFly=true;
@@ -231,7 +236,7 @@ public class GameManager implements Target {//game process control
                     LinkedList<String> msgs=new LinkedList<>();
                     msgs.addLast(id);
                     msgs.addLast(Game.dataManager.getRoomId());
-                    Game.socketManager.send(new DataPack(DataPack.E_GAME_FINISHED,msgs));
+                    Game.socketManager.send(new DataPack(DataPack.R_GAME_FINISHED,msgs));
                     if(Integer.valueOf(id)<0)
                         msgs.addLast("ROBOT");
                     else
