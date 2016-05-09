@@ -383,6 +383,7 @@ class MyHandler extends Handler{
                     parent.startActivity(intent2);
                 }
                 Game.dataManager.giveUp(false);
+                Game.gameManager.gameOver();
             }
             default:
                 super.handleMessage(msg);

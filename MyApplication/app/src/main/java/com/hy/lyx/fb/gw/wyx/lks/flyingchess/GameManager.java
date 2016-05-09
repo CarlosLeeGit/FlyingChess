@@ -19,7 +19,6 @@ public class GameManager implements Target {//game process control
     private String winner;
     private ArrayList<Integer> avaPlaneId;
     public GameManager(){
-        gw=new GameWorker();
         Game.socketManager.registerActivity(DataPack.E_GAME_PROCEED_PLANE,this);
         Game.socketManager.registerActivity(DataPack.E_GAME_PROCEED_DICE,this);
         Game.socketManager.registerActivity(DataPack.E_GAME_FINISHED,this);
@@ -29,14 +28,12 @@ public class GameManager implements Target {//game process control
         Game.chessBoard.init();
         this.board=board;
         finished=false;
+        gw=new GameWorker();
         new Thread(gw).start();
     }
 
     public void gameOver(){
         gw.exit();
-        Message msg = new Message();
-        msg.what=5;
-        board.handler.sendMessage(msg);
     }
 
     public void turnTo(int color){//call by other thread  be careful
@@ -236,11 +233,12 @@ public class GameManager implements Target {//game process control
                     LinkedList<String> msgs=new LinkedList<>();
                     msgs.addLast(id);
                     msgs.addLast(Game.dataManager.getRoomId());
-                    Game.socketManager.send(new DataPack(DataPack.R_GAME_FINISHED,msgs));
                     if(Integer.valueOf(id)<0)
                         msgs.addLast("ROBOT");
                     else
                         msgs.addLast(Game.dataManager.getMyName());
+
+                    Game.socketManager.send(new DataPack(DataPack.R_GAME_FINISHED,msgs));
                 }
                 Game.dataManager.setWinner(id);
             }
@@ -256,6 +254,9 @@ public class GameManager implements Target {//game process control
                 Game.dataManager.setWinner(winnerId);
             }
             gameOver();
+            Message msg = new Message();
+            msg.what=5;
+            board.handler.sendMessage(msg);
         }
     }
 
@@ -361,6 +362,8 @@ public class GameManager implements Target {//game process control
     }
 
     public void crash(int color, int pos) {
+        if(pos>=50)//不被人撞
+            return;
         int crashColor = color;
         int crashPlane = whichPlane;
         int count = 0;
@@ -369,7 +372,7 @@ public class GameManager implements Target {//game process control
                 for(int j = 0; j < 4; j++) {
                     int crackPos = Game.chessBoard.getAirplane(i).position[j];
                     int factor = (i - color + 4) % 4;
-                    if(pos != 0 && crackPos != 0 && crackPos == (pos + 13 * factor) % 52) {
+                    if(pos != 0 && crackPos != 0 && crackPos == (pos + 13 * factor) % 52&&crackPos<50) {//撞别人
                         crashPlane = j;
                         count++;
                     }
