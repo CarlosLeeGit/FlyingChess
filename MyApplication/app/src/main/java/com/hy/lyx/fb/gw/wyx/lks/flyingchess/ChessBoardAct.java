@@ -215,11 +215,7 @@ public class ChessBoardAct extends AppCompatActivity {
         });
         Game.gameManager.newTurn(this);
         Game.activityManager.add(this);
-    }
-
-    @Override
-    public void onStart(){
-        super.onStart();
+        ///setting
         moveTo(plane[0][0],1,n-4);
         moveTo(plane[0][1],3,n-4);
         moveTo(plane[0][2],1,n-2);
@@ -264,6 +260,7 @@ public class ChessBoardAct extends AppCompatActivity {
             plane[Game.playerMapData.get(key).color][3].setVisibility(View.VISIBLE);
         }
     }
+
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
