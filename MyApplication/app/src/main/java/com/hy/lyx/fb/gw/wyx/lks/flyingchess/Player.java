@@ -1,6 +1,7 @@
 package com.hy.lyx.fb.gw.wyx.lks.flyingchess;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * Created by karthur on 2016/4/16.
@@ -35,7 +36,7 @@ public class Player {//user
         return false;
     }
 
-    public static ArrayList<Integer> getAvaPlaneId(int color,int dice){
+    public static ArrayList<Integer> getAvaPlaneId(int color,int dice){//选择可用飞机
         ArrayList<Integer> arrayList=new ArrayList<>();
         for(int i=0;i<4;i++){
             if(Game.chessBoard.getAirplane(color).position[i]>=0){
@@ -77,14 +78,14 @@ public class Player {//user
     }
 
     public static void setDiceValid(){
-        if(canRoll){
+        if(canRoll&&!Game.dataManager.isGiveUp()){
             dice=Game.chessBoard.getDice().roll();
             diceValid=true;
         }
     }
 
     public static void setPlaneValid(int _whichPlane){
-        if(canChoosePlane){
+        if(canChoosePlane&&!Game.dataManager.isGiveUp()){
             whichPlane=_whichPlane;
             planeValid=true;
         }
@@ -93,6 +94,11 @@ public class Player {//user
     public static int roll(){
         canRoll=true;
         while(!diceValid) {
+            if(Game.dataManager.isGiveUp()){//托管
+                Random r=new Random(System.currentTimeMillis());
+                dice = r.nextInt(6)+1;
+                break;
+            }
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
@@ -104,9 +110,22 @@ public class Player {//user
         return dice;
     }
 
-    public static int choosePlane(){
+    public static int choosePlane(int color,int dice){
         canChoosePlane=true;
         while(!planeValid){
+            if(Game.dataManager.isGiveUp()){//托管
+                Random r=new Random(System.currentTimeMillis());
+                ArrayList<Integer>avaPlaneId;
+                avaPlaneId=getAvaPlaneId(color,dice);
+                whichPlane=avaPlaneId.get(r.nextInt(avaPlaneId.size()));
+                for(int i=0;i<4;i++){//寻找正好到达的飞机
+                    if(56-Game.chessBoard.getAirplane(color).position[i]==dice){
+                        whichPlane=i;
+                        break;
+                    }
+                }
+                break;
+            }
             try {
                 Thread.sleep(500);
             }catch (InterruptedException e){

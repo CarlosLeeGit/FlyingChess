@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 
+import java.util.LinkedList;
+
 public class PauseAct extends Activity {
     Button resume,robot,exit;
     @Override
@@ -45,13 +47,16 @@ public class PauseAct extends Activity {
         exit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
-
-                }
-                Game.dataManager.setWinner("x");
-                Game.gameManager.gameOver();
-                startActivity(new Intent(getApplicationContext(),GameInfoAct.class));
-                Game.dataManager.giveUp(false);
+            if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
+                LinkedList<String> msgs=new LinkedList<>();
+                msgs.addLast(Game.playerMapData.get("me").id);
+                msgs.addLast(Game.dataManager.getRoomId());
+                Game.socketManager.send(new DataPack(DataPack.R_GAME_EXIT));
+            }
+            Game.dataManager.setWinner("x");
+            Game.gameManager.gameOver();
+            startActivity(new Intent(getApplicationContext(),GameInfoAct.class));
+            Game.dataManager.giveUp(false);
             }
         });
         if(Game.dataManager.isGiveUp()){

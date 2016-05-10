@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Timer;
 
 public class ChessBoardAct extends AppCompatActivity {
@@ -275,7 +276,10 @@ public class ChessBoardAct extends AppCompatActivity {
 
     public void exit(){
         if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
-
+            LinkedList<String> msgs=new LinkedList<>();
+            msgs.addLast(Game.playerMapData.get("me").id);
+            msgs.addLast(Game.dataManager.getRoomId());
+            Game.socketManager.send(new DataPack(DataPack.R_GAME_EXIT));
         }
         Game.dataManager.setWinner("x");
         Game.gameManager.gameOver();
