@@ -3,11 +3,9 @@ package com.hy.lyx.fb.gw.wyx.lks.flyingchess;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
-import android.os.SystemClock;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.Random;
 
 /**
  * Created by karthur on 2016/4/9.
@@ -15,12 +13,8 @@ import java.util.Random;
 public class GameManager implements Target {//game process control
     private GameWorker gw;//thread
     private ChessBoardAct board;
-    private boolean waitForPlane,waitForDice,finished;
+    private boolean finished;
     private int dice,whichPlane;
-    private String winnerId;
-    private String winner;
-    private ArrayList<Integer> avaPlaneId;
-    private boolean[] offline;
     public GameManager(){
         Game.socketManager.registerActivity(DataPack.E_GAME_PROCEED_PLANE,this);
         Game.socketManager.registerActivity(DataPack.E_GAME_PROCEED_DICE,this);
@@ -34,11 +28,6 @@ public class GameManager implements Target {//game process control
         finished=false;
         gw=new GameWorker();
         new Thread(gw).start();
-        offline=new boolean[4];
-        offline[0]=false;
-        offline[1]=false;
-        offline[2]=false;
-        offline[3]=false;
     }
 
     public void gameOver(){
@@ -46,188 +35,38 @@ public class GameManager implements Target {//game process control
     }
 
     public void turnTo(int color){//call by other thread  be careful
-        if(color==Game.playerMapData.get("me").color){//it is my turn
-            //get dice
-            dice=Player.roll();
-
-            if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){///发送网络信息
-                LinkedList<String> msgs=new LinkedList<>();
-                msgs.addLast(Game.playerMapData.get("me").id);
-                msgs.addLast(Game.dataManager.getRoomId());
-                msgs.addLast(String.format("%d",dice));
-                Game.socketManager.send(new DataPack(DataPack.R_GAME_PROCEED_DICE,msgs));
+        Role role=null;
+        for(String key:Game.playersData.keySet()){
+            if(Game.playersData.get(key).color==color){
+                role=Game.playersData.get(key);
             }
-            Game.sound.roll();
+        }
+        if(role!=null) {//此颜色有玩家
+            dice = role.roll();
+            if((role.offline||role.type!=Role.PLAYER)&&Game.dataManager.getHostId().compareTo(Game.dataManager.getMyId())==0||role.type==Role.ME){
+                Game.socketManager.send(DataPack.R_GAME_PROCEED_DICE,role.id, Game.dataManager.getRoomId(), dice);
+            }
+            Game.soundManager.playSound(SoundManager.ROLL);
             diceAnimate(dice);
-            //get plane
-            boolean canFly=false;
-            if(Player.canIMove(color,dice)){//can move a plane
-                //get plane
+            Game.delay(200);
+            boolean canFly = false;
+            if (role.canIMove()) {
                 do {
-                    whichPlane=Player.choosePlane(color,dice);
-                }while(!Player.move(color,whichPlane,dice));
-                ///UI update
-                canFly=true;
+                    whichPlane = role.choosePlane();
+                } while (!role.move());
+                canFly = true;
+            } else if(role.type==Role.ME){
+                toast("sad...I can not move");
             }
-            else{
-                toast("i can not move");
+            if((role.offline||role.type!=Role.PLAYER)&&Game.dataManager.getHostId().compareTo(Game.dataManager.getMyId())==0||role.type==Role.ME){
+                Game.socketManager.send(DataPack.R_GAME_PROCEED_PLANE, role.id, Game.dataManager.getRoomId(), whichPlane);
             }
-
-            //tell other players
-            if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
-                LinkedList<String> msgs2=new LinkedList<>();
-                msgs2.addLast(Game.playerMapData.get("me").id);
-                msgs2.addLast(Game.dataManager.getRoomId());
-                msgs2.addLast(String.format("%d",whichPlane));
-                Game.socketManager.send(new DataPack(DataPack.R_GAME_PROCEED_PLANE,msgs2));
-            }
-            if(canFly){
+            if (canFly) {
                 flyNow(color);
-                amIWin(Game.playerMapData.get("me").id,color);
+                amIWin(role.id, color);
             }
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
+            Game.delay(200);
         }
-        else{//others
-            switch (Game.dataManager.getGameMode()){
-                case DataManager.GM_LOCAL://local game
-                {//////////////////////////AI
-                    //dice/
-                    Random r=new Random(System.currentTimeMillis());
-                    dice=r.nextInt(6)+1;
-                    Game.sound.roll();
-                    diceAnimate(dice);
-                    try {
-                        Thread.sleep(200);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    //plane
-                    if(Player.canIMove(color,dice)){
-                        do{
-                            avaPlaneId=Player.getAvaPlaneId(color,dice);
-                            whichPlane=avaPlaneId.get(r.nextInt(avaPlaneId.size()));
-                        }while(!Player.move(color,whichPlane,dice));
-                        ///UI update
-                        flyNow(color);
-                        //
-                        amIWin("-1",color);
-                    }
-
-                    try {
-                        Thread.sleep(200);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-                    break;
-                case DataManager.GM_LAN:
-                    break;
-                case DataManager.GM_WLAN:
-                {
-                    waitForPlane=true;
-                    waitForDice=true;
-                    if(Game.playerMapData.get("host").id.compareTo(Game.playerMapData.get("me").id)==0&&Game.playerMapData.containsKey(String.format("%d",-color-1)))
-                    {
-                        Random r=new Random(System.currentTimeMillis());
-                        dice=r.nextInt(6)+1;
-
-                        LinkedList<String> msgs=new LinkedList<>();
-                        msgs.addLast(String.valueOf(-color-1));
-                        msgs.addLast(Game.dataManager.getRoomId());
-                        msgs.addLast(String.format("%d",dice));
-                        Game.socketManager.send(new DataPack(DataPack.R_GAME_PROCEED_DICE,msgs));
-
-                        Game.sound.roll();
-                        diceAnimate(dice);
-                        try {
-                            Thread.sleep(200);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-
-                        boolean canFly=false;
-                        if(Player.canIMove(color,dice)){
-                            do{
-                                avaPlaneId=Player.getAvaPlaneId(color,dice);
-                                whichPlane=avaPlaneId.get(r.nextInt(avaPlaneId.size()));
-                            }while(!Player.move(color,whichPlane,dice));
-                            ///UI update
-                            canFly=true;
-                        }
-
-                        LinkedList<String> msgs2=new LinkedList<>();
-                        msgs2.addLast(String.valueOf(-color-1));
-                        msgs2.addLast(Game.dataManager.getRoomId());
-                        msgs2.addLast(String.format("%d",whichPlane));
-                        Game.socketManager.send(new DataPack(DataPack.R_GAME_PROCEED_PLANE,msgs2));
-
-                        if(canFly){
-                            flyNow(color);
-                            amIWin("-1",color);
-                        }
-                        try {
-                            Thread.sleep(200);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    else{
-                        while(waitForDice){
-                            if(offline[color]&&Game.playerMapData.get("host").id.compareTo(Game.playerMapData.get("me").id)==0){//断线且我是房主
-                                Random r=new Random(System.currentTimeMillis());
-                                dice=r.nextInt(6)+1;
-
-                                LinkedList<String> msgs=new LinkedList<>();
-                                msgs.addLast(Game.playerMapData.get("me").id);//设定值
-                                msgs.addLast(Game.dataManager.getRoomId());
-                                msgs.addLast(String.format("%d",dice));
-                                Game.socketManager.send(new DataPack(DataPack.R_GAME_PROCEED_DICE,msgs));
-                                break;
-                            }
-                            try {
-                                Thread.sleep(100);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        Game.sound.roll();
-                        diceAnimate(dice);
-
-                        while(waitForPlane) {
-                            if(offline[color]&&Game.playerMapData.get("host").id.compareTo(Game.playerMapData.get("me").id)==0){//断线且我是房主
-                                Random r = new Random(System.currentTimeMillis());
-                                avaPlaneId=Player.getAvaPlaneId(color,dice);
-                                whichPlane=avaPlaneId.get(r.nextInt(avaPlaneId.size()));
-
-                                LinkedList<String> msgs2=new LinkedList<>();
-                                msgs2.addLast(Game.playerMapData.get("me").id);//设定值
-                                msgs2.addLast(Game.dataManager.getRoomId());
-                                msgs2.addLast(String.format("%d",whichPlane));
-                                Game.socketManager.send(new DataPack(DataPack.R_GAME_PROCEED_PLANE,msgs2));
-                                break;
-                            }
-                            try {
-                                Thread.sleep(100);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        if(Player.canIMove(color,dice)) {
-                            Player.move(color, whichPlane, dice);
-                            flyNow(color);
-                            amIWin("z",color);
-                        }
-                    }
-                }
-                    break;
-            }
-        }
-
     }
 
     private void amIWin(String id,int color){
@@ -238,12 +77,12 @@ public class GameManager implements Target {//game process control
             }
         }
         if(win){
-            if(id.compareTo("z")!=0){
-                if(Integer.valueOf(id)<0) {
+            if(Integer.valueOf(id)<0||id.compareTo(Game.dataManager.getMyId())==0){
+                if(Integer.valueOf(id)<0) {//robot
                     String[] s = {"Red","Green","Blue","Yellow"};
                     toast(s[color]+" robot is the winner!");
                 }
-                else
+                else//me
                     toast("I am the winner!");
                 if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
                     LinkedList<String> msgs=new LinkedList<>();
@@ -253,22 +92,16 @@ public class GameManager implements Target {//game process control
                         msgs.addLast("ROBOT");
                     else
                         msgs.addLast(Game.dataManager.getMyName());
-
                     Game.socketManager.send(new DataPack(DataPack.R_GAME_FINISHED,msgs));
                 }
-                Game.dataManager.setWinner(id);
             }
-            else{
+            else{//player
                 while(!finished){
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                    Game.delay(100);
                 }
-                toast("player"+winner+"is the winner!");
-                Game.dataManager.setWinner(winnerId);
+                toast("player"+Game.playersData.get(id).name+"is the winner!");
             }
+            Game.dataManager.setWinner(id);
             gameOver();
             Message msg = new Message();
             msg.what=5;
@@ -419,33 +252,23 @@ public class GameManager implements Target {//game process control
     public void processDataPack(DataPack dataPack) {
         switch (dataPack.getCommand()){
             case DataPack.E_GAME_FINISHED:
-                winnerId=dataPack.getMessage(0);
-                winner=dataPack.getMessage(2);
                 finished=true;
                 break;
             case DataPack.E_GAME_PROCEED_DICE:
-                dice=Integer.valueOf(dataPack.getMessage(2));
-                waitForDice=false;
+                Game.playersData.get(dataPack.getMessage(0)).setDiceValid(Integer.valueOf(dataPack.getMessage(2)));
                 break;
             case DataPack.E_GAME_PROCEED_PLANE:
-                whichPlane=Integer.valueOf(dataPack.getMessage(2));
-                waitForPlane=false;
+                Game.playersData.get(dataPack.getMessage(0)).setPlaneValid(Integer.valueOf(dataPack.getMessage(2)));
                 break;
             case DataPack.E_GAME_PLAYER_DISCONNECTED:
-                if(dataPack.getMessage(0).compareTo(Game.playerMapData.get("me").id)!=0){//不是我
-                    if(dataPack.getMessage(1).compareTo("1")==0){//退出游戏
+                if(dataPack.getMessage(0).compareTo(Game.dataManager.getMyId())!=0){//不是我
+                    if(dataPack.getMessage(0).compareTo(Game.dataManager.getHostId())==0){//是房主  退出游戏
                         gameOver();
                         board.startActivity(new Intent(board.getApplicationContext(),GameInfoAct.class));
                         Game.dataManager.giveUp(false);
                     }
                     else{//由电脑托管
-                        for(String key:Game.playerMapData.keySet()){
-                            if(Game.playerMapData.get(key).id.compareTo(dataPack.getMessage(0))==0){
-                                Game.playerMapData.get(key).id=String.valueOf(Game.playerMapData.get(key).color*(-1)-1);
-                                Game.playerMapData.get(key).name = "ROBOT";
-                                offline[Game.playerMapData.get(key).color]=true;
-                            }
-                        }
+                        Game.playersData.get(dataPack.getMessage(0)).offline=true;
                     }
                 }
                 break;
@@ -464,13 +287,8 @@ class GameWorker implements Runnable{
     public void run() {
         int i=0;
         while(run){//control round
-            i=(i%4);
-            for(String key:Game.playerMapData.keySet()){
-                if(Game.playerMapData.get(key).color==i){
-                    Game.gameManager.turnTo(i);
-                    break;
-                }
-            }
+            i=(i%4);//轮询颜色
+            Game.gameManager.turnTo(i);
             i++;
         }
     }

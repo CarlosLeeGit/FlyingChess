@@ -3,7 +3,6 @@ package com.hy.lyx.fb.gw.wyx.lks.flyingchess;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.Image;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -13,8 +12,6 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
-
-import com.google.gson.Gson;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -46,14 +43,14 @@ public class ChooseModeAct extends AppCompatActivity implements Target{
         local.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {//choose local game
-                Game.sound.button();
+                Game.soundManager.playSound(SoundManager.BUTTON);
                 Game.dataManager.setGameMode(DataManager.GM_LOCAL);//set game mode
-                Game.dataManager.setMyName("ME");
 
                 Intent intent = new Intent(getApplicationContext(), RoomAct.class);
-                ArrayList<String> msgs=new ArrayList<String>();
-                msgs.add(Game.playerMapData.get("me").id);
-                msgs.add(Game.dataManager.getMyName());
+                ArrayList<String> msgs=new ArrayList<>();
+                Game.dataManager.setMyId("0");
+                msgs.add("0");
+                msgs.add("ME");
                 msgs.add(String.valueOf(Game.dataManager.getScore()));
                 msgs.add("-1");
                 intent.putStringArrayListExtra("msgs",msgs);
@@ -63,7 +60,7 @@ public class ChooseModeAct extends AppCompatActivity implements Target{
         lan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Game.sound.button();
+                Game.soundManager.playSound(SoundManager.BUTTON);
                 Game.dataManager.setGameMode(DataManager.GM_LAN);
                 Intent intent=new Intent(getApplicationContext(),GameInfoAct.class);
                 startActivity(intent);
@@ -72,7 +69,7 @@ public class ChooseModeAct extends AppCompatActivity implements Target{
         wlan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Game.sound.button();
+                Game.soundManager.playSound(SoundManager.BUTTON);
                 Game.socketManager.connectToServer();
                 Intent intent = new Intent(getApplicationContext(),WaitingAct.class);
                 intent.putExtra("tipe","Connecting..");
@@ -83,8 +80,8 @@ public class ChooseModeAct extends AppCompatActivity implements Target{
         Game.socketManager.registerActivity(DataPack.CONNECTED,this);
         //setting
         Game.activityManager.add(this);
-        Game.sound.startMusic();
-        //back ground img
+        Game.soundManager.playMusic(SoundManager.BACKGROUND);
+        //background img
         DisplayMetrics dm=new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
         BitmapFactory.Options opt= new BitmapFactory.Options();

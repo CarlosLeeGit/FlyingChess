@@ -14,8 +14,6 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class RoomAct extends AppCompatActivity implements Target {
     Button startButton,backButton,site[],addRobotButton[];
@@ -52,20 +50,16 @@ public class RoomAct extends AppCompatActivity implements Target {
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Game.sound.button();
+                Game.soundManager.playSound(SoundManager.BUTTON);
                 if(idlePlayerListData.size()>1)
                     Toast.makeText(getApplicationContext(),"some one is not ready!",Toast.LENGTH_SHORT).show();
                 else{
                     if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
-                        if(Game.playerMapData.get("host").id.compareTo(Game.playerMapData.get("me").id)!=0){
+                        if(Game.dataManager.getHostId().compareTo(Game.dataManager.getMyId())!=0){
                             Toast.makeText(getApplicationContext(),"wait for room host",Toast.LENGTH_SHORT).show();
                             return;
                         }
-                        LinkedList<String> msgs=new LinkedList<>();
-                        msgs.addLast(Game.playerMapData.get("me").id);
-                        msgs.addLast(Game.dataManager.getRoomId());
-                        DataPack dataPack=new DataPack(DataPack.R_GAME_START,msgs);
-                        Game.socketManager.send(dataPack);
+                        Game.socketManager.send(DataPack.R_GAME_START,Game.dataManager.getMyId(),Game.dataManager.getRoomId());
                     }
                     else if(Game.dataManager.getGameMode()==DataManager.GM_LOCAL){
                         Intent intent=new Intent(getApplicationContext(),ChessBoardAct.class);
@@ -77,14 +71,9 @@ public class RoomAct extends AppCompatActivity implements Target {
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Game.sound.returnButton();
+                Game.soundManager.playSound(SoundManager.BACK);
                 if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
-                    LinkedList<String> msgs=new LinkedList<>();
-                    msgs.addLast(Game.playerMapData.get("me").id);
-                    msgs.addLast(Game.dataManager.getRoomId());
-                    msgs.addLast(String.format("%d",Game.playerMapData.get("me").color));
-                    DataPack dataPack = new DataPack(DataPack.R_ROOM_EXIT,msgs);
-                    Game.socketManager.send(dataPack);
+                    Game.socketManager.send(DataPack.R_ROOM_EXIT,Game.dataManager.getMyId(),Game.dataManager.getRoomId(),Game.playersData.get(Game.dataManager.getMyId()).color);
                     startActivity(new Intent(getApplicationContext(),GameInfoAct.class));
                 }
                 else if(Game.dataManager.getGameMode()==DataManager.GM_LOCAL){
@@ -166,10 +155,18 @@ public class RoomAct extends AppCompatActivity implements Target {
         map.put("name","name");
         map.put("score","score");
         idlePlayerListData.addLast(map);
-        Game.playerMapData.clear();
+        Game.playersData.clear();
         Bundle bundle = getIntent().getExtras();
         ArrayList<String> players = bundle.getStringArrayList("msgs");
-        Game.playerMapData.put("host",new Player(players.get(0),players.get(1),players.get(2),Integer.valueOf(players.get(3))));
+        //添加玩家数据
+        Game.dataManager.setHostId(players.get(0));
+        Game.playersData.put(players.get(0),new Role(players.get(0),players.get(1),players.get(2),Integer.valueOf(players.get(3)),Role.PLAYER,true));
+        for(int i=4;i<players.size();){
+            int type = (Integer.valueOf(players.get(i))<0)?Role.ROBOT:Role.PLAYER;
+            Game.playersData.put(players.get(i),new Role(players.get(i),players.get(i+1),players.get(i+2),Integer.valueOf(players.get(i+3)),type,false));
+        }
+        Game.playersData.get(Game.dataManager.getMyId()).type=Role.ME;
+
         for(int i=0;i<players.size();) {//添加玩家到指定的位置
             int color = Integer.valueOf(players.get(i+3));
             if (Integer.valueOf(players.get(i))<0) {//机器人
@@ -188,13 +185,6 @@ public class RoomAct extends AppCompatActivity implements Target {
                     site[color].setText(players.get(i+1));
                     siteState[color] = 1;
                 }
-            }
-            HashMap<String,Player> g = Game.playerMapData;
-            if(Game.dataManager.getMyName().compareTo(players.get(i+1))!=0){
-                Game.playerMapData.put(players.get(i),new Player(players.get(i),players.get(i+1),players.get(i+2),Integer.valueOf(players.get(i+3))));
-            }
-            else{
-                Game.playerMapData.put("me",new Player(players.get(i),players.get(i+1),players.get(i+2),Integer.valueOf(players.get(i+3))));
             }
             i+=4;
         }
@@ -218,7 +208,7 @@ public class RoomAct extends AppCompatActivity implements Target {
             HashMap<String,String> map=new HashMap<>();
             map.put("name",dataPack.getMessage(1));
             map.put("score",dataPack.getMessage(2));
-            Game.playerMapData.put(dataPack.getMessage(0),new Player(dataPack.getMessage(0),dataPack.getMessage(1),dataPack.getMessage(2),Integer.valueOf(dataPack.getMessage(3))));
+            Game.playersData.put(dataPack.getMessage(0),new Role(dataPack.getMessage(0),dataPack.getMessage(1),dataPack.getMessage(2),Integer.valueOf(dataPack.getMessage(3)),Role.PLAYER,false));
             idlePlayerListData.addLast(map);
             site[0].post(new Runnable() {
                 @Override
@@ -228,7 +218,7 @@ public class RoomAct extends AppCompatActivity implements Target {
             });
         }
         else if(dataPack.getCommand()==DataPack.E_ROOM_EXIT){
-            if(dataPack.getMessage(0).compareTo(Game.playerMapData.get("host").id)==0)//是房主
+            if(dataPack.getMessage(0).compareTo(Game.dataManager.getHostId())==0)//是房主
             {
                 Intent intent=new Intent(getApplicationContext(),GameInfoAct.class);
                 startActivity(intent);
@@ -258,12 +248,7 @@ public class RoomAct extends AppCompatActivity implements Target {
                         });
                     }
                 }
-                for(String key:Game.playerMapData.keySet()){
-                    if(Game.playerMapData.get(key).name.compareTo(dataPack.getMessage(1))==0){
-                        Game.playerMapData.remove(key);
-                        break;
-                    }
-                }
+                Game.playersData.remove(dataPack.getMessage(0));
             }
         }
         else if(dataPack.getCommand()==DataPack.E_ROOM_POSITION_SELECT) {
@@ -280,7 +265,7 @@ public class RoomAct extends AppCompatActivity implements Target {
                                 addRobotButton[np].setText("-");
                             }
                         });
-                        Game.playerMapData.put(dataPack.getMessage(0),new Player(dataPack.getMessage(0),"ROBOT","0",np));
+                        Game.playersData.put(dataPack.getMessage(0),new Role(dataPack.getMessage(0),"ROBOT","0",np,Role.ROBOT,false));
                     }
                     else{
                         siteState[-id-1]=-1;
@@ -291,7 +276,7 @@ public class RoomAct extends AppCompatActivity implements Target {
                                 addRobotButton[-id-1].setText("+");
                             }
                         });
-                        Game.playerMapData.remove(dataPack.getMessage(0));
+                        Game.playersData.remove(dataPack.getMessage(0));
                     }
                 }
                 else {
@@ -329,11 +314,7 @@ public class RoomAct extends AppCompatActivity implements Target {
                             }
                         });
                     }
-                    for(String key:Game.playerMapData.keySet()){
-                        if(Game.playerMapData.get(key).id.compareTo(dataPack.getMessage(0))==0){
-                            Game.playerMapData.get(key).color=np;
-                        }
-                    }
+                    Game.playersData.get(dataPack.getMessage(0)).color=np;
                     site[np].post(new Runnable() {
                         @Override
                         public void run() {
@@ -352,7 +333,6 @@ public class RoomAct extends AppCompatActivity implements Target {
             }
         }
         else if(dataPack.getCommand()==DataPack.E_GAME_START){
-            System.out.println(dataPack.toString());
             Intent intent=new Intent(getApplicationContext(),ChessBoardAct.class);
             startActivity(intent);
         }
@@ -361,28 +341,18 @@ public class RoomAct extends AppCompatActivity implements Target {
     private void chooseSite(int color){
         if(siteState[color]==-1) {
             if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
-                LinkedList<String> msgs = new LinkedList<>();
-                msgs.addLast(Game.playerMapData.get("me").id);
-                msgs.addLast(Game.dataManager.getRoomId());
-                msgs.addLast(Game.playerMapData.get("me").name);
-                msgs.addLast(Game.playerMapData.get("me").score);
-                msgs.addLast(String.format("%d", color));
-                Game.socketManager.send(new DataPack(DataPack.R_ROOM_POSITION_SELECT,msgs));
+                Game.socketManager.send(DataPack.R_ROOM_POSITION_SELECT,Game.dataManager.getMyId(),Game.dataManager.getRoomId(),Game.playersData.get(Game.dataManager.getMyId()).name,Game.playersData.get(Game.dataManager.getMyId()).score,Game.playersData.get(Game.dataManager.getMyId()).color);
             }
             else if(Game.dataManager.getGameMode()==DataManager.GM_LOCAL){
-                if(Game.playerMapData.get("me").color==ChessBoard.COLOR_Z){
+                if(Game.playersData.get(Game.dataManager.getMyId()).color==ChessBoard.COLOR_Z){
                     idlePlayerListData.removeLast();
                     idlePlayerListAdapter.notifyDataSetChanged();
                 }
                 else{
-                    site[Game.playerMapData.get("me").color].setText("");
-                    siteState[Game.playerMapData.get("me").color]=-1;
+                    site[Game.playersData.get(Game.dataManager.getMyId()).color].setText("");
+                    siteState[Game.playersData.get(Game.dataManager.getMyId()).color]=-1;
                 }
-                for(String key:Game.playerMapData.keySet()){
-                    if(Game.playerMapData.get(key).name.compareTo(Game.dataManager.getMyName())==0){
-                        Game.playerMapData.get(key).color=color;
-                    }
-                }
+                Game.playersData.get(Game.dataManager.getMyId()).color=color;
                 site[color].setText("ME");
                 siteState[color]=1;
             }
@@ -393,7 +363,7 @@ public class RoomAct extends AppCompatActivity implements Target {
     }
 
     private void addRobot(int color){
-        if(Game.playerMapData.get("host").id.compareTo(Game.playerMapData.get("me").id)==0){
+        if(Game.dataManager.getHostId().compareTo(Game.dataManager.getMyId())==0){
             if(siteState[color]==1){
                 Toast.makeText(getApplicationContext(),"add robot failed!",Toast.LENGTH_SHORT).show();
             }
@@ -417,13 +387,13 @@ public class RoomAct extends AppCompatActivity implements Target {
                         site[color].setText("ROBOT");
                         siteState[color]=0;
                         addRobotButton[color].setText("-");
-                        Game.playerMapData.put(String.format("%d",-color-1),new Player(String.format("%d",-color-1),"robot","0",color));
+                        Game.playersData.put(String.format("%d",-color-1),new Role(String.format("%d",-color-1),"robot","0",color,Role.ROBOT,false));
                     }
                     else{
                         site[color].setText("");
                         siteState[color]=-1;
                         addRobotButton[color].setText("+");
-                        Game.playerMapData.remove(String.format("%d",-color-1));
+                        Game.playersData.remove(String.format("%d",-color-1));
                     }
                 }
             }
@@ -434,15 +404,8 @@ public class RoomAct extends AppCompatActivity implements Target {
     }
 
     private void exit(){
-        if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
-            LinkedList<String> msgs=new LinkedList<>();
-            msgs.addLast(Game.playerMapData.get("me").id);
-            msgs.addLast(Game.dataManager.getRoomId());
-            msgs.addLast(String.format("%d",Game.playerMapData.get("me").color));
-            DataPack dataPack2 = new DataPack(DataPack.R_ROOM_EXIT,msgs);
-            Game.socketManager.send(dataPack2);
-        }
-        Intent intent=new Intent(getApplicationContext(),GameInfoAct.class);
+        Game.socketManager.send(DataPack.R_ROOM_EXIT,Game.dataManager.getMyId(),Game.dataManager.getRoomId(),Game.playersData.get(Game.dataManager.getMyId()).color);
+        Intent intent=new Intent(getApplicationContext(),ChooseModeAct.class);
         startActivity(intent);
     }
 }

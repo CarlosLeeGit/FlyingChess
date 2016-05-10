@@ -8,6 +8,7 @@ import com.google.gson.GsonBuilder;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.security.KeyStore;
+import java.util.LinkedList;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.net.ssl.SSLContext;
@@ -68,6 +69,18 @@ public class SocketManager extends MsgHandler{
 
     public boolean send(DataPack dataPack){
         return sw.send(dataPack);
+    }
+
+    public boolean send(int command,Object ...argv){
+        if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
+            LinkedList<String> msgs = new LinkedList<>();
+            for(int i=0;i<argv.length;i++){
+                msgs.addLast(String.valueOf(argv[i]));
+            }
+            DataPack dataPack = new DataPack(command,msgs);
+            return sw.send(dataPack);
+        }
+        return false;
     }
 
 }

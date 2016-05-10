@@ -18,11 +18,15 @@ import java.io.OutputStream;
 public class DataManager {//数据存储类
     public static final int GM_LOCAL=0,GM_LAN=1,GM_WLAN=3;//游戏模式
     private boolean autoLogin;//需要登录
+    private String myId;
+    private String hostId;
     private String roomId;//房间ID
+    private String onlineScore;
     private int gameMode;//游戏模式
     private String lastWinner;
-    Data data;
     private boolean giveUp;
+
+    Data data;
 
     public DataManager(){//加载本地数据
         autoLogin=false;
@@ -104,6 +108,18 @@ public class DataManager {//数据存储类
     public boolean isGiveUp(){
         return giveUp;
     }
+
+    public String getMyId(){
+        return myId;
+    }
+
+    public String getOnlineScore(){
+        return onlineScore;
+    }
+
+    public String getHostId(){
+        return hostId;
+    }
     /////////////////////////////////////////////////////setter
 
     public void setMyName(String myName){//设置用户名
@@ -144,6 +160,18 @@ public class DataManager {//数据存储类
 
     public void giveUp(boolean bool){
         giveUp=bool;
+    }
+
+    public void setMyId(String myId){
+        this.myId=myId;
+    }
+
+    public void setOnlineScore(String onlineScore){
+        this.onlineScore=onlineScore;
+    }
+
+    public void setHostId(String hostId){
+        this.hostId=hostId;
     }
     //////////////////////////////////
     public void saveData(){

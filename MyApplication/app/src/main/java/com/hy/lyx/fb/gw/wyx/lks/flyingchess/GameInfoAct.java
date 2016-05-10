@@ -1,7 +1,6 @@
 package com.hy.lyx.fb.gw.wyx.lks.flyingchess;
 
 import android.content.Intent;
-import android.graphics.Matrix;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -17,7 +16,6 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map;
 
 public class GameInfoAct extends AppCompatActivity implements Target{
     Button createButton,joinButton,backButton;
@@ -52,15 +50,9 @@ public class GameInfoAct extends AppCompatActivity implements Target{
         createButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {//start a new game
-                Game.sound.button();
-                if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
-                    LinkedList<String> msgs=new LinkedList<String>();
-                    msgs.addLast(Game.playerMapData.get("me").id);
-                    msgs.addLast(Game.dataManager.getMyName()+"'s Room");
-                    DataPack dataPack=new DataPack(DataPack.R_ROOM_CREATE,msgs);
-                    Game.socketManager.send(dataPack);
-                }
-                else if(Game.dataManager.getGameMode()==DataManager.GM_LAN){
+                Game.soundManager.playSound(SoundManager.BUTTON);
+                Game.socketManager.send(DataPack.R_ROOM_CREATE,Game.dataManager.getMyId(),Game.dataManager.getMyName()+"'s Room");
+                if(Game.dataManager.getGameMode()==DataManager.GM_LAN){
 
                 }
             }
@@ -68,7 +60,7 @@ public class GameInfoAct extends AppCompatActivity implements Target{
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Game.sound.returnButton();
+                Game.soundManager.playSound(SoundManager.BACK);
                 goBack();
             }
         });
@@ -82,17 +74,13 @@ public class GameInfoAct extends AppCompatActivity implements Target{
         joinButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Game.sound.button();
+                Game.soundManager.playSound(SoundManager.BUTTON);
                 boolean find=false;
                 synchronized (roomListData){
                     for(HashMap<String,String> map:roomListData){
                         if(map.get("id").compareTo(roomId)==0){
                             if(map.get("state").compareTo("waiting")==0) {
-                                LinkedList<String> msgs=new LinkedList<>();
-                                msgs.addLast(Game.playerMapData.get("me").id);
-                                msgs.addLast(roomId);
-                                DataPack dataPack = new DataPack(DataPack.R_ROOM_ENTER,msgs);
-                                Game.socketManager.send(dataPack);
+                                Game.socketManager.send(DataPack.R_ROOM_ENTER,Game.dataManager.getMyId(),roomId);
                                 find=true;
                             }
                             break;
@@ -124,12 +112,7 @@ public class GameInfoAct extends AppCompatActivity implements Target{
     }
 
     private void goBack(){
-        if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
-            LinkedList<String> msgs=new LinkedList<>();
-            msgs.addLast(Game.playerMapData.get("me").id);
-            DataPack dataPack=new DataPack(DataPack.R_LOGOUT,msgs);
-            Game.socketManager.send(dataPack);
-        }
+        Game.socketManager.send(DataPack.R_LOGOUT,Game.dataManager.getMyId());
         startActivity(new Intent(getApplicationContext(),ChooseModeAct.class));
     }
 
@@ -165,9 +148,9 @@ public class GameInfoAct extends AppCompatActivity implements Target{
                 Game.dataManager.setRoomId(dataPack.getMessage(0));
                 Intent intent = new Intent(getApplicationContext(), RoomAct.class);
                 ArrayList<String> msgs=new ArrayList<>();
-                msgs.add(Game.playerMapData.get("me").id);
-                msgs.add(Game.playerMapData.get("me").name);
-                msgs.add(Game.playerMapData.get("me").score);
+                msgs.add(Game.dataManager.getMyId());
+                msgs.add(Game.dataManager.getMyName());
+                msgs.add(Game.dataManager.getOnlineScore());
                 msgs.add("-1");
                 intent.putStringArrayListExtra("msgs",msgs);
                 startActivity(intent);//switch wo chess board activity

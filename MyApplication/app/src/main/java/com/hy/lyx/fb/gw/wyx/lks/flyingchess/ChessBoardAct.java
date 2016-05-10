@@ -17,18 +17,16 @@ import android.widget.Toast;
 
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Timer;
 
 public class ChessBoardAct extends AppCompatActivity {
-    Timer closeTimer;
-    Button pause,dice,test;
+    Button pauseButton,throwDiceButton;
     Button[][] plane;
     int boardWidth;
     Handler handler;
     ImageView map;
     float dx;
     int n;
+    int i,j;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //ui setting
@@ -36,11 +34,10 @@ public class ChessBoardAct extends AppCompatActivity {
         setContentView(R.layout.activity_chess_board);
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);//Activity切换动画
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        Game.activityManager.add(this);
         //init
-        test=(Button)findViewById(R.id.test);
-        closeTimer=new Timer();
-        pause=(Button)findViewById(R.id.pause);
-        dice=(Button)findViewById(R.id.dice);
+        pauseButton=(Button)findViewById(R.id.pause);
+        throwDiceButton=(Button)findViewById(R.id.dice);
         plane=new Button[4][4];
         plane[0][0]=(Button)findViewById(R.id.R1);
         plane[0][1]=(Button)findViewById(R.id.R2);
@@ -77,145 +74,30 @@ public class ChessBoardAct extends AppCompatActivity {
         InputStream is = getApplicationContext().getResources().openRawResource(R.raw.map);
         map.setImageBitmap(BitmapFactory.decodeStream(is,null,opt));
         //trigger
-        test.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Game.chessBoard.getAirplane(0).position[0]=51;
-                Game.chessBoard.getAirplane(0).position[1]=52;
-                Game.chessBoard.getAirplane(0).position[2]=53;
-                Game.chessBoard.getAirplane(0).position[3]=54;
-            }
-        });
-        pause.setOnClickListener(new View.OnClickListener() {
+        pauseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getApplicationContext(),PauseAct.class));
             }
         });
-        dice.setOnClickListener(new View.OnClickListener() {//throw dice
+        throwDiceButton.setOnClickListener(new View.OnClickListener() {//throw dice
             @Override
             public void onClick(View v) {
-                Player.setDiceValid();
+                Game.playersData.get(Game.dataManager.getMyId()).setDiceValid(0);
             }
         });
-        /////////////////add four plane trigger and when click a plane, we should call game manager :: choosePlane to choose plane
-        plane[0][0].setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Game.playerMapData.get("me").color==ChessBoard.COLOR_RED)
-                    Player.setPlaneValid(0);
+        /////////////////
+        for(i=0;i<4;i++){
+            for(j=0;j<4;j++){
+                plane[i][j].setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (Game.playersData.get(Game.dataManager.getMyId()).color==i)
+                            Game.playersData.get(Game.dataManager.getMyId()).setPlaneValid(j);
+                    }
+                });
             }
-        });
-        plane[0][1].setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Game.playerMapData.get("me").color==ChessBoard.COLOR_RED)
-                    Player.setPlaneValid(1);
-            }
-        });
-        plane[0][2].setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Game.playerMapData.get("me").color==ChessBoard.COLOR_RED)
-                    Player.setPlaneValid(2);
-            }
-        });
-        plane[0][3].setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Game.playerMapData.get("me").color==ChessBoard.COLOR_RED)
-                    Player.setPlaneValid(3);
-            }
-        });
-
-        plane[1][0].setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Game.playerMapData.get("me").color==ChessBoard.COLOR_GREEN)
-                    Player.setPlaneValid(0);
-            }
-        });
-        plane[1][1].setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Game.playerMapData.get("me").color==ChessBoard.COLOR_GREEN)
-                    Player.setPlaneValid(1);
-            }
-        });
-        plane[1][2].setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Game.playerMapData.get("me").color==ChessBoard.COLOR_GREEN)
-                    Player.setPlaneValid(2);
-            }
-        });
-        plane[1][3].setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Game.playerMapData.get("me").color==ChessBoard.COLOR_GREEN)
-                    Player.setPlaneValid(3);
-            }
-        });
-
-        plane[2][0].setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Game.playerMapData.get("me").color==ChessBoard.COLOR_BLUE)
-                    Player.setPlaneValid(0);
-            }
-        });
-        plane[2][1].setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Game.playerMapData.get("me").color==ChessBoard.COLOR_BLUE)
-                    Player.setPlaneValid(1);
-            }
-        });
-        plane[2][2].setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Game.playerMapData.get("me").color==ChessBoard.COLOR_BLUE)
-                    Player.setPlaneValid(2);
-            }
-        });
-        plane[2][3].setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Game.playerMapData.get("me").color==ChessBoard.COLOR_BLUE)
-                    Player.setPlaneValid(3);
-            }
-        });
-
-        plane[3][0].setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Game.playerMapData.get("me").color==ChessBoard.COLOR_YELLOW)
-                    Player.setPlaneValid(0);
-            }
-        });
-        plane[3][1].setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Game.playerMapData.get("me").color==ChessBoard.COLOR_YELLOW)
-                    Player.setPlaneValid(1);
-            }
-        });
-        plane[3][2].setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Game.playerMapData.get("me").color==ChessBoard.COLOR_YELLOW)
-                    Player.setPlaneValid(2);
-            }
-        });
-        plane[3][3].setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Game.playerMapData.get("me").color==ChessBoard.COLOR_YELLOW)
-                    Player.setPlaneValid(3);
-            }
-        });
-        Game.gameManager.newTurn(this);
-        Game.activityManager.add(this);
+        }
         ///setting
         moveTo(plane[0][0],1,n-4);
         moveTo(plane[0][1],3,n-4);
@@ -254,12 +136,15 @@ public class ChessBoardAct extends AppCompatActivity {
         plane[3][2].setVisibility(View.INVISIBLE);
         plane[3][3].setVisibility(View.INVISIBLE);
 
-        for(String key:Game.playerMapData.keySet()){
-            plane[Game.playerMapData.get(key).color][0].setVisibility(View.VISIBLE);
-            plane[Game.playerMapData.get(key).color][1].setVisibility(View.VISIBLE);
-            plane[Game.playerMapData.get(key).color][2].setVisibility(View.VISIBLE);
-            plane[Game.playerMapData.get(key).color][3].setVisibility(View.VISIBLE);
+        for(String key:Game.playersData.keySet()){
+            plane[Game.playersData.get(key).color][0].setVisibility(View.VISIBLE);
+            plane[Game.playersData.get(key).color][1].setVisibility(View.VISIBLE);
+            plane[Game.playersData.get(key).color][2].setVisibility(View.VISIBLE);
+            plane[Game.playersData.get(key).color][3].setVisibility(View.VISIBLE);
         }
+        Game.gameManager.newTurn(this);
+        Game.soundManager.stopMusic();
+        Game.soundManager.playMusic(SoundManager.GAME);
     }
 
 
@@ -275,22 +160,19 @@ public class ChessBoardAct extends AppCompatActivity {
     }
 
     public void exit(){
-        if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
-            LinkedList<String> msgs=new LinkedList<>();
-            msgs.addLast(Game.playerMapData.get("me").id);
-            msgs.addLast(Game.dataManager.getRoomId());
-            Game.socketManager.send(new DataPack(DataPack.R_GAME_EXIT));
-        }
-        Game.dataManager.setWinner("x");
+        Game.socketManager.send(DataPack.R_GAME_EXIT,Game.playersData.get("me").id,Game.dataManager.getRoomId());
         Game.gameManager.gameOver();
         startActivity(new Intent(getApplicationContext(),GameInfoAct.class));
         Game.dataManager.giveUp(false);
+        Game.soundManager.stopMusic();
+        Game.soundManager.playMusic(SoundManager.BACKGROUND);
     }
 
     public void moveTo(Button plane,int x,int y){
         plane.setX(x*dx);
         plane.setY(y*dx);
     }
+
     public void animMoveTo(Button plane, int x, int y) {
         plane.animate().setDuration(500);
         plane.animate().translationX(x * dx);
@@ -320,10 +202,10 @@ class MyHandler extends Handler{
                 }
             }
             break;
-            case 2://筛子
-                parent.dice.setText(msg.getData().getString("dice"));
+            case 2://骰子
+                parent.throwDiceButton.setText(msg.getData().getString("dice"));
                 break;
-            case 3://msg
+            case 3://显示消息
                 Toast.makeText(parent.getApplicationContext(),msg.getData().getString("msg"),Toast.LENGTH_SHORT).show();
                 break;
             case 4: // crash
@@ -338,53 +220,51 @@ class MyHandler extends Handler{
                 Intent intent = new Intent(parent.getApplicationContext(), RoomAct.class);
                 ArrayList<String> msgs=new ArrayList<>();
                 if(Game.dataManager.getGameMode()==DataManager.GM_LOCAL){
-                    if(Game.dataManager.getLastWinner().compareTo(Game.playerMapData.get("me").id)==0)//更新分数
+                    if(Game.dataManager.getLastWinner().compareTo(Game.dataManager.getMyId())==0)//更新分数
                         Game.dataManager.setScore(Game.dataManager.getScore()+10);
+                    else
+                        Game.dataManager.setScore(Game.dataManager.getScore()-5);
                     Game.dataManager.saveData();
-                    Game.playerMapData.get("me").color=-1;
-                    msgs.add(Game.playerMapData.get("me").id);
-                    msgs.add(Game.playerMapData.get("me").name);
+                    msgs.add(Game.dataManager.getMyId());
+                    msgs.add(Game.playersData.get(Game.dataManager.getMyId()).name);
                     msgs.add(String.valueOf(Game.dataManager.getScore()));
                     msgs.add("-1");
                 }
                 else if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
-                    for(String key:Game.playerMapData.keySet()){//更新玩家的分数
-                        if(Game.playerMapData.get(key).id.compareTo(Game.dataManager.getLastWinner())==0){
-                            Game.playerMapData.get(key).score=String.valueOf(Integer.valueOf(Game.playerMapData.get(key).score)+10);
+                    for(String key:Game.playersData.keySet()){//更新玩家的分数
+                        if(Game.playersData.get(key).id.compareTo(Game.dataManager.getLastWinner())==0){
+                            Game.playersData.get(key).score=String.valueOf(Integer.valueOf(Game.playersData.get(key).score)+10);
                         }
                         else{
-                            Game.playerMapData.get(key).score=String.valueOf(Integer.valueOf(Game.playerMapData.get(key).score)-5);
+                            Game.playersData.get(key).score=String.valueOf(Integer.valueOf(Game.playersData.get(key).score)-5);
                         }
                     }
-                    msgs.add(Game.playerMapData.get("host").id);
-                    msgs.add(Game.playerMapData.get("host").name);
-                    msgs.add(Game.playerMapData.get("host").score);
+
+                    Game.dataManager.setOnlineScore(Game.playersData.get(Game.dataManager.getMyId()).score);
+
+                    msgs.add(Game.playersData.get(Game.dataManager.getHostId()).id);
+                    msgs.add(Game.playersData.get(Game.dataManager.getHostId()).name);
+                    msgs.add(Game.playersData.get(Game.dataManager.getHostId()).score);
                     msgs.add("-1");
-                    for(String key:Game.playerMapData.keySet()){
-                        Game.playerMapData.get(key).color=-1;
-                        if(Game.playerMapData.get("me").id.compareTo(Game.playerMapData.get(key).id)!=0&&Game.playerMapData.get("host").id.compareTo(Game.playerMapData.get(key).id)!=0&&Integer.valueOf(Game.playerMapData.get(key).id)>=0){
-                            msgs.add(Game.playerMapData.get(key).id);
-                            msgs.add(Game.playerMapData.get(key).name);
-                            msgs.add(Game.playerMapData.get(key).score);
+                    for(String key:Game.playersData.keySet()){
+                        Game.playersData.get(key).color=-1;
+                        if(Game.dataManager.getHostId().compareTo(Game.playersData.get(key).id)!=0&&Integer.valueOf(Game.playersData.get(key).id)>=0){
+                            msgs.add(Game.playersData.get(key).id);
+                            msgs.add(Game.playersData.get(key).name);
+                            msgs.add(Game.playersData.get(key).score);
                             msgs.add("-1");
                         }
-                    }
-                    if(Game.playerMapData.get("me").id.compareTo(Game.playerMapData.get("host").id)!=0){
-                        msgs.add(Game.playerMapData.get("me").id);
-                        msgs.add(Game.playerMapData.get("me").name);
-                        msgs.add(Game.playerMapData.get("me").score);
-                        msgs.add("-1");
                     }
                 }
                 intent.putStringArrayListExtra("msgs",msgs);
                 parent.startActivity(intent);
-                if(Game.dataManager.getLastWinner().compareTo("x")!=0){
-                    Intent intent2 = new Intent(parent.getApplicationContext(),GameEndAct.class);
-                    intent2.putStringArrayListExtra("msgs",msgs);
-                    parent.startActivity(intent2);
-                }
+                Intent intent2 = new Intent(parent.getApplicationContext(),GameEndAct.class);
+                intent2.putStringArrayListExtra("msgs",msgs);
+                parent.startActivity(intent2);
                 Game.dataManager.giveUp(false);
                 Game.gameManager.gameOver();
+                Game.soundManager.stopMusic();
+                Game.soundManager.playMusic(SoundManager.BACKGROUND);
             }
             default:
                 super.handleMessage(msg);

@@ -49,14 +49,16 @@ public class PauseAct extends Activity {
             public void onClick(View v) {
             if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
                 LinkedList<String> msgs=new LinkedList<>();
-                msgs.addLast(Game.playerMapData.get("me").id);
+                msgs.addLast(Game.playersData.get("me").id);
                 msgs.addLast(Game.dataManager.getRoomId());
                 Game.socketManager.send(new DataPack(DataPack.R_GAME_EXIT));
             }
             Game.dataManager.setWinner("x");
             Game.gameManager.gameOver();
-            startActivity(new Intent(getApplicationContext(),GameInfoAct.class));
+            startActivity(new Intent(getApplicationContext(),ChooseModeAct.class));
             Game.dataManager.giveUp(false);
+            Game.soundManager.stopMusic();
+            Game.soundManager.playMusic(SoundManager.BACKGROUND);
             }
         });
         if(Game.dataManager.isGiveUp()){

@@ -42,6 +42,7 @@ public class LoginAct extends AppCompatActivity implements Target {
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Game.soundManager.playSound(SoundManager.BUTTON);
                 if(_myName.getText().length()==0){
                     _myName.setError("Please input you name");
                     _myName.requestFocus();
@@ -64,33 +65,25 @@ public class LoginAct extends AppCompatActivity implements Target {
                         return;
                     }
                     //sign in
-                    LinkedList<String> msgList=new LinkedList<>();
-                    msgList.addLast(_myName.getText().toString());
-                    msgList.addLast(_pw.getText().toString());
-                    DataPack dataPack=new DataPack(DataPack.R_REGISTER,msgList);
-                    Game.socketManager.send(dataPack);
+                    Game.socketManager.send(DataPack.R_REGISTER,_myName.getText().toString(),_pw.getText().toString());
                     Intent intent = new Intent(getApplicationContext(),WaitingAct.class);
                     intent.putExtra("tipe","Register..");
                     startActivity(intent);
                 }
                 else{// login
-                    LinkedList<String> msgList=new LinkedList<String>();
-                    msgList.addLast(_myName.getText().toString());
-                    msgList.addLast(_pw.getText().toString());
-                    DataPack dataPack=new DataPack(DataPack.R_LOGIN,msgList);
-                    Game.socketManager.send(dataPack);
+                    Game.socketManager.send(DataPack.R_LOGIN,_myName.getText().toString(),_pw.getText().toString());
                     Intent intent = new Intent(getApplicationContext(),WaitingAct.class);
                     intent.putExtra("tipe","login..");
                     startActivity(intent);
                     Game.dataManager.setMyName(_myName.getText().toString());
                     Game.dataManager.setPassword(_pw.getText().toString());
-                    Game.playerMapData.get("me").name=_myName.getText().toString();
                 }
             }
         });
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Game.soundManager.playSound(SoundManager.BUTTON);
                 if(bRegister){
                     login.setText("Login");
                     register.setText("Register");
@@ -113,6 +106,7 @@ public class LoginAct extends AppCompatActivity implements Target {
         home.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Game.soundManager.playSound(SoundManager.BACK);
                 startActivity(new Intent(getApplicationContext(),ChooseModeAct.class));
             }
         });
@@ -130,8 +124,8 @@ public class LoginAct extends AppCompatActivity implements Target {
     public void processDataPack(DataPack dataPack) {
         if(dataPack.getCommand()== DataPack.A_LOGIN){
             if(dataPack.isSuccessful()){
-                Game.playerMapData.get("me").id=dataPack.getMessage(0);
-                Game.playerMapData.get("me").score=dataPack.getMessage(1);
+                Game.dataManager.setMyId(dataPack.getMessage(0));
+                Game.dataManager.setOnlineScore(dataPack.getMessage(1));
                 startActivity(new Intent(getApplicationContext(),GameInfoAct.class));
                 Game.dataManager.setAutoLogin(true);
             }
