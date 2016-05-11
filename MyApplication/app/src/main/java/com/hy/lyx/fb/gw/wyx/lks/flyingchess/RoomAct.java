@@ -341,7 +341,7 @@ public class RoomAct extends AppCompatActivity implements Target {
     private void chooseSite(int color){
         if(siteState[color]==-1) {
             if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
-                Game.socketManager.send(DataPack.R_ROOM_POSITION_SELECT,Game.dataManager.getMyId(),Game.dataManager.getRoomId(),Game.playersData.get(Game.dataManager.getMyId()).name,Game.playersData.get(Game.dataManager.getMyId()).score,Game.playersData.get(Game.dataManager.getMyId()).color);
+                Game.socketManager.send(DataPack.R_ROOM_POSITION_SELECT,Game.dataManager.getMyId(),Game.dataManager.getRoomId(),Game.playersData.get(Game.dataManager.getMyId()).name,Game.playersData.get(Game.dataManager.getMyId()).score,color);
             }
             else if(Game.dataManager.getGameMode()==DataManager.GM_LOCAL){
                 if(Game.playersData.get(Game.dataManager.getMyId()).color==ChessBoard.COLOR_Z){
