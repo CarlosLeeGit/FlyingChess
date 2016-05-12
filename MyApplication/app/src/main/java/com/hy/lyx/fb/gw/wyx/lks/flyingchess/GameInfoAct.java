@@ -33,6 +33,7 @@ public class GameInfoAct extends AppCompatActivity implements Target{
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);//Activity切换动画
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         Game.activityManager.add(this);
+        Game.soundManager.playMusic(SoundManager.BACKGROUND);
         //init
         createButton=(Button)findViewById(R.id.create);
         backButton=(Button)findViewById(R.id.back);
@@ -98,6 +99,12 @@ public class GameInfoAct extends AppCompatActivity implements Target{
             Game.socketManager.registerActivity(DataPack.A_ROOM_ENTER,this);
             new Thread(worker).start();
         }
+    }
+
+    @Override
+    public void onStop(){
+        super.onStop();
+        Game.soundManager.pauseMusic();
     }
 
     @Override

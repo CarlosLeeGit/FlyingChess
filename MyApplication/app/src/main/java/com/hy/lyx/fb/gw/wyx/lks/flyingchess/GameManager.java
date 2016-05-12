@@ -77,29 +77,36 @@ public class GameManager implements Target {//game process control
             }
         }
         if(win){
-            if(Integer.valueOf(id)<0||id.compareTo(Game.dataManager.getMyId())==0){
-                if(Integer.valueOf(id)<0) {//robot
-                    String[] s = {"Red","Green","Blue","Yellow"};
-                    toast(s[color]+" robot is the winner!");
+            if(Integer.valueOf(id)<0){
+                String[] s = {"Red","Green","Blue","Yellow"};
+                toast(s[color]+" robot is the winner!");
+                if(Game.dataManager.getGameMode()==DataManager.GM_WLAN&&Game.dataManager.getHostId().compareTo(Game.dataManager.getMyId())==0){//我是房主
+                    LinkedList<String> msgs=new LinkedList<>();
+                    msgs.addLast(id);
+                    msgs.addLast(Game.dataManager.getRoomId());
+                    msgs.addLast("ROBOT");
+                    Game.socketManager.send(new DataPack(DataPack.R_GAME_FINISHED,msgs));
                 }
-                else//me
-                    toast("I am the winner!");
+            }
+            else if(id.compareTo(Game.dataManager.getMyId())==0){//我赢了
+                toast("I am the winner!");
                 if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
                     LinkedList<String> msgs=new LinkedList<>();
                     msgs.addLast(id);
                     msgs.addLast(Game.dataManager.getRoomId());
-                    if(Integer.valueOf(id)<0)
-                        msgs.addLast("ROBOT");
-                    else
-                        msgs.addLast(Game.dataManager.getMyName());
+                    msgs.addLast(Game.dataManager.getMyName());
                     Game.socketManager.send(new DataPack(DataPack.R_GAME_FINISHED,msgs));
                 }
             }
             else{//player
-                while(!finished){
-                    Game.delay(100);
-                }
                 toast("player"+Game.playersData.get(id).name+"is the winner!");
+                if(Game.dataManager.getGameMode()==DataManager.GM_WLAN&&Game.playersData.get(id).offline&&Game.dataManager.getHostId().compareTo(Game.dataManager.getMyId())==0){//掉线且我是房主
+                    LinkedList<String> msgs=new LinkedList<>();
+                    msgs.addLast(id);
+                    msgs.addLast(id);
+                    msgs.addLast(Game.playersData.get(id).name);
+                    Game.socketManager.send(new DataPack(DataPack.R_GAME_FINISHED,msgs));
+                }
             }
             Game.dataManager.setWinner(id);
             gameOver();
@@ -148,6 +155,7 @@ public class GameManager implements Target {//game process control
     }
 
     private void planeCrash(int color, int crashPlane) {
+        Game.soundManager.playSound(SoundManager.BOOM);
         Message msg = new Message();
         Bundle b = new Bundle();
         b.putInt("color", color);
@@ -159,54 +167,68 @@ public class GameManager implements Target {//game process control
     }
 
     private void flyNow(int color) {
-            int toPos = Game.chessBoard.getAirplane(color).position[whichPlane];
-            int curPos = Game.chessBoard.getAirplane(color).lastPosition[whichPlane];
-            if(curPos + dice == toPos || curPos == -1) {
-                for (int pos = curPos + 1; pos <= toPos; pos++) {
-                    planeAnimate(color, pos);
-                }
-                crash(color, toPos);
+        int toPos = Game.chessBoard.getAirplane(color).position[whichPlane];
+        int curPos = Game.chessBoard.getAirplane(color).lastPosition[whichPlane];
+        if(curPos + dice == toPos || curPos == -1) {
+            for (int pos = curPos + 1; pos <= toPos; pos++) {
+                Game.soundManager.playSound(SoundManager.FLYSHORT);
+                planeAnimate(color, pos);
             }
-            else if(curPos + dice + 4 == toPos) { // short jump
-                for(int pos = curPos + 1; pos <= curPos + dice; pos++) {
-                    planeAnimate(color, pos);
-                }
-                crash(color, curPos + dice);
-                planeAnimate(color, toPos);
-                crash(color, curPos);
+            crash(color, toPos);
+        }
+        else if(curPos + dice + 4 == toPos) { // short jump
+            for(int pos = curPos + 1; pos <= curPos + dice; pos++) {
+                Game.soundManager.playSound(SoundManager.FLYSHORT);
+                planeAnimate(color, pos);
             }
-            else if(toPos == 30) { // short jump and then long jump
-                for(int pos = curPos + 1; pos <= curPos + dice; pos++) {
-                    planeAnimate(color, pos);
-                }
-                crash(color, curPos + dice);
-                planeAnimate(color, 18);
-                crash(color, 18);
-                planeAnimate(color, 30);
-                crash(color, 30);
+            crash(color, curPos + dice);
+            Game.soundManager.playSound(SoundManager.FLYLONG);
+            planeAnimate(color, toPos);
+            crash(color, curPos);
+        }
+        else if(toPos == 30) { // short jump and then long jump
+            for(int pos = curPos + 1; pos <= curPos + dice; pos++) {
+                Game.soundManager.playSound(SoundManager.FLYSHORT);
+                planeAnimate(color, pos);
             }
-            else if(toPos == 34) { // long jump and then short jump
-                for(int pos =curPos + 1; pos <= 18; pos++) {
-                    planeAnimate(color, pos);
-                }
-                crash(color, 18);
-                planeAnimate(color, 30);
-                crash(color, 30);
+            crash(color, curPos + dice);
+            Game.soundManager.playSound(SoundManager.FLYLONG);
+            planeAnimate(color, 18);
+            crash(color, 18);
+            Game.soundManager.playSound(SoundManager.FLYLONG);
+            planeAnimate(color, 30);
+            crash(color, 30);
+        }
+        else if(toPos == 34) { // long jump and then short jump
+            for(int pos =curPos + 1; pos <= 18; pos++) {
+                Game.soundManager.playSound(SoundManager.FLYSHORT);
+                planeAnimate(color, pos);
+            }
+            crash(color, 18);
+            Game.soundManager.playSound(SoundManager.FLYLONG);
+            planeAnimate(color, 30);
+            crash(color, 30);
+            Game.soundManager.playSound(SoundManager.FLYLONG);
             planeAnimate(color, 34);
             crash(color, 34);
         }
         else if(Game.chessBoard.isOverflow()) { // overflow
             for (int pos = curPos + 1; pos <= 56; pos++) {
+                Game.soundManager.playSound(SoundManager.FLYSHORT);
                 planeAnimate(color, pos);
             }
-            for(int pos = 55; pos >= toPos; pos--)
+            for(int pos = 55; pos >= toPos; pos--) {
+                Game.soundManager.playSound(SoundManager.FLYSHORT);
                 planeAnimate(color, pos);
+            }
             crash(color, toPos);
             Game.chessBoard.setOverflow(false);
         }
         else if(toPos==-2) {
-            for(int pos = curPos+1;pos<=56;pos++)
-                planeAnimate(color,pos);
+            for (int pos = curPos + 1; pos <= 56; pos++) {
+                Game.soundManager.playSound(SoundManager.FLYSHORT);
+                planeAnimate(color, pos);
+            }
         }
     }
 

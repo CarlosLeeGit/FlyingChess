@@ -52,6 +52,10 @@ public class GameEndAct extends AppCompatActivity {
                 map.put("state","Lost");
                 map.put("action","-5");
             }
+            if(Game.playersData.get(msgs.get(i)).offline){
+                map.put("state","offline");
+                map.put("action","0");
+            }
             map.put("score", msgs.get(i + 2));
             playerListData.addLast(map);
         }

@@ -27,6 +27,7 @@ public class LoginAct extends AppCompatActivity implements Target {
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);//Activity切换动画
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         Game.activityManager.add(this);
+        Game.soundManager.playMusic(SoundManager.BACKGROUND);
         //init
         login = (Button)findViewById(R.id.loginButton);
         myName=(TextInputLayout)findViewById(R.id.myName);
@@ -120,6 +121,11 @@ public class LoginAct extends AppCompatActivity implements Target {
         }
     }
 
+    @Override
+    public void onStop(){
+        super.onStop();
+        Game.soundManager.pauseMusic();
+    }
     @Override
     public void processDataPack(DataPack dataPack) {
         if(dataPack.getCommand()== DataPack.A_LOGIN){

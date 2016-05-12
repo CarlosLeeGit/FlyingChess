@@ -81,6 +81,7 @@ public class ChooseModeAct extends AppCompatActivity implements Target{
         //setting
         Game.activityManager.add(this);
         Game.soundManager.playMusic(SoundManager.BACKGROUND);
+        Game.updateManager.checkUpdate();
         //background img
         DisplayMetrics dm=new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
@@ -92,6 +93,12 @@ public class ChooseModeAct extends AppCompatActivity implements Target{
         bk.setImageBitmap(BitmapFactory.decodeStream(is,null,opt));
         InputStream is2 = getApplicationContext().getResources().openRawResource(R.raw.choosemodebk2);
         bk2.setImageBitmap(BitmapFactory.decodeStream(is2,null,opt));
+    }
+
+    @Override
+    public void onStop(){
+        super.onStop();
+        Game.soundManager.pauseMusic();
     }
 
     @Override

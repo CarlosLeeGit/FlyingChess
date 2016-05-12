@@ -15,6 +15,7 @@ public class Game{
     public static HashMap<String,Role> playersData;
     public static ActivityManager activityManager;
     public static SoundManager soundManager;
+    public static UpdateManager updateManager;
 
     public static void init(AppCompatActivity activity){
         dataManager=new DataManager();
@@ -24,6 +25,7 @@ public class Game{
         playersData =new HashMap<>();
         activityManager=new ActivityManager();
         soundManager = new SoundManager(activity);
+        updateManager = new UpdateManager(activity);
     }
 
     public static void delay(int interval){

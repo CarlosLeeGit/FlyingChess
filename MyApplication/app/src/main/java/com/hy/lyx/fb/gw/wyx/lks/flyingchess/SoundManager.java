@@ -29,9 +29,7 @@ public class SoundManager {
     public static final int BACK=9;
     public static final int BUTTON=10;
 
-    private boolean bk,game;
-
-    private MediaPlayer music;
+    private MediaPlayer bk,game;
     private SoundPool soundPool;
     private Context context;
 
@@ -40,9 +38,10 @@ public class SoundManager {
     public SoundManager(AppCompatActivity activity){
         this.context=activity.getApplicationContext();
         initSound();
-        music = MediaPlayer.create(context,R.raw.bg);
-        bk=false;
-        game=false;
+        bk = MediaPlayer.create(context,R.raw.bg);
+        bk.setLooping(true);
+        game=MediaPlayer.create(context,R.raw.bg2);
+        game.setLooping(true);
     }
 
     //初始化音效播放器
@@ -52,7 +51,7 @@ public class SoundManager {
 
         soundMap = new HashMap<Integer,Integer>();
         soundMap.put(BUTTON, soundPool.load(context, R.raw.itemboom, 1));
-        soundMap.put(R.raw.sel, soundPool.load(context, R.raw.sel, 1));
+        soundMap.put(BOOM, soundPool.load(context, R.raw.sel, 1));
         soundMap.put(ARRIVE, soundPool.load(context, R.raw.arrive, 1));
         soundMap.put(BACK, soundPool.load(context, R.raw.click, 1));
         soundMap.put(ROLL, soundPool.load(context, R.raw.dice, 1));
@@ -70,33 +69,28 @@ public class SoundManager {
     public void playMusic(int type){
         switch (type){
             case BACKGROUND:
-                if(!bk){
-                    music = MediaPlayer.create(context,R.raw.bg);
-                    music.setLooping(true);
-                    music.start();
-                    bk=true;
-                    game=false;
+                if(!bk.isPlaying()){
+                    bk.start();
+                }
+                if(game.isPlaying()){
+                    game.stop();
                 }
                 break;
             case GAME:
-                if(!game) {
-                    music = MediaPlayer.create(context,R.raw.bg2);
-                    music.setLooping(true);
-                    music.start();
-                    game=true;
-                    bk=false;
+                if(!game.isPlaying()) {
+                    game.start();
+                }
+                if(bk.isPlaying()){
+                    bk.stop();
                 }
                 break;
         }
     }
 
     public void pauseMusic() {
-        if(music.isPlaying())
-            music.pause();
-    }
-
-    public void stopMusic(){
-        if(music.isPlaying())
-            music.stop();
+       /*if(bk.isPlaying())
+            bk.pause();
+        if(game.isPlaying())
+            game.pause();*/
     }
 }

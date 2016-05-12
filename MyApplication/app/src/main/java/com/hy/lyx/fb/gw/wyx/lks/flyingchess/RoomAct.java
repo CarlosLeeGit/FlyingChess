@@ -28,6 +28,7 @@ public class RoomAct extends AppCompatActivity implements Target {
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);//Activity切换动画
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         Game.activityManager.add(this);
+        Game.soundManager.playMusic(SoundManager.BACKGROUND);
         //init
         startButton=(Button)findViewById(R.id.start);
         backButton=(Button)findViewById(R.id.back);
@@ -164,6 +165,7 @@ public class RoomAct extends AppCompatActivity implements Target {
         for(int i=4;i<players.size();){
             int type = (Integer.valueOf(players.get(i))<0)?Role.ROBOT:Role.PLAYER;
             Game.playersData.put(players.get(i),new Role(players.get(i),players.get(i+1),players.get(i+2),Integer.valueOf(players.get(i+3)),type,false));
+            i+=4;
         }
         Game.playersData.get(Game.dataManager.getMyId()).type=Role.ME;
 
@@ -190,7 +192,11 @@ public class RoomAct extends AppCompatActivity implements Target {
         }
         idlePlayerListAdapter.notifyDataSetChanged();
     }
-
+    @Override
+    public void onStop(){
+        super.onStop();
+        Game.soundManager.pauseMusic();
+    }
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {//返回按钮
@@ -218,37 +224,39 @@ public class RoomAct extends AppCompatActivity implements Target {
             });
         }
         else if(dataPack.getCommand()==DataPack.E_ROOM_EXIT){
-            if(dataPack.getMessage(0).compareTo(Game.dataManager.getHostId())==0)//是房主
-            {
-                Intent intent=new Intent(getApplicationContext(),GameInfoAct.class);
-                startActivity(intent);
-            }
-            else{
-                for(HashMap<String,String> map:idlePlayerListData){
-                    if(map.get("name").compareTo(dataPack.getMessage(1))==0){
-                        idlePlayerListData.remove(map);
-                        site[0].post(new Runnable() {
-                            @Override
-                            public void run() {
-                                idlePlayerListAdapter.notifyDataSetChanged();
-                            }
-                        });
-                        return ;
-                    }
+            if(dataPack.getMessageList()!=null){//不是我退出了
+                if(dataPack.getMessage(0).compareTo(Game.dataManager.getHostId())==0)//是房主
+                {
+                    Intent intent=new Intent(getApplicationContext(),GameInfoAct.class);
+                    startActivity(intent);
                 }
-                for(int i=0;i<4;i++){
-                    if(site[i].getText().toString().compareTo(dataPack.getMessage(1))==0){
-                        final int tmp=i;
-                        site[i].post(new Runnable() {
-                            @Override
-                            public void run() {
-                                site[tmp].setText("");
-                                siteState[tmp]=-1;
-                            }
-                        });
+                else{
+                    for(HashMap<String,String> map:idlePlayerListData){
+                        if(map.get("name").compareTo(dataPack.getMessage(1))==0){
+                            idlePlayerListData.remove(map);
+                            site[0].post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    idlePlayerListAdapter.notifyDataSetChanged();
+                                }
+                            });
+                            return ;
+                        }
                     }
+                    for(int i=0;i<4;i++){
+                        if(site[i].getText().toString().compareTo(dataPack.getMessage(1))==0){
+                            final int tmp=i;
+                            site[i].post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    site[tmp].setText("");
+                                    siteState[tmp]=-1;
+                                }
+                            });
+                        }
+                    }
+                    Game.playersData.remove(dataPack.getMessage(0));
                 }
-                Game.playersData.remove(dataPack.getMessage(0));
             }
         }
         else if(dataPack.getCommand()==DataPack.E_ROOM_POSITION_SELECT) {

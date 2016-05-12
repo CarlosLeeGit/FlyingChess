@@ -111,6 +111,7 @@ public class Role {
         switch (type){
             case ME: {
                 canRoll = true;
+                isDiceValid=false;
                 while (!isDiceValid) {//等待按下骰子
                     if (Game.dataManager.isGiveUp()) {//托管
                         canRoll = false;//防止产生随机数时  玩家按下骰子
@@ -147,19 +148,22 @@ public class Role {
         switch (type){
             case ME:{
                 canChoosePlane=true;
-                while(!isDiceValid){
+                isPlaneValid=false;
+                while(!isPlaneValid){
                     if(Game.dataManager.isGiveUp()){//托管
                         canChoosePlane=false;
-                        isDiceValid=false;
+                        isPlaneValid=false;
                         whichPlane=AIChoosePlane();
                         break;
                     }
                     Game.delay(200);
                 }
                 canChoosePlane=false;
-                isDiceValid=false;
+                isPlaneValid=false;
+                break;
             }
             case PLAYER:{
+                waitForPlane=true;
                 while(waitForPlane) {
                     if(offline&&Game.dataManager.getHostId().compareTo(Game.dataManager.getMyId())==0){//断线且我是房主
                         whichPlane=AIChoosePlane();
@@ -167,9 +171,11 @@ public class Role {
                     }
                     Game.delay(100);
                 }
+                break;
             }
             case ROBOT:{
                 whichPlane=AIChoosePlane();
+                break;
             }
         }
         return whichPlane;
