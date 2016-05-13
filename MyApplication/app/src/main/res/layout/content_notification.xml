@@ -10,7 +10,8 @@
         android:text="Downloading FlyingChess"
         android:id="@+id/textView9"
         android:textSize="18sp"
-        android:layout_marginLeft="20sp" />
+        android:layout_marginLeft="20sp"
+        android:textColor="#ffffff" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -19,7 +20,8 @@
         android:text="0"
         android:id="@+id/textView10"
         android:textSize="12sp"
-        android:layout_marginLeft="20sp" />
+        android:layout_marginLeft="20sp"
+        android:textColor="#ffffff" />
 
     <ProgressBar
         style="?android:attr/progressBarStyleHorizontal"

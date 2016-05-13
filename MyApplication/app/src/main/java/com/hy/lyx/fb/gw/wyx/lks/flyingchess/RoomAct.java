@@ -264,7 +264,7 @@ public class RoomAct extends AppCompatActivity implements Target {
                 final int id = Integer.valueOf(dataPack.getMessage(0));
                 final int np = Integer.valueOf(dataPack.getMessage(3));
                 if (id < 0) {//robot choose
-                    if(np!=-1){//如果添加机器人
+                    if(np!=-1){//如果添加
                         siteState[np]=0;
                         site[0].post(new Runnable() {
                             @Override
@@ -287,7 +287,7 @@ public class RoomAct extends AppCompatActivity implements Target {
                         Game.playersData.remove(dataPack.getMessage(0));
                     }
                 }
-                else {
+                else {//human
                     for (HashMap<String, String> map : idlePlayerListData) {
                         if (map.get("name").compareTo(dataPack.getMessage(1)) == 0) {
                             idlePlayerListData.remove(map);

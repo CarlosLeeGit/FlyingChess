@@ -29,12 +29,16 @@ import java.net.Socket;
  */
 public class UpdateManager {
     public UpdateWorker uw;
+    private boolean checked;
     public UpdateManager(AppCompatActivity activity){
         uw=new UpdateWorker(activity);
+        checked=false;
     }
     public void checkUpdate(){
-        uw.cancleUpdate();
-        new Thread(uw).start();
+        if(checked==false){
+            new Thread(uw).start();
+        }
+        checked=true;
     }
 }
 

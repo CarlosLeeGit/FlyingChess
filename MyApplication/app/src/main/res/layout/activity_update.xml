@@ -9,50 +9,38 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.hy.lyx.fb.gw.wyx.lks.flyingchess.UpdateAct">
 
-    <Space
-        android:layout_width="20px"
-        android:layout_height="20px"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/space" />
-
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="RightNow"
         android:id="@+id/rn"
-        android:layout_below="@+id/space"
-        android:layout_alignEnd="@+id/space"
         android:layout_marginRight="20sp"
-        android:padding="5sp" />
+        android:padding="5sp"
+        android:layout_below="@+id/space"
+        android:layout_toStartOf="@+id/textView8"
+        android:layout_marginBottom="20sp" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Later"
         android:id="@+id/later"
-        android:layout_alignTop="@+id/rn"
-        android:layout_toEndOf="@+id/space"
         android:layout_marginLeft="20sp"
-        android:padding="5sp" />
+        android:padding="5sp"
+        android:layout_below="@+id/space"
+        android:layout_toEndOf="@+id/textView8"
+        android:layout_marginBottom="20sp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Update now?"
-        android:id="@+id/textView6"
-        android:layout_alignBottom="@+id/space"
-        android:layout_centerHorizontal="true" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="New version of FlyingChess released."
+        android:text="    New version of FlyingChess released.Update now?"
         android:id="@+id/textView7"
-        android:layout_above="@+id/textView6"
-        android:layout_centerHorizontal="true" />
+        android:textSize="30sp"
+        android:layout_below="@+id/textView8"
+        android:layout_centerHorizontal="true"
+        android:textAlignment="center" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -60,6 +48,14 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="              "
         android:id="@+id/textView8"
-        android:layout_above="@+id/textView7"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:textSize="30sp" />
+
+    <Space
+        android:layout_width="20px"
+        android:layout_height="20px"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/space"
+        android:layout_below="@+id/textView7" />
 </RelativeLayout>

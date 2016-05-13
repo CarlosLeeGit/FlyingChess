@@ -37,6 +37,8 @@ public class Role {
         isPlaneValid=false;
         canRoll=false;
         canChoosePlane=false;
+        waitForDice=true;
+        waitForPlane=true;
     }
 
     public boolean canIMove(){//test whether i can move a plane
@@ -126,7 +128,6 @@ public class Role {
                 break;
             }
             case PLAYER: {
-                waitForDice=true;
                 while(waitForDice){
                     if(offline&&Game.dataManager.getHostId().compareTo(Game.dataManager.getMyId())==0){//断线且我是房主
                         dice=AIDice();
@@ -134,6 +135,7 @@ public class Role {
                     }
                     Game.delay(100);
                 }
+                waitForDice=true;
                 break;
             }
             case ROBOT: {
@@ -163,7 +165,6 @@ public class Role {
                 break;
             }
             case PLAYER:{
-                waitForPlane=true;
                 while(waitForPlane) {
                     if(offline&&Game.dataManager.getHostId().compareTo(Game.dataManager.getMyId())==0){//断线且我是房主
                         whichPlane=AIChoosePlane();
@@ -171,6 +172,7 @@ public class Role {
                     }
                     Game.delay(100);
                 }
+                waitForPlane=true;
                 break;
             }
             case ROBOT:{
