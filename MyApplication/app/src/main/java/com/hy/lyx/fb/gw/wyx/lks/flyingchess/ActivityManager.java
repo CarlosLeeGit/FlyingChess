@@ -20,6 +20,9 @@ public class ActivityManager {
         list.getLast().finish();
         list.removeLast();
     }
+    public boolean isSuspend(){
+        return false;
+    }
     public void closeAll(){
         for(AppCompatActivity activity: list){
             activity.finish();

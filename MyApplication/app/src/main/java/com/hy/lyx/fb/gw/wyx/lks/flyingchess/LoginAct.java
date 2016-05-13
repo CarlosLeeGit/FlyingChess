@@ -107,7 +107,7 @@ public class LoginAct extends AppCompatActivity implements Target {
         home.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Game.soundManager.playSound(SoundManager.BACK);
+                Game.soundManager.playSound(SoundManager.BUTTON);
                 startActivity(new Intent(getApplicationContext(),ChooseModeAct.class));
             }
         });

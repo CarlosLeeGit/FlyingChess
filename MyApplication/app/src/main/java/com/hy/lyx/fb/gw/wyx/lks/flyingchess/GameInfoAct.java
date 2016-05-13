@@ -61,7 +61,7 @@ public class GameInfoAct extends AppCompatActivity implements Target{
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Game.soundManager.playSound(SoundManager.BACK);
+                Game.soundManager.playSound(SoundManager.BUTTON);
                 goBack();
             }
         });

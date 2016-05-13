@@ -72,7 +72,7 @@ public class RoomAct extends AppCompatActivity implements Target {
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Game.soundManager.playSound(SoundManager.BACK);
+                Game.soundManager.playSound(SoundManager.BUTTON);
                 if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
                     Game.socketManager.send(DataPack.R_ROOM_EXIT,Game.dataManager.getMyId(),Game.dataManager.getRoomId(),Game.playersData.get(Game.dataManager.getMyId()).color);
                     startActivity(new Intent(getApplicationContext(),GameInfoAct.class));
@@ -86,6 +86,7 @@ public class RoomAct extends AppCompatActivity implements Target {
         site[0].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Game.soundManager.playSound(SoundManager.BUTTON);
                 chooseSite(0);
             }
         });
@@ -93,6 +94,7 @@ public class RoomAct extends AppCompatActivity implements Target {
         site[1].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Game.soundManager.playSound(SoundManager.BUTTON);
                 chooseSite(1);
             }
         });
@@ -100,6 +102,7 @@ public class RoomAct extends AppCompatActivity implements Target {
         site[2].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Game.soundManager.playSound(SoundManager.BUTTON);
                 chooseSite(2);
             }
         });
@@ -107,6 +110,7 @@ public class RoomAct extends AppCompatActivity implements Target {
         site[3].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Game.soundManager.playSound(SoundManager.BUTTON);
                 chooseSite(3);
             }
         });
@@ -413,7 +417,13 @@ public class RoomAct extends AppCompatActivity implements Target {
 
     private void exit(){
         Game.socketManager.send(DataPack.R_ROOM_EXIT,Game.dataManager.getMyId(),Game.dataManager.getRoomId(),Game.playersData.get(Game.dataManager.getMyId()).color);
-        Intent intent=new Intent(getApplicationContext(),ChooseModeAct.class);
-        startActivity(intent);
+        if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
+            Intent intent=new Intent(getApplicationContext(),GameInfoAct.class);
+            startActivity(intent);
+        }
+        else if(Game.dataManager.getGameMode()==DataManager.GM_LOCAL){
+            Intent intent=new Intent(getApplicationContext(),ChooseModeAct.class);
+            startActivity(intent);
+        }
     }
 }

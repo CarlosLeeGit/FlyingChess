@@ -106,8 +106,8 @@ public class ChooseModeAct extends AppCompatActivity implements Target{
         if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {//返回按钮
             if (event.getAction() == KeyEvent.ACTION_DOWN && event.getRepeatCount() == 0) {
                 if(exit){
-                    //System.exit(0);
                     Game.activityManager.closeAll();
+                    System.exit(0);
                 }
                 else{
                     exit=true;

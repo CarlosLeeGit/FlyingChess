@@ -15,19 +15,19 @@ import java.util.Map;
  */
 public class SoundManager {
 
-    public static final int BACKGROUND=-1;
-    public static final int GAME=-2;
 
-    public static final int BOOM=1;
-    public static final int MSG=2;
-    public static final int BUMP=3;
-    public static final int ARRIVE=4;
-    public static final int WIN=5;
-    public static final int FLYSHORT=6;
-    public static final int FLYLONG=7;
-    public static final int ROLL=8;
-    public static final int BACK=9;
-    public static final int BUTTON=10;
+    public static final int ARRIVE=1;
+    public static final int BACKGROUND =2 ;
+    public static final int BUTTON = 3;
+    public static final int DICE = 4;
+    public static final int FLYCRASH=5;
+    public static final int FLYLONG = 6;
+    public static final int FLYSHORT = 7;
+    public static final int FLYMID =8;
+    public static final int FLYOUT = 9;
+    public static final int WIN = 10;
+    public static final int LOSE = 11;
+    public static final int GAME=12;
 
     private MediaPlayer bk,game;
     private SoundPool soundPool;
@@ -38,9 +38,9 @@ public class SoundManager {
     public SoundManager(AppCompatActivity activity){
         this.context=activity.getApplicationContext();
         initSound();
-        bk = MediaPlayer.create(context,R.raw.bg);
+        bk = MediaPlayer.create(context,R.raw.backgroundmusic);
         bk.setLooping(true);
-        game=MediaPlayer.create(context,R.raw.bg2);
+        game=MediaPlayer.create(context,R.raw.gamemusic);
         game.setLooping(true);
     }
 
@@ -50,20 +50,21 @@ public class SoundManager {
         soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC,100);
 
         soundMap = new HashMap<Integer,Integer>();
-        soundMap.put(BUTTON, soundPool.load(context, R.raw.itemboom, 1));
-        soundMap.put(BOOM, soundPool.load(context, R.raw.sel, 1));
         soundMap.put(ARRIVE, soundPool.load(context, R.raw.arrive, 1));
-        soundMap.put(BACK, soundPool.load(context, R.raw.click, 1));
-        soundMap.put(ROLL, soundPool.load(context, R.raw.dice, 1));
-        soundMap.put(FLYLONG, soundPool.load(context, R.raw.fly, 1));
-        soundMap.put(MSG, soundPool.load(context, R.raw.message, 1));
-        soundMap.put(FLYSHORT, soundPool.load(context, R.raw.onestep, 1));
-        soundMap.put(WIN, soundPool.load(context, R.raw.win1, 1));
+        soundMap.put(BUTTON, soundPool.load(context, R.raw.button, 1));
+        soundMap.put(DICE, soundPool.load(context, R.raw.dice, 1));
+        soundMap.put(FLYCRASH, soundPool.load(context, R.raw.flycrash, 1));
+        soundMap.put(FLYLONG, soundPool.load(context, R.raw.flylong, 1));
+        soundMap.put(FLYSHORT, soundPool.load(context, R.raw.flyshort, 1));
+        soundMap.put(FLYMID, soundPool.load(context, R.raw.flymid, 1));
+        soundMap.put(FLYOUT, soundPool.load(context, R.raw.flyout, 1));
+        soundMap.put(WIN, soundPool.load(context, R.raw.win, 1));
+        //soundMap.put(, soundPool.load(context, R.raw., 1));
     }
 
     public void playSound(int type)
     {
-        soundPool.play(soundMap.get(type), 1, 1, 1, 0, 1);
+        soundPool.play(soundMap.get(type), 2, 2, 1, 0, 1);
     }
 
     public void playMusic(int type){
@@ -73,7 +74,7 @@ public class SoundManager {
                     bk.start();
                 }
                 if(game.isPlaying()){
-                    game.stop();
+                    game.pause();
                 }
                 break;
             case GAME:
@@ -81,7 +82,7 @@ public class SoundManager {
                     game.start();
                 }
                 if(bk.isPlaying()){
-                    bk.stop();
+                    bk.pause();
                 }
                 break;
         }

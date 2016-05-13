@@ -49,7 +49,7 @@ public class GameEndAct extends AppCompatActivity {
                 winner.setText(msgs.get(i+1)+" win the game~");
             }
             else{
-                map.put("state","Lost");
+                map.put("state","Lose");
                 map.put("action","-5");
             }
             if(Game.playersData.get(msgs.get(i)).offline){

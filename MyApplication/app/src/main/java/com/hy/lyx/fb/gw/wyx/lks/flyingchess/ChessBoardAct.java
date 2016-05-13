@@ -194,13 +194,7 @@ class MyHandler extends Handler{
                 int color=msg.getData().getInt("color");
                 int whichPlane=msg.getData().getInt("whichPlane");
                 int pos=msg.getData().getInt("pos");
-                if(pos!=-2){
-                    parent.animMoveTo(parent.plane[color][whichPlane], Game.chessBoard.map[color][pos][0], Game.chessBoard.map[color][pos][1]);
-                }
-                else{//到达
-                    parent.animMoveTo(parent.plane[color][whichPlane], Game.chessBoard.map[color][55][0], Game.chessBoard.map[color][55][1]);
-                    Game.soundManager.playSound(SoundManager.ARRIVE);
-                }
+                parent.animMoveTo(parent.plane[color][whichPlane], Game.chessBoard.map[color][pos][0], Game.chessBoard.map[color][pos][1]);
             }
             break;
             case 2://骰子
@@ -221,10 +215,14 @@ class MyHandler extends Handler{
                 Intent intent = new Intent(parent.getApplicationContext(), RoomAct.class);
                 ArrayList<String> msgs=new ArrayList<>();
                 if(Game.dataManager.getGameMode()==DataManager.GM_LOCAL){
-                    if(Game.dataManager.getLastWinner().compareTo(Game.dataManager.getMyId())==0)//更新分数
-                        Game.dataManager.setScore(Game.dataManager.getScore()+10);
-                    else
-                        Game.dataManager.setScore(Game.dataManager.getScore()-5);
+                    if(Game.dataManager.getLastWinner().compareTo(Game.dataManager.getMyId())==0) {//更新分数
+                        Game.dataManager.setScore(Game.dataManager.getScore() + 10);
+                        Game.soundManager.playSound(SoundManager.WIN);
+                    }
+                    else {
+                        Game.dataManager.setScore(Game.dataManager.getScore() - 5);
+                        //Game.soundManager.playSound(SoundManager.LOSE);
+                    }
 
                     Game.dataManager.saveData();
                     msgs.add(Game.dataManager.getMyId());
@@ -237,8 +235,10 @@ class MyHandler extends Handler{
                         if(Game.playersData.get(key).offline==false) {
                             if (Game.playersData.get(key).id.compareTo(Game.dataManager.getLastWinner()) == 0) {
                                 Game.playersData.get(key).score = String.valueOf(Integer.valueOf(Game.playersData.get(key).score) + 10);
+                                Game.soundManager.playSound(SoundManager.WIN);
                             } else {
                                 Game.playersData.get(key).score = String.valueOf(Integer.valueOf(Game.playersData.get(key).score) - 5);
+                                //Game.soundManager.playSound(SoundManager.LOSE);
                             }
                         }
                     }
