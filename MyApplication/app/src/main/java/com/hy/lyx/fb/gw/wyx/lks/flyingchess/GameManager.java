@@ -6,6 +6,7 @@ import android.os.Message;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Created by karthur on 2016/4/9.
@@ -42,6 +43,8 @@ public class GameManager implements Target {//game process control
             }
         }
         if(role!=null) {//此颜色有玩家
+            whichPlane=-1;
+            System.err.println("turn to: " + role.name + " " + role.color);
             dice = role.roll();
             if((role.offline||role.type!=Role.PLAYER)&&Game.dataManager.getHostId().compareTo(Game.dataManager.getMyId())==0||role.type==Role.ME){
                 Game.socketManager.send(DataPack.R_GAME_PROCEED_DICE,role.id, Game.dataManager.getRoomId(), dice);
@@ -52,7 +55,9 @@ public class GameManager implements Target {//game process control
             boolean canFly = false;
             if (role.canIMove()) {
                 do {
+                    System.err.println("turnto():wait for plane");
                     whichPlane = role.choosePlane();
+                    System.err.println("turnto():choose " + whichPlane);
                 } while (!role.move());
                 canFly = true;
             } else if(role.type==Role.ME){
@@ -277,10 +282,14 @@ public class GameManager implements Target {//game process control
                 finished=true;
                 break;
             case DataPack.E_GAME_PROCEED_DICE:
+                System.err.println("processDatapack: dice " + dataPack.getMessage(0) + " " + dataPack.getMessage(1) + " " + dataPack.getMessage(2));
                 Game.playersData.get(dataPack.getMessage(0)).setDiceValid(Integer.valueOf(dataPack.getMessage(2)));
                 break;
             case DataPack.E_GAME_PROCEED_PLANE:
-                Game.playersData.get(dataPack.getMessage(0)).setPlaneValid(Integer.valueOf(dataPack.getMessage(2)));
+                System.err.println("processDatapack: plane " + dataPack.getMessage(0) + " " + dataPack.getMessage(1) + " " + dataPack.getMessage(2));
+                if(Integer.valueOf(dataPack.getMessage(2))>=0){
+                    Game.playersData.get(dataPack.getMessage(0)).setPlaneValid(Integer.valueOf(dataPack.getMessage(2)));
+                }
                 break;
             case DataPack.E_GAME_PLAYER_DISCONNECTED:
                 if(dataPack.getMessage(0).compareTo(Game.dataManager.getMyId())!=0){//不是我
