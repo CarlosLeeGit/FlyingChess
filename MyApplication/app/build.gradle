@@ -9,7 +9,7 @@ android {
         applicationId "com.hy.lyx.fb.gw.wyx.lks.flyingchess"
         minSdkVersion 21
         targetSdkVersion 23
-        versionCode 2
+        versionCode 3
         versionName "1.7"
     }
     buildTypes {

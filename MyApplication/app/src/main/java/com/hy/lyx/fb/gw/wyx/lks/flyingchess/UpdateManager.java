@@ -1,5 +1,6 @@
 package com.hy.lyx.fb.gw.wyx.lks.flyingchess;
 
+import android.app.Application;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -9,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.Parcel;
+import android.provider.SyncStateContract;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.NotificationCompat;
 import android.widget.RemoteViews;
@@ -150,9 +152,8 @@ class UpdateWorker implements Runnable{
                 nm.cancel(0);
                 fos.close();
                 Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setDataAndType(Uri.parse(Environment.getExternalStorageDirectory().getPath()+"/ksymphony.com/FlyingChess/new.apk"),
-                        "application/vnd.android.package-archive");
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.setDataAndType(Uri.fromFile(apk),"application/vnd.android.package-archive");
                 activity.startActivity(intent);
             }
             dos.writeInt(0);
