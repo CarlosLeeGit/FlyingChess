@@ -16,6 +16,7 @@ public class Game{
     public static ActivityManager activityManager;
     public static SoundManager soundManager;
     public static UpdateManager updateManager;
+    public static LogManager logManager;
 
     public static void init(AppCompatActivity activity){
         dataManager=new DataManager();
@@ -26,6 +27,7 @@ public class Game{
         activityManager=new ActivityManager();
         soundManager = new SoundManager(activity);
         updateManager = new UpdateManager(activity);
+        logManager = new LogManager();
     }
 
     public static void delay(int interval){

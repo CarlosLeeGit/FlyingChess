@@ -19,7 +19,7 @@ public class Role {
     public boolean isHost;
     public boolean offline;
 
-    public static boolean waitForDice,waitForPlane;
+    public boolean waitForDice,waitForPlane;
 
     private boolean isDiceValid,isPlaneValid,canRoll,canChoosePlane;
     private int dice,whichPlane;
@@ -123,6 +123,7 @@ public class Role {
                     }
                     Game.delay(200);
                 }
+                Game.logManager.p("ME roll:",dice);
                 canRoll = false;
                 isDiceValid = false;
                 break;
@@ -131,15 +132,26 @@ public class Role {
                 while(waitForDice){
                     if(offline&&Game.dataManager.getHostId().compareTo(Game.dataManager.getMyId())==0){//断线且我是房主
                         dice=AIDice();
+                        Game.logManager.p("PLAYER offline and dice:",dice);
                         break;
                     }
                     Game.delay(100);
                 }
                 waitForDice=true;
+                Game.logManager.p("PLAYER roll:",dice);
                 break;
             }
             case ROBOT: {
-                dice=AIDice();
+                if(Game.dataManager.getMyId().compareTo(Game.dataManager.getHostId())==0){//我是房主
+                    dice=AIDice();
+                }
+                else{
+                    while(waitForDice){
+                        Game.delay(100);
+                    }
+                    waitForDice=true;
+                }
+                Game.logManager.p("ROBOT roll:",dice);
                 break;
             }
         }
@@ -162,21 +174,34 @@ public class Role {
                 }
                 canChoosePlane=false;
                 isPlaneValid=false;
+                Game.logManager.p("ME fly:",whichPlane);
                 break;
             }
             case PLAYER:{
                 while(waitForPlane) {
                     if(offline&&Game.dataManager.getHostId().compareTo(Game.dataManager.getMyId())==0){//断线且我是房主
                         whichPlane=AIChoosePlane();
+                        Game.logManager.p("PLAYER offline and fly:",whichPlane);
                         break;
                     }
                     Game.delay(100);
                 }
                 waitForPlane=true;
+                Game.logManager.p("PLAYER fly:",whichPlane);
                 break;
             }
             case ROBOT:{
-                whichPlane=AIChoosePlane();
+                if(Game.dataManager.getMyId().compareTo(Game.dataManager.getHostId())==0){//我是房主
+                    whichPlane=AIChoosePlane();
+                }
+                else{
+
+                    while(waitForPlane) {
+                        Game.delay(100);
+                    }
+                    waitForPlane=true;
+                }
+                Game.logManager.p("ROBOT fly:",whichPlane);
                 break;
             }
         }

@@ -29,9 +29,11 @@ public class GameManager implements Target {//game process control
         finished=false;
         gw=new GameWorker();
         new Thread(gw).start();
+        Game.logManager.p("new Turn");
     }
 
     public void gameOver(){
+        Game.logManager.p("game over");
         gw.exit();
     }
 
@@ -43,11 +45,14 @@ public class GameManager implements Target {//game process control
             }
         }
         if(role!=null) {//此颜色有玩家
+            Game.logManager.p("turn to:",role.name," color is:",role.color);
             whichPlane=-1;
-            System.err.println("turn to: " + role.name + " " + role.color);
+            Game.logManager.p("turn to:","waite for dice");
             dice = role.roll();
-            if((role.offline||role.type!=Role.PLAYER)&&Game.dataManager.getHostId().compareTo(Game.dataManager.getMyId())==0||role.type==Role.ME){
+            Game.logManager.p("turn to:","dice is :",dice);
+            if((role.offline||role.type==Role.ROBOT)&&Game.dataManager.getHostId().compareTo(Game.dataManager.getMyId())==0||role.type==Role.ME){
                 Game.socketManager.send(DataPack.R_GAME_PROCEED_DICE,role.id, Game.dataManager.getRoomId(), dice);
+                Game.logManager.p("turn to:","send dice:",dice);
             }
             Game.soundManager.playSound(SoundManager.DICE);
             diceAnimate(dice);
@@ -55,19 +60,21 @@ public class GameManager implements Target {//game process control
             boolean canFly = false;
             if (role.canIMove()) {
                 do {
-                    System.err.println("turnto():wait for plane");
+                    Game.logManager.p("turu to: wait for which plane");
                     whichPlane = role.choosePlane();
-                    System.err.println("turnto():choose " + whichPlane);
+                    Game.logManager.p("turn to: plane result:",whichPlane);
                 } while (!role.move());
                 canFly = true;
             } else if(role.type==Role.ME){
                 toast("sad...I can not move");
+                Game.logManager.p("turn to: i can not fly");
             }
             if((role.offline||role.type!=Role.PLAYER)&&Game.dataManager.getHostId().compareTo(Game.dataManager.getMyId())==0||role.type==Role.ME){
                 Game.socketManager.send(DataPack.R_GAME_PROCEED_PLANE, role.id, Game.dataManager.getRoomId(), whichPlane);
+                Game.logManager.p("turn to: send which plane :",whichPlane);
             }
             if (canFly) {
-                flyNow(color);
+                flyNow(color,whichPlane);
                 amIWin(role.id, color);
             }
             Game.delay(200);
@@ -167,11 +174,12 @@ public class GameManager implements Target {//game process control
         b.putInt("whichPlane", crashPlane);
         b.putInt("pos", Game.chessBoard.getAirplane(color).position[crashPlane]);
         msg.setData(b);
+        //Game.logManager.p("planeCrash:","color:",color,"crashplane:",crashPlane,"position:",Game.chessBoard.getAirplane(color).position[crashPlane]);
         msg.what = 4;
         board.handler.sendMessage(msg);
     }
 
-    private void flyNow(int color) {
+    private void flyNow(int color,int whichPlane) {
         int toPos = Game.chessBoard.getAirplane(color).position[whichPlane];
         int curPos = Game.chessBoard.getAirplane(color).lastPosition[whichPlane];
         if(curPos + dice == toPos || curPos == -1) {
@@ -179,43 +187,43 @@ public class GameManager implements Target {//game process control
                 Game.soundManager.playSound(SoundManager.FLYSHORT);
                 planeAnimate(color, pos);
             }
-            crash(color, toPos);
+            crash(color, toPos,whichPlane);
         }
         else if(curPos + dice + 4 == toPos) { // short jump
             for(int pos = curPos + 1; pos <= curPos + dice; pos++) {
                 Game.soundManager.playSound(SoundManager.FLYSHORT);
                 planeAnimate(color, pos);
             }
-            crash(color, curPos + dice);
+            crash(color, curPos + dice,whichPlane);
             Game.soundManager.playSound(SoundManager.FLYMID);
             planeAnimate(color, toPos);
-            crash(color, curPos);
+            crash(color, toPos,whichPlane);
         }
         else if(toPos == 30) { // short jump and then long jump
             for(int pos = curPos + 1; pos <= curPos + dice; pos++) {
                 Game.soundManager.playSound(SoundManager.FLYSHORT);
                 planeAnimate(color, pos);
             }
-            crash(color, curPos + dice);
+            crash(color, curPos + dice,whichPlane);
             Game.soundManager.playSound(SoundManager.FLYMID);
             planeAnimate(color, 18);
-            crash(color, 18);
+            crash(color, 18,whichPlane);
             Game.soundManager.playSound(SoundManager.FLYLONG);
             planeAnimate(color, 30);
-            crash(color, 30);
+            crash(color, 30,whichPlane);
         }
         else if(toPos == 34) { // long jump and then short jump
             for(int pos =curPos + 1; pos <= 18; pos++) {
                 Game.soundManager.playSound(SoundManager.FLYSHORT);
                 planeAnimate(color, pos);
             }
-            crash(color, 18);
+            crash(color, 18,whichPlane);
             Game.soundManager.playSound(SoundManager.FLYLONG);
             planeAnimate(color, 30);
-            crash(color, 30);
+            crash(color, 30,whichPlane);
             Game.soundManager.playSound(SoundManager.FLYMID);
             planeAnimate(color, 34);
-            crash(color, 34);
+            crash(color, 34,whichPlane);
         }
         else if(Game.chessBoard.isOverflow()) { // overflow
             for (int pos = curPos + 1; pos <= 56; pos++) {
@@ -226,7 +234,7 @@ public class GameManager implements Target {//game process control
                 Game.soundManager.playSound(SoundManager.FLYSHORT);
                 planeAnimate(color, pos);
             }
-            crash(color, toPos);
+            crash(color, toPos,whichPlane);
             Game.chessBoard.setOverflow(false);
         }
         else if(toPos==-2) {
@@ -239,7 +247,8 @@ public class GameManager implements Target {//game process control
         }
     }
 
-    public void crash(int color, int pos) {
+    public void crash(int color, int pos,int whichPlane) {
+        Game.logManager.p("crash:","my color:",color,"my pos:",pos,"which plane:",whichPlane);
         if(pos>=50)//不被人撞
             return;
         int crashColor = color;
@@ -249,18 +258,28 @@ public class GameManager implements Target {//game process control
         int curY = Game.chessBoard.map[color][pos][1];
         for(int i = 0; i < 4; i++) {
             if(i != color) {
+                Game.logManager.p("crash:","find color:",i);
                 for(int j = 0; j < 4; j++) {
-                    int crackPos = Game.chessBoard.getAirplane(i).position[j];
-                    if(crackPos>0){
-                        if(pos != 0 && Game.chessBoard.map[i][crackPos][0] == curX && Game.chessBoard.map[i][crackPos][1] == curY && crackPos<50) {//撞别人
+                    int crashPos = Game.chessBoard.getAirplane(i).position[j];
+                    if(crashPos>0){
+                        Game.logManager.p("crash:","find plane:",j,"position:",crashPos,"(x,y):","(",Game.chessBoard.map[i][crashPos][0],",",Game.chessBoard.map[i][crashPos][1],")");
+                    }
+                    else{
+                        Game.logManager.p("crash:","find plane:",j,"position:",crashPos,"(x,y):","(","home",")");
+                    }
+                    if(crashPos>0){
+                        if(Game.chessBoard.map[i][crashPos][0] == curX && Game.chessBoard.map[i][crashPos][1] == curY) {//撞别人
+                            Game.logManager.p("crash:","crash success");
                             crashPlane = j;
                             count++;
                         }
                     }
                 }
-                if(count == 1)
+                if(count == 1) {
                     crashColor = i;
-                if(count >= 1) {
+                    break;
+                }
+                if(count > 1) {
                     crashPlane = whichPlane;
                     break;
                 }
@@ -290,13 +309,17 @@ public class GameManager implements Target {//game process control
                 finished=true;
                 break;
             case DataPack.E_GAME_PROCEED_DICE:
-                System.err.println("processDatapack: dice " + dataPack.getMessage(0) + " " + dataPack.getMessage(1) + " " + dataPack.getMessage(2));
-                Game.playersData.get(dataPack.getMessage(0)).setDiceValid(Integer.valueOf(dataPack.getMessage(2)));
+                if((Integer.valueOf(dataPack.getMessage(0))<0||Game.playersData.get(dataPack.getMessage(0)).offline)&&Game.dataManager.getMyId().compareTo(Game.dataManager.getHostId())!=0||Game.playersData.get(dataPack.getMessage(0)).type==Role.PLAYER) {//机器人且我不是房主  或者 是玩家且没有掉线 或者 是玩家且掉线当我不是房主
+                    Game.playersData.get(dataPack.getMessage(0)).setDiceValid(Integer.valueOf(dataPack.getMessage(2)));
+                    //Game.logManager.p("processDataPack:","dice:",dataPack.getMessage(2));
+                }
                 break;
             case DataPack.E_GAME_PROCEED_PLANE:
-                System.err.println("processDatapack: plane " + dataPack.getMessage(0) + " " + dataPack.getMessage(1) + " " + dataPack.getMessage(2));
-                if(Integer.valueOf(dataPack.getMessage(2))>=0){
-                    Game.playersData.get(dataPack.getMessage(0)).setPlaneValid(Integer.valueOf(dataPack.getMessage(2)));
+                if((Integer.valueOf(dataPack.getMessage(0))<0||Game.playersData.get(dataPack.getMessage(0)).offline)&&Game.dataManager.getMyId().compareTo(Game.dataManager.getHostId())!=0||Game.playersData.get(dataPack.getMessage(0)).type==Role.PLAYER) {//机器人且我不是房主  或者 是玩家且没有掉线 或者 是玩家且掉线当我不是房主
+                    if (Integer.valueOf(dataPack.getMessage(2)) >= 0) {
+                        Game.playersData.get(dataPack.getMessage(0)).setPlaneValid(Integer.valueOf(dataPack.getMessage(2)));
+                    }
+                    //Game.logManager.p("processDataPack:", "plane:", dataPack.getMessage(2));
                 }
                 break;
             case DataPack.E_GAME_PLAYER_DISCONNECTED:
