@@ -72,7 +72,7 @@ class UpdateWorker implements Runnable{
     @Override
     public void run() {
         try {
-            Socket socket = new Socket(InetAddress.getByName("115.159.4.119"),7654);
+            Socket socket = new Socket(InetAddress.getByName("115.159.51.214"),7654);
             InputStream is = socket.getInputStream();
             OutputStream os = socket.getOutputStream();
             DataInputStream dis = new DataInputStream(is);
