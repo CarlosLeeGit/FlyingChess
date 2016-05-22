@@ -1,6 +1,7 @@
 package com.hy.lyx.fb.gw.wyx.lks.flyingchess;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -11,6 +12,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -25,6 +27,7 @@ public class GameInfoAct extends AppCompatActivity implements Target{
     LinkedList<HashMap<String,String>> roomListData;
     Worker worker;
     String roomId;
+    TextView title;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //ui setting
@@ -42,11 +45,12 @@ public class GameInfoAct extends AppCompatActivity implements Target{
         roomListData=new LinkedList<>();
         String[] t={"room","id","player","state"};
         int[] t2={R.id.roomName,R.id.roomId,R.id.player,R.id.roomState};
-        roomListAdapter=new SimpleAdapter(getApplicationContext(),roomListData,R.layout.content_game_info_room_list_item,t,t2);
+        roomListAdapter=new SimpleAdapter(getApplicationContext(),roomListData,R.layout.content_room_list_item,t,t2);
         roomListView.setAdapter(roomListAdapter);
         worker=new Worker();
         onlineLayout=(LinearLayout)findViewById(R.id.onlineLayout);
         roomId="";
+        title = (TextView)findViewById(R.id.room_title);
         //trigger
         createButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,6 +103,13 @@ public class GameInfoAct extends AppCompatActivity implements Target{
             Game.socketManager.registerActivity(DataPack.A_ROOM_ENTER,this);
             new Thread(worker).start();
         }
+        title.setTypeface(Typeface.createFromAsset(getAssets(),"fonts/hksn.ttf"));
+    }
+
+    @Override
+    public void onStart(){
+        super.onStart();
+        Game.soundManager.resumeMusic(SoundManager.BACKGROUND);
     }
 
     @Override

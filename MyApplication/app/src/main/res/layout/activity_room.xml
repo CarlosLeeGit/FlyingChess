@@ -164,20 +164,20 @@
         android:layout_height="wrap_content"
         android:text="Start"
         android:id="@+id/start"
-        android:background="@drawable/normal_button"
+        android:background="@drawable/button_normal"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_marginRight="15dp"
         android:layout_marginBottom="15dp" />
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="back "
+        android:layout_width="36sp"
+        android:layout_height="36sp"
         android:id="@+id/back"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        android:background="@drawable/back_button"
-        android:layout_marginLeft="5dp" />
+        android:background="@drawable/button_back"
+        android:layout_marginLeft="15sp"
+        android:layout_marginTop="5sp" />
 
 </RelativeLayout>

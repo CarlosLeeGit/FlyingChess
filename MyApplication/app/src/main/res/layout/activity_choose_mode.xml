@@ -8,8 +8,8 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:id="@+id/chooseMode"
-    tools:context="com.hy.lyx.fb.gw.wyx.lks.flyingchess.ChooseModeAct"
-    android:background="#6ac6dd">
+    android:background="@drawable/sky_color"
+    tools:context="com.hy.lyx.fb.gw.wyx.lks.flyingchess.ChooseModeAct">
 
     <Button
         android:layout_width="wrap_content"
@@ -18,11 +18,15 @@
         android:id="@+id/button2"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
-        android:alpha="0.9"
         android:allowUndo="false"
-        android:background="@drawable/choosemod_local_button"
-        android:layout_marginLeft="10dp"
-        android:layout_marginBottom="10dp" />
+        android:background="@drawable/button_local"
+        android:layout_marginLeft="30sp"
+        android:layout_marginBottom="30sp"
+        android:layout_marginTop="30sp"
+        android:translationZ="1dp"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="#fbeb5d" />
 
     <Button
         android:layout_width="wrap_content"
@@ -31,9 +35,13 @@
         android:id="@+id/button3"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:alpha="0.9"
-        android:background="@drawable/choosemod_lan_button"
-        android:layout_marginBottom="10dp" />
+        android:background="@drawable/button_lan"
+        android:layout_marginBottom="30sp"
+        android:layout_marginTop="30sp"
+        android:translationZ="1dp"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="#fbeb5d" />
 
     <Button
         android:layout_width="wrap_content"
@@ -42,10 +50,14 @@
         android:id="@+id/button4"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:alpha="0.9"
-        android:background="@drawable/choosemod_wlan_button"
-        android:layout_marginBottom="10dp"
-        android:layout_marginRight="10dp" />
+        android:background="@drawable/button_wlan"
+        android:layout_marginBottom="30sp"
+        android:layout_marginRight="30sp"
+        android:layout_marginTop="30sp"
+        android:translationZ="1dp"
+        android:textSize="20sp"
+        android:textColor="#fbeb5d"
+        android:textStyle="bold" />
 
     <ImageView
         android:layout_width="wrap_content"
@@ -53,7 +65,10 @@
         android:id="@+id/backgroud"
         android:layout_alignParentEnd="true"
         android:layout_above="@+id/button2"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="30sp"
+        android:layout_marginRight="30sp"
+        android:layout_marginTop="20sp" />
 
     <ImageView
         android:layout_width="fill_parent"
@@ -64,5 +79,12 @@
         android:translationZ="-1dp"
         android:scaleType="fitXY"
         android:layout_below="@+id/backgroud" />
+
+    <include
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        layout="@layout/content_wait_view"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

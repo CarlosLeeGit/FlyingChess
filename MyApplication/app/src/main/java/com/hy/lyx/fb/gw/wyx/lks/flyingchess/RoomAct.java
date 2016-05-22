@@ -55,6 +55,7 @@ public class RoomAct extends AppCompatActivity implements Target {
                 if(idlePlayerListData.size()>1)
                     Toast.makeText(getApplicationContext(),"some one is not ready!",Toast.LENGTH_SHORT).show();
                 else{
+                    Game.replayManager.startRecord();
                     if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
                         if(Game.dataManager.getHostId().compareTo(Game.dataManager.getMyId())!=0){
                             Toast.makeText(getApplicationContext(),"wait for room host",Toast.LENGTH_SHORT).show();

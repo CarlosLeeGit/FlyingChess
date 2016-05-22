@@ -10,4 +10,10 @@
     android:id="@+id/welcome"
     tools:context="com.hy.lyx.fb.gw.wyx.lks.flyingchess.WelcomeAct">
 
+    <SurfaceView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/surfaceView"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
 </RelativeLayout>

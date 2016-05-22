@@ -48,30 +48,49 @@ public class GameManager implements Target {//game process control
             Game.logManager.p("turn to:",role.name," color is:",role.color);
             whichPlane=-1;
             Game.logManager.p("turn to:","waite for dice");
-            dice = role.roll();
+
+            if(Game.replayManager.isReplay == true) {
+                dice = Game.replayManager.getSavedDice();
+                role.setDice(dice);
+            }
+            else
+                dice = role.roll();
+
+            Game.replayManager.saveDice(dice);
             Game.logManager.p("turn to:","dice is :",dice);
-            if((role.offline||role.type==Role.ROBOT)&&Game.dataManager.getHostId().compareTo(Game.dataManager.getMyId())==0||role.type==Role.ME){
-                Game.socketManager.send(DataPack.R_GAME_PROCEED_DICE,role.id, Game.dataManager.getRoomId(), dice);
-                Game.logManager.p("turn to:","send dice:",dice);
+            if(!Game.replayManager.isReplay) {
+                if ((role.offline || role.type == Role.ROBOT) && Game.dataManager.getHostId().compareTo(Game.dataManager.getMyId()) == 0 || role.type == Role.ME) {
+                    Game.socketManager.send(DataPack.R_GAME_PROCEED_DICE, role.id, Game.dataManager.getRoomId(), dice);
+                    Game.logManager.p("turn to:", "send dice:", dice);
+                }
             }
             Game.soundManager.playSound(SoundManager.DICE);
             diceAnimate(dice);
             Game.delay(200);
             boolean canFly = false;
             if (role.canIMove()) {
-                do {
-                    Game.logManager.p("turu to: wait for which plane");
-                    whichPlane = role.choosePlane();
-                    Game.logManager.p("turn to: plane result:",whichPlane);
-                } while (!role.move());
+                if(Game.replayManager.isReplay == true) {
+                    whichPlane = Game.replayManager.getSavedWhichPlane();
+                    role.setWhichPlane(whichPlane);
+                    role.move();
+                }
+                else {
+                    do {
+                        Game.logManager.p("turu to: wait for which plane");
+                        whichPlane = role.choosePlane();
+                        Game.logManager.p("turn to: plane result:", whichPlane);
+                    } while (!role.move());
+                }
                 canFly = true;
             } else if(role.type==Role.ME){
                 toast("sad...I can not move");
                 Game.logManager.p("turn to: i can not fly");
             }
-            if((role.offline||role.type!=Role.PLAYER)&&Game.dataManager.getHostId().compareTo(Game.dataManager.getMyId())==0||role.type==Role.ME){
-                Game.socketManager.send(DataPack.R_GAME_PROCEED_PLANE, role.id, Game.dataManager.getRoomId(), whichPlane);
-                Game.logManager.p("turn to: send which plane :",whichPlane);
+            if(!Game.replayManager.isReplay){
+                if((role.offline||role.type!=Role.PLAYER)&&Game.dataManager.getHostId().compareTo(Game.dataManager.getMyId())==0||role.type==Role.ME){
+                    Game.socketManager.send(DataPack.R_GAME_PROCEED_PLANE, role.id, Game.dataManager.getRoomId(), whichPlane);
+                    Game.logManager.p("turn to: send which plane :",whichPlane);
+                }
             }
             if (canFly) {
                 flyNow(color,whichPlane);

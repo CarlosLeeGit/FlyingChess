@@ -109,6 +109,14 @@ public class Role {
         }
     }
 
+    public void setDice(int dice){
+        this.dice=dice;
+    }
+
+    public void setWhichPlane(int whichPlane){
+        this.whichPlane = whichPlane;
+    }
+
     public int roll(){
         switch (type){
             case ME: {

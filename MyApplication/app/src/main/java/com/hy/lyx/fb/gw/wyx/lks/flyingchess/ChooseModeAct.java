@@ -3,6 +3,8 @@ package com.hy.lyx.fb.gw.wyx.lks.flyingchess;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
+import android.graphics.drawable.AnimationDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -23,6 +25,8 @@ public class ChooseModeAct extends AppCompatActivity implements Target{
     boolean exit;
     Timer closeTimer;
     ImageView bk,bk2;
+    ImageView waitImage;
+    Button waitBackground;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //ui setting
@@ -30,6 +34,7 @@ public class ChooseModeAct extends AppCompatActivity implements Target{
         setContentView(R.layout.activity_choose_mode);
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);//Activity切换动画
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        Game.soundManager.playMusic(SoundManager.BACKGROUND);
         //init
         local=(Button)findViewById(R.id.button2);
         lan=(Button)findViewById(R.id.button3);
@@ -39,6 +44,8 @@ public class ChooseModeAct extends AppCompatActivity implements Target{
         exit=false;
         bk=(ImageView)findViewById(R.id.backgroud);
         bk2=(ImageView)findViewById(R.id.backgroud2);
+        waitImage=(ImageView)findViewById(R.id.wait);
+        waitBackground = (Button)findViewById(R.id.waitbackground);
         //trigger
         local.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,28 +78,33 @@ public class ChooseModeAct extends AppCompatActivity implements Target{
             public void onClick(View v) {
                 Game.soundManager.playSound(SoundManager.BUTTON);
                 Game.socketManager.connectToServer();
-                Intent intent = new Intent(getApplicationContext(),WaitingAct.class);
-                intent.putExtra("tipe","Connecting..");
-                startActivity(intent);
+                local.setVisibility(View.INVISIBLE);
+                lan.setVisibility(View.INVISIBLE);
+                wlan.setVisibility(View.INVISIBLE);
+                waitImage.setVisibility(View.VISIBLE);
+                waitBackground.setVisibility(View.VISIBLE);
             }
         });
         //internet init
         Game.socketManager.registerActivity(DataPack.CONNECTED,this);
         //setting
         Game.activityManager.add(this);
-        Game.soundManager.playMusic(SoundManager.BACKGROUND);
         Game.updateManager.checkUpdate();
+        waitImage.setVisibility(View.INVISIBLE);
+        waitBackground.setVisibility(View.INVISIBLE);
+        waitImage.setBackground(Game.getWaitAnimation());
         //background img
-        DisplayMetrics dm=new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(dm);
-        BitmapFactory.Options opt= new BitmapFactory.Options();
-        opt.inPreferredConfig = Bitmap.Config.RGB_565;
-        opt.outWidth=dm.widthPixels;
-        opt.outHeight=dm.heightPixels;
-        InputStream is = getApplicationContext().getResources().openRawResource(R.raw.choosemodebk);
-        bk.setImageBitmap(BitmapFactory.decodeStream(is,null,opt));
-        InputStream is2 = getApplicationContext().getResources().openRawResource(R.raw.choosemodebk2);
-        bk2.setImageBitmap(BitmapFactory.decodeStream(is2,null,opt));
+        bk.setImageBitmap(Game.loadBitmap(R.raw.choosemodebk));
+        bk2.setImageBitmap(Game.loadBitmap(R.raw.cloud));
+        lan.setTypeface(Typeface.createFromAsset(getAssets(),"fonts/comici.ttf"));
+        wlan.setTypeface(Typeface.createFromAsset(getAssets(),"fonts/comici.ttf"));
+        local.setTypeface(Typeface.createFromAsset(getAssets(),"fonts/comici.ttf"));
+    }
+
+    @Override
+    public void onStart(){
+        super.onStart();
+        Game.soundManager.resumeMusic(SoundManager.BACKGROUND);
     }
 
     @Override
@@ -137,8 +149,12 @@ public class ChooseModeAct extends AppCompatActivity implements Target{
                 wlan.post(new Runnable() {
                     @Override
                     public void run() {
-                        Game.activityManager.back();
                         Toast.makeText(getApplicationContext(), "Sorry,i can not connect to server now!", Toast.LENGTH_SHORT).show();
+                        local.setVisibility(View.VISIBLE);
+                        lan.setVisibility(View.VISIBLE);
+                        wlan.setVisibility(View.VISIBLE);
+                        waitBackground.setVisibility(View.INVISIBLE);
+                        waitImage.setVisibility(View.INVISIBLE);
                     }
                 });
             }

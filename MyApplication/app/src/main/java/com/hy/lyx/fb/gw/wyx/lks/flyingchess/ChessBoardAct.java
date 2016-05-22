@@ -130,7 +130,11 @@ public class ChessBoardAct extends AppCompatActivity {
         plane[3][2].setVisibility(View.INVISIBLE);
         plane[3][3].setVisibility(View.INVISIBLE);
 
+
+        Game.replayManager.savePlayerNum(Game.playersData.size());
         for(String key:Game.playersData.keySet()){
+            Game.replayManager.saveRoleKey(key);
+            Game.replayManager.saveRoleInfo(Game.playersData.get(key));
             plane[Game.playersData.get(key).color][0].setVisibility(View.VISIBLE);
             plane[Game.playersData.get(key).color][1].setVisibility(View.VISIBLE);
             plane[Game.playersData.get(key).color][2].setVisibility(View.VISIBLE);

@@ -1,12 +1,16 @@
 package com.hy.lyx.fb.gw.wyx.lks.flyingchess;
 
 import android.content.Context;
+import android.content.res.AssetFileDescriptor;
+import android.content.res.AssetManager;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.SoundPool;
 import android.support.v7.app.AppCompatActivity;
 
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 /**
@@ -29,69 +33,109 @@ public class SoundManager {
     public static final int LOSE = 11;
     public static final int GAME=12;
 
-    private MediaPlayer bk,game;
-    private SoundPool soundPool;
-    private Context context;
-
-    private Map<Integer,Integer> soundMap; //音效资源id与加载过后的音源id的映射关系表
+    private MediaPlayer mediaPlayer,bk,game;
+    private AssetManager assetManager;
+    private LinkedList<MediaPlayer> mediaPlayers;
+    private Map<Integer,String> soundMap; //音效资源id与加载过后的音源id的映射关系表
 
     public SoundManager(AppCompatActivity activity){
-        this.context=activity.getApplicationContext();
-        initSound();
-        bk = MediaPlayer.create(context,R.raw.backgroundmusic);
-        bk.setLooping(true);
-        game=MediaPlayer.create(context,R.raw.gamemusic);
-        game.setLooping(true);
+        bk = new MediaPlayer();
+        game = new MediaPlayer();
+        assetManager = activity.getAssets();
+        mediaPlayers=new LinkedList<>();
+        initMap();
     }
 
-    //初始化音效播放器
-    private void initSound()
-    {
-        soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC,100);
-
-        soundMap = new HashMap<Integer,Integer>();
-        soundMap.put(ARRIVE, soundPool.load(context, R.raw.arrive, 1));
-        soundMap.put(BUTTON, soundPool.load(context, R.raw.button, 1));
-        soundMap.put(DICE, soundPool.load(context, R.raw.dice, 1));
-        soundMap.put(FLYCRASH, soundPool.load(context, R.raw.flycrash, 1));
-        soundMap.put(FLYLONG, soundPool.load(context, R.raw.flylong, 1));
-        soundMap.put(FLYSHORT, soundPool.load(context, R.raw.flyshort, 1));
-        soundMap.put(FLYMID, soundPool.load(context, R.raw.flymid, 1));
-        soundMap.put(FLYOUT, soundPool.load(context, R.raw.flyout, 1));
-        soundMap.put(WIN, soundPool.load(context, R.raw.win, 1));
-        //soundMap.put(, soundPool.load(context, R.raw., 1));
+    private void initMap(){
+        soundMap = new HashMap<>();
+        soundMap.put(ARRIVE,"music/arrive.ogg");
+        soundMap.put(BACKGROUND,"music/backgroundmusic.mp3");
+        soundMap.put(BUTTON,"music/button.ogg");
+        soundMap.put(DICE,"music/dice.ogg");
+        soundMap.put(FLYCRASH,"music/flycrash.ogg");
+        soundMap.put(FLYLONG,"music/flylong.ogg");
+        soundMap.put(FLYSHORT,"music/flyshort.ogg");
+        soundMap.put(FLYMID,"music/flymid.ogg");
+        soundMap.put(WIN,"music/win.ogg");
+        soundMap.put(LOSE,"music/lose.ogg");
+        soundMap.put(GAME,"music/gamemusic.ogg");
     }
 
     public void playSound(int type)
     {
-        soundPool.play(soundMap.get(type), 2, 2, 1, 0, 1);
+        try {
+            mediaPlayer = new MediaPlayer();
+            mediaPlayers.addLast(mediaPlayer);
+            AssetFileDescriptor assetFileDescriptor =  assetManager.openFd(soundMap.get(type));
+            mediaPlayer.setDataSource(assetFileDescriptor.getFileDescriptor(),assetFileDescriptor.getStartOffset(),assetFileDescriptor.getLength());
+            mediaPlayer.setLooping(false);
+            mediaPlayer.prepare();
+            mediaPlayer.start();
+            if(mediaPlayers.size()>3){
+                mediaPlayers.getFirst().release();
+                mediaPlayers.removeFirst();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void playMusic(int type){
         switch (type){
             case BACKGROUND:
                 if(!bk.isPlaying()){
-                    bk.start();
+                    try{
+                        bk.reset();
+                        AssetFileDescriptor assetFileDescriptor =  assetManager.openFd(soundMap.get(type));
+                        bk.setDataSource(assetFileDescriptor.getFileDescriptor(),assetFileDescriptor.getStartOffset(),assetFileDescriptor.getLength());
+                        bk.setLooping(false);
+                        bk.prepare();
+                        bk.start();
+                    }
+                    catch (IOException e){
+                        e.printStackTrace();
+                    }
                 }
                 if(game.isPlaying()){
-                    game.pause();
+                    game.stop();
                 }
                 break;
             case GAME:
                 if(!game.isPlaying()) {
-                    game.start();
+                    try{
+                        game.reset();
+                        AssetFileDescriptor assetFileDescriptor =  assetManager.openFd(soundMap.get(type));
+                        game.setDataSource(assetFileDescriptor.getFileDescriptor(),assetFileDescriptor.getStartOffset(),assetFileDescriptor.getLength());
+                        game.setLooping(false);
+                        game.prepare();
+                        game.start();
+                    }
+                    catch (IOException e){
+                        e.printStackTrace();
+                    }
                 }
                 if(bk.isPlaying()){
-                    bk.pause();
+                    bk.stop();
                 }
                 break;
         }
     }
 
     public void pauseMusic() {
-       /*if(bk.isPlaying())
-            bk.pause();
-        if(game.isPlaying())
-            game.pause();*/
+        if(Game.activityManager.isSuspend()){
+            if(bk.isPlaying())
+                bk.pause();
+            if(game.isPlaying())
+                game.pause();
+        }
+    }
+
+    public void resumeMusic(int type){
+        if(type==GAME&&!game.isPlaying()){
+            game.start();
+        }
+        else if(type==BACKGROUND&&!bk.isPlaying()){
+            bk.start();
+        }
     }
 }

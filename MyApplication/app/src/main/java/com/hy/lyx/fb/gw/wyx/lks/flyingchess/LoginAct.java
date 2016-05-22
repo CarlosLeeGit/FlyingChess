@@ -1,6 +1,9 @@
 package com.hy.lyx.fb.gw.wyx.lks.flyingchess;
 
 import android.content.Intent;
+import android.graphics.Typeface;
+import android.media.Image;
+import android.provider.ContactsContract;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,6 +12,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.util.LinkedList;
@@ -19,6 +23,9 @@ public class LoginAct extends AppCompatActivity implements Target {
     EditText _myName,_pw,_pw2;
     TextInputLayout myName,pw,pw2;
     boolean bRegister;
+    ImageView imageView;
+    Button waitBackground;
+    ImageView waitView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //ui setting
@@ -39,6 +46,9 @@ public class LoginAct extends AppCompatActivity implements Target {
         pw2=(TextInputLayout)findViewById(R.id.pw2);
         _pw2=(EditText)findViewById(R.id._pw2);
         bRegister =false;
+        imageView= (ImageView)findViewById(R.id.imageView);
+        waitBackground=(Button)findViewById(R.id.waitbackground);
+        waitView=(ImageView)findViewById(R.id.wait);
         //trigger
         login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,15 +77,13 @@ public class LoginAct extends AppCompatActivity implements Target {
                     }
                     //sign in
                     Game.socketManager.send(DataPack.R_REGISTER,_myName.getText().toString(),_pw.getText().toString());
-                    Intent intent = new Intent(getApplicationContext(),WaitingAct.class);
-                    intent.putExtra("tipe","Register..");
-                    startActivity(intent);
+                    waitBackground.setVisibility(View.VISIBLE);
+                    waitView.setVisibility(View.VISIBLE);
                 }
                 else{// login
                     Game.socketManager.send(DataPack.R_LOGIN,_myName.getText().toString(),_pw.getText().toString());
-                    Intent intent = new Intent(getApplicationContext(),WaitingAct.class);
-                    intent.putExtra("tipe","login..");
-                    startActivity(intent);
+                    waitBackground.setVisibility(View.VISIBLE);
+                    waitView.setVisibility(View.VISIBLE);
                     Game.dataManager.setMyName(_myName.getText().toString());
                     Game.dataManager.setPassword(_pw.getText().toString());
                 }
@@ -119,6 +127,24 @@ public class LoginAct extends AppCompatActivity implements Target {
             _myName.setText(Game.dataManager.getMyName());
             _pw.setText(Game.dataManager.getPassword());
         }
+        imageView.setImageBitmap(Game.loadBitmap(R.raw.cloud));
+        waitView.setVisibility(View.INVISIBLE);
+        waitBackground.setVisibility(View.INVISIBLE);
+        waitView.setBackground(Game.getWaitAnimation());
+        login.setTypeface(Typeface.createFromAsset(getAssets(),"fonts/comici.ttf"));
+        register.setTypeface(Typeface.createFromAsset(getAssets(),"fonts/comici.ttf"));
+        myName.setTypeface(Typeface.createFromAsset(getAssets(),"fonts/comici.ttf"));
+        pw.setTypeface(Typeface.createFromAsset(getAssets(),"fonts/comici.ttf"));
+        pw2.setTypeface(Typeface.createFromAsset(getAssets(),"fonts/comici.ttf"));
+        _myName.setTypeface(Typeface.createFromAsset(getAssets(),"fonts/comici.ttf"));
+        _pw.setTypeface(Typeface.createFromAsset(getAssets(),"fonts/comici.ttf"));
+        _pw2.setTypeface(Typeface.createFromAsset(getAssets(),"fonts/comici.ttf"));
+    }
+
+    @Override
+    public void onStart(){
+        super.onStart();
+        Game.soundManager.resumeMusic(SoundManager.BACKGROUND);
     }
 
     @Override
@@ -139,8 +165,9 @@ public class LoginAct extends AppCompatActivity implements Target {
                 myName.post(new Runnable() {
                     @Override
                     public void run() {
-                        Game.activityManager.back();
                         Toast.makeText(getApplicationContext(),"Login failed!",Toast.LENGTH_SHORT).show();
+                        waitBackground.setVisibility(View.INVISIBLE);
+                        waitView.setVisibility(View.INVISIBLE);
                     }
                 });
             }
@@ -156,6 +183,8 @@ public class LoginAct extends AppCompatActivity implements Target {
                         pw2.setVisibility(View.GONE);
                         _pw2.setText("");
                         Toast.makeText(getApplicationContext(),"Register successful!",Toast.LENGTH_SHORT).show();
+                        waitBackground.setVisibility(View.INVISIBLE);
+                        waitView.setVisibility(View.INVISIBLE);
                     }
                 });
             }
@@ -164,10 +193,11 @@ public class LoginAct extends AppCompatActivity implements Target {
                     @Override
                     public void run() {
                         Toast.makeText(getApplicationContext(),"Register failed!",Toast.LENGTH_SHORT).show();
+                        waitBackground.setVisibility(View.INVISIBLE);
+                        waitView.setVisibility(View.INVISIBLE);
                     }
                 });
             }
-            Game.activityManager.back();
         }
     }
 
