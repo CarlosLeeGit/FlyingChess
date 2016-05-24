@@ -18,15 +18,12 @@ public class ActivityManager {
     }
     public void add(AppCompatActivity activity){
         list.addLast(activity);
-        if(list.size()>3){
+        if(list.size()>2){
             list.getFirst().finish();
             list.removeFirst();
         }
     }
-    public void back(){
-        list.getLast().finish();
-        list.removeLast();
-    }
+
     public boolean isSuspend(){
         List<android.app.ActivityManager.RunningAppProcessInfo> appProcesses = activityManager.getRunningAppProcesses();
         if (appProcesses == null) return true;

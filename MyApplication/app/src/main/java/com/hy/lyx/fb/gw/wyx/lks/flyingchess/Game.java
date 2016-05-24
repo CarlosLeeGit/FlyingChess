@@ -2,10 +2,15 @@ package com.hy.lyx.fb.gw.wyx.lks.flyingchess;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 import android.graphics.drawable.AnimationDrawable;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
+import android.view.View;
+import android.widget.ImageView;
+
+import com.hy.lyx.fb.gw.wyx.lks.flyingchess.Server.LocalServer;
 
 import java.io.InputStream;
 import java.util.HashMap;
@@ -24,8 +29,11 @@ public class Game{
     public static UpdateManager updateManager;
     public static LogManager logManager;
     public static ReplayManager replayManager;
+    public static LocalServer localServer;
+
     private static AppCompatActivity activity;
-    private static AnimationDrawable ad;
+    private static RotateAnimationWorker rotateAnimationWorker;
+    private static Typeface typeface;
 
     public static void init(AppCompatActivity activity){
         Game.activity=activity;
@@ -39,8 +47,9 @@ public class Game{
         updateManager = new UpdateManager(activity);
         logManager = new LogManager();
         replayManager = new ReplayManager();
-        ad = (AnimationDrawable)activity.getResources().getDrawable(R.drawable.animation_wait,null);
-        ad.start();
+        localServer = new LocalServer(activity);
+        rotateAnimationWorker = new RotateAnimationWorker();
+        typeface = Typeface.createFromAsset(activity.getAssets(),"fonts/comici.ttf");
     }
 
     public static void delay(int interval){
@@ -62,8 +71,45 @@ public class Game{
         return BitmapFactory.decodeStream(is,null,opt);
     }
 
-    public static AnimationDrawable getWaitAnimation(){
-        return ad;
+    public static void startWaitAnimation(View view){
+        rotateAnimationWorker.setView(view);
+        rotateAnimationWorker.stop();
+        new Thread(rotateAnimationWorker).start();
     }
 
+    public static void stopWaitAnimation(){
+        rotateAnimationWorker.stop();
+    }
+
+    public static Typeface getFont(){
+        return typeface;
+    }
+
+}
+
+class RotateAnimationWorker implements Runnable{
+    private View view;
+    private boolean run;
+    public RotateAnimationWorker(){
+        run=true;
+    }
+    public void setView(View view){
+        this.view=view;
+    }
+    public void stop(){
+        run=false;
+    }
+    @Override
+    public void run() {
+        run=true;
+        while(run){
+            Game.delay(80);
+            view.post(new Runnable() {
+                @Override
+                public void run() {
+                    view.setRotation(view.getRotation()+20);
+                }
+            });
+        }
+    }
 }

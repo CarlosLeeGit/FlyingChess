@@ -1,31 +1,47 @@
 package com.hy.lyx.fb.gw.wyx.lks.flyingchess;
 
 import android.content.Intent;
+import android.content.res.AssetFileDescriptor;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
+import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.KeyEvent;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import junit.framework.Assert;
+
+import org.w3c.dom.Text;
+
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
 public class ChessBoardAct extends AppCompatActivity {
-    Button pauseButton,throwDiceButton;
+    Button pauseButton;
+    Button throwDiceButton;
     Button[][] plane;
     int boardWidth;
     Handler handler;
     ImageView map;
     float dx;
+    Drawable d[];
     int n;
+    TextView xt[],xname[],xscore[];
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //ui setting
@@ -37,7 +53,7 @@ public class ChessBoardAct extends AppCompatActivity {
         Game.soundManager.playMusic(SoundManager.GAME);
         //init
         pauseButton=(Button)findViewById(R.id.pause);
-        throwDiceButton=(Button)findViewById(R.id.dice);
+        throwDiceButton=(Button) findViewById(R.id.dice);
         plane=new Button[4][4];
         plane[0][0]=(Button)findViewById(R.id.R1);
         plane[0][1]=(Button)findViewById(R.id.R2);
@@ -61,18 +77,37 @@ public class ChessBoardAct extends AppCompatActivity {
 
         handler=new MyHandler(this);
         map=(ImageView)findViewById(R.id.map);
+
+        xt=new TextView[4];
+        xname=new TextView[4];
+        xscore=new TextView[4];
+        xt[0]=(TextView)findViewById(R.id.rt);
+        xt[1]=(TextView)findViewById(R.id.gt);
+        xt[2]=(TextView)findViewById(R.id.bt);
+        xt[3]=(TextView)findViewById(R.id.yt);
+        xname[0]=(TextView)findViewById(R.id.rname);
+        xname[1]=(TextView)findViewById(R.id.gname);
+        xname[2]=(TextView)findViewById(R.id.bname);
+        xname[3]=(TextView)findViewById(R.id.yname);
+        xscore[0]=(TextView)findViewById(R.id.rscore);
+        xscore[1]=(TextView)findViewById(R.id.gscore);
+        xscore[2]=(TextView)findViewById(R.id.bscore);
+        xscore[3]=(TextView)findViewById(R.id.yscore);
+
+        d=new Drawable[6];
+        d[0]=getResources().getDrawable(R.drawable.dices,null);
+        d[1]=getResources().getDrawable(R.drawable.dices2,null);
+        d[2]=getResources().getDrawable(R.drawable.dices3,null);
+        d[3]=getResources().getDrawable(R.drawable.dices4,null);
+        d[4]=getResources().getDrawable(R.drawable.dices5,null);
+        d[5]=getResources().getDrawable(R.drawable.dices6,null);
         //set data
         DisplayMetrics dm=new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
         boardWidth=dm.heightPixels;
         n=19;
         dx=boardWidth/n+0.8f;
-        BitmapFactory.Options opt= new BitmapFactory.Options();
-        opt.inPreferredConfig = Bitmap.Config.RGB_565;
-        opt.outWidth=dm.heightPixels;
-        opt.outHeight=dm.heightPixels;
-        InputStream is = getApplicationContext().getResources().openRawResource(R.raw.map);
-        map.setImageBitmap(BitmapFactory.decodeStream(is,null,opt));
+        map.setImageBitmap(Game.loadBitmap(R.raw.map));
         //trigger
         pauseButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -139,10 +174,23 @@ public class ChessBoardAct extends AppCompatActivity {
             plane[Game.playersData.get(key).color][1].setVisibility(View.VISIBLE);
             plane[Game.playersData.get(key).color][2].setVisibility(View.VISIBLE);
             plane[Game.playersData.get(key).color][3].setVisibility(View.VISIBLE);
+            xt[Game.playersData.get(key).color].setText("");
+            xname[Game.playersData.get(key).color].setText(Game.playersData.get(key).name);
+            xscore[Game.playersData.get(key).color].setText(Game.playersData.get(key).score);
         }
         Game.gameManager.newTurn(this);
-    }
 
+        for(int i=0;i<4;i++){
+            xname[i].setTypeface(Game.getFont());
+            xscore[i].setTypeface(Game.getFont());
+        }
+        throwDiceButton.setBackground(d[0]);
+    }
+    @Override
+    public void onStart(){
+        super.onStart();
+        Game.soundManager.resumeMusic(SoundManager.BACKGROUND);
+    }
     @Override
     public void onStop(){
         super.onStop();
@@ -152,6 +200,8 @@ public class ChessBoardAct extends AppCompatActivity {
     public boolean dispatchKeyEvent(KeyEvent event) {
         if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {//返回按钮
             if (event.getAction() == KeyEvent.ACTION_DOWN && event.getRepeatCount() == 0) {
+                if(Game.replayManager.isReplay == false)
+                    Game.replayManager.clearRecord();
                 exit();
             }
             return true;
@@ -202,7 +252,8 @@ class MyHandler extends Handler{
             }
             break;
             case 2://骰子
-                parent.throwDiceButton.setText(msg.getData().getString("dice"));
+                System.out.println(msg.getData().getInt("dice"));
+                parent.throwDiceButton.setBackground(parent.d[msg.getData().getInt("dice")-1]);
                 break;
             case 3://显示消息
                 Toast.makeText(parent.getApplicationContext(),msg.getData().getString("msg"),Toast.LENGTH_SHORT).show();
@@ -216,62 +267,77 @@ class MyHandler extends Handler{
             break;
             case 5://finished
             {
-                Intent intent = new Intent(parent.getApplicationContext(), RoomAct.class);
-                ArrayList<String> msgs=new ArrayList<>();
-                if(Game.dataManager.getGameMode()==DataManager.GM_LOCAL){
-                    if(Game.dataManager.getLastWinner().compareTo(Game.dataManager.getMyId())==0) {//更新分数
-                        Game.dataManager.setScore(Game.dataManager.getScore() + 10);
-                        Game.soundManager.playSound(SoundManager.WIN);
-                    }
-                    else {
-                        Game.dataManager.setScore(Game.dataManager.getScore() - 5);
-                        //Game.soundManager.playSound(SoundManager.LOSE);
-                    }
+                if(Game.replayManager.isReplay == false) {
+                    Intent intent = new Intent(parent.getApplicationContext(), RoomAct.class);
+                    ArrayList<String> msgs = new ArrayList<>();
+                    if (Game.dataManager.getGameMode() == DataManager.GM_LOCAL) {
+                        if (Game.dataManager.getLastWinner().compareTo(Game.dataManager.getMyId()) == 0) {//更新分数
+                            Game.dataManager.setScore(Game.dataManager.getScore() + 10);
+                            Game.soundManager.playSound(SoundManager.WIN);
+                        } else {
+                            Game.dataManager.setScore(Game.dataManager.getScore() - 5);
+                            //Game.soundManager.playSound(SoundManager.LOSE);
+                        }
 
-                    Game.dataManager.saveData();
-                    msgs.add(Game.dataManager.getMyId());
-                    msgs.add(Game.playersData.get(Game.dataManager.getMyId()).name);
-                    msgs.add(String.valueOf(Game.dataManager.getScore()));
-                    msgs.add("-1");
-                }
-                else if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
-                    for(String key:Game.playersData.keySet()){//更新玩家的分数
-                        if(Game.playersData.get(key).offline==false) {
-                            if (Game.playersData.get(key).id.compareTo(Game.dataManager.getLastWinner()) == 0) {
-                                Game.playersData.get(key).score = String.valueOf(Integer.valueOf(Game.playersData.get(key).score) + 10);
-                                Game.soundManager.playSound(SoundManager.WIN);
-                            } else {
-                                Game.playersData.get(key).score = String.valueOf(Integer.valueOf(Game.playersData.get(key).score) - 5);
-                                //Game.soundManager.playSound(SoundManager.LOSE);
+                        Game.dataManager.saveData();
+                        msgs.add(Game.dataManager.getMyId());
+                        msgs.add(Game.playersData.get(Game.dataManager.getMyId()).name);
+                        msgs.add(String.valueOf(Game.dataManager.getScore()));
+                        msgs.add("-1");
+                    } else if (Game.dataManager.getGameMode() == DataManager.GM_WLAN) {
+                        for (String key : Game.playersData.keySet()) {//更新玩家的分数
+                            if (Game.playersData.get(key).offline == false) {
+                                if (Game.playersData.get(key).id.compareTo(Game.dataManager.getLastWinner()) == 0) {
+                                    Game.playersData.get(key).score = String.valueOf(Integer.valueOf(Game.playersData.get(key).score) + 10);
+                                    Game.soundManager.playSound(SoundManager.WIN);
+                                } else {
+                                    Game.playersData.get(key).score = String.valueOf(Integer.valueOf(Game.playersData.get(key).score) - 5);
+                                    //Game.soundManager.playSound(SoundManager.LOSE);
+                                }
+                            }
+                        }
+
+                        Game.dataManager.setOnlineScore(Game.playersData.get(Game.dataManager.getMyId()).score);
+
+                        msgs.add(Game.playersData.get(Game.dataManager.getHostId()).id);
+                        msgs.add(Game.playersData.get(Game.dataManager.getHostId()).name);
+                        msgs.add(Game.playersData.get(Game.dataManager.getHostId()).score);
+                        msgs.add("-1");
+                        for (String key : Game.playersData.keySet()) {
+                            Game.playersData.get(key).color = -1;
+                            if (Game.dataManager.getHostId().compareTo(Game.playersData.get(key).id) != 0 && Integer.valueOf(Game.playersData.get(key).id) >= 0 && Game.playersData.get(key).offline == false) {
+                                msgs.add(Game.playersData.get(key).id);
+                                msgs.add(Game.playersData.get(key).name);
+                                msgs.add(Game.playersData.get(key).score);
+                                msgs.add("-1");
                             }
                         }
                     }
-
-                    Game.dataManager.setOnlineScore(Game.playersData.get(Game.dataManager.getMyId()).score);
-
-                    msgs.add(Game.playersData.get(Game.dataManager.getHostId()).id);
-                    msgs.add(Game.playersData.get(Game.dataManager.getHostId()).name);
-                    msgs.add(Game.playersData.get(Game.dataManager.getHostId()).score);
-                    msgs.add("-1");
-                    for(String key:Game.playersData.keySet()){
-                        Game.playersData.get(key).color=-1;
-                        if(Game.dataManager.getHostId().compareTo(Game.playersData.get(key).id)!=0&&Integer.valueOf(Game.playersData.get(key).id)>=0&&Game.playersData.get(key).offline==false){
-                            msgs.add(Game.playersData.get(key).id);
-                            msgs.add(Game.playersData.get(key).name);
-                            msgs.add(Game.playersData.get(key).score);
-                            msgs.add("-1");
-                        }
-                    }
+                    intent.putStringArrayListExtra("msgs", msgs);
+                    parent.startActivity(intent);
+                    Intent intent2 = new Intent(parent.getApplicationContext(), GameEndAct.class);
+                    intent2.putStringArrayListExtra("msgs", msgs);
+                    parent.startActivity(intent2);
+                    Game.dataManager.giveUp(false);
+                    Game.gameManager.gameOver();
+                    Game.soundManager.playMusic(SoundManager.BACKGROUND);
+                    Game.replayManager.closeRecord();
+                    Game.replayManager.stopReplay();
                 }
-                intent.putStringArrayListExtra("msgs",msgs);
-                parent.startActivity(intent);
-                Intent intent2 = new Intent(parent.getApplicationContext(),GameEndAct.class);
-                intent2.putStringArrayListExtra("msgs",msgs);
-                parent.startActivity(intent2);
-                Game.dataManager.giveUp(false);
-                Game.gameManager.gameOver();
-                Game.soundManager.playMusic(SoundManager.BACKGROUND);
+                else {
+                    Toast.makeText(parent, "Replay finished!", Toast.LENGTH_SHORT).show();
+                    parent.startActivity(new Intent(parent.getApplicationContext(), ChooseModeAct.class));
+                }
+                break;
             }
+            case 6://turn to
+            {
+                for(int i=0;i<4;i++){
+                    parent.xt[i].setText(" ");
+                }
+                parent.xt[msg.getData().getInt("color")].setText(">");
+            }
+                break;
             default:
                 super.handleMessage(msg);
         }

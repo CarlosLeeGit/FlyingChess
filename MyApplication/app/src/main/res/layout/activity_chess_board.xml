@@ -8,23 +8,18 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:id="@+id/chessBoard"
-    tools:context="com.hy.lyx.fb.gw.wyx.lks.flyingchess.ChessBoardAct">
+    tools:context="com.hy.lyx.fb.gw.wyx.lks.flyingchess.ChessBoardAct"
+    android:background="@drawable/sky_color">
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Pause"
+        android:layout_width="36sp"
+        android:layout_height="36sp"
         android:id="@+id/pause"
         android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Dice"
-        android:id="@+id/dice"
-        android:layout_centerVertical="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:background="@drawable/pause"
+        android:layout_marginTop="2sp"
+        android:layout_marginRight="5sp" />
 
     <Button
         android:layout_width="20dp"
@@ -141,7 +136,7 @@
 
     <ImageView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="fill_parent"
         android:id="@+id/map"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="false"
@@ -150,12 +145,25 @@
         android:adjustViewBounds="true"
         android:textAlignment="viewStart" />
 
+    <include
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        layout="@layout/content_board_player_list"
+        android:layout_toEndOf="@+id/map"
+        android:layout_below="@+id/pause"
+        android:layout_marginLeft="10sp"
+        android:layout_marginTop="10sp"
+        android:layout_marginRight="10sp"
+        android:id="@+id/include"
+        android:layout_toRightOf="@+id/map"
+        android:layout_above="@+id/dice" />
+
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="test"
-        android:id="@+id/test"
+        android:layout_width="70sp"
+        android:layout_height="70sp"
+        android:id="@+id/dice"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:layout_margin="7sp" />
 
 </RelativeLayout>

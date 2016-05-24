@@ -2,16 +2,20 @@ package com.hy.lyx.fb.gw.wyx.lks.flyingchess;
 
 
 
+
 import android.os.Environment;
 
 import com.google.gson.*;
 
 import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Created by Great on 2016/5/12.
  */
 public class ReplayManager {
+    public static final String PATH = Environment.getExternalStorageDirectory().getPath() + "/FlashMinds.com/FlyingChess/replay/";
     public boolean isReplay;
     File file;
     BufferedWriter writer;
@@ -19,13 +23,30 @@ public class ReplayManager {
     Gson gson;
 
     public ReplayManager() {
-        file = new File(Environment.getExternalStorageDirectory().getPath()+"/ksymphony.com/FlyingChess/record.dat");
         isReplay = false;
         gson = new Gson();
     }
 
+    public void openFile(String fileName) {
+        file = new File(fileName);
+        if(!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public void startRecord() {
         if(isReplay == false) {
+            SimpleDateFormat format = new SimpleDateFormat("MM-dd HH:mm:ss");
+            Date curData = new Date(System.currentTimeMillis());
+            String fileName = format.format(curData);
+            File dir = new File(PATH);
+            if(!dir.exists())
+                dir.mkdirs();
+            openFile(PATH + fileName);
             try {
                 writer = new BufferedWriter(new FileWriter(file));
             } catch (Exception e) {
@@ -94,6 +115,7 @@ public class ReplayManager {
         }
     }
 
+    /*
     public void saveWinnerInfo(String id, String name, int score) {
         if(isReplay == false) {
             try {
@@ -103,6 +125,7 @@ public class ReplayManager {
             }
         }
     }
+    */
 
     public String getWinnerId() {
         String temp = null;

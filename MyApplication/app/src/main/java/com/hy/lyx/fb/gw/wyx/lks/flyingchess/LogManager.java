@@ -21,7 +21,7 @@ public class LogManager {
     private FileOutputStream os;
     private DataOutputStream dos;
     public LogManager(){
-        file = new File(Environment.getExternalStorageDirectory().getPath()+"/ksymphony.com/FlyingChess/log.log");
+        file = new File(Environment.getExternalStorageDirectory().getPath()+"/FlashMinds.com/FlyingChess/log.log");
         try {
             file.createNewFile();
             os = new FileOutputStream(file);

@@ -7,31 +7,43 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".PauseAct">
+    tools:context=".PauseAct"
+    android:background="@drawable/list_outline">
 
-    <Button
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/resume"
-        android:id="@+id/resume"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="10sp" />
+        android:background="@drawable/list"
+        android:layout_margin="15sp">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/robot"
-        android:id="@+id/robot"
-        android:layout_below="@+id/resume"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="10sp" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/resume"
+            android:id="@+id/resume"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="10sp"
+            android:background="@drawable/button_normal" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/exit"
-        android:id="@+id/exit"
-        android:layout_below="@+id/robot"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="10sp" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/robot"
+            android:id="@+id/robot"
+            android:layout_below="@+id/resume"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="10sp"
+            android:background="@drawable/button_normal" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/exit"
+            android:id="@+id/exit"
+            android:layout_below="@+id/robot"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="10sp"
+            android:background="@drawable/button_normal" />
+    </RelativeLayout>
+
 </RelativeLayout>

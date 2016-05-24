@@ -1,6 +1,7 @@
 package com.hy.lyx.fb.gw.wyx.lks.flyingchess;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -9,6 +10,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -21,6 +23,7 @@ public class RoomAct extends AppCompatActivity implements Target {
     ListView idlePlayerView;
     LinkedList<HashMap<String,String>> idlePlayerListData;
     SimpleAdapter idlePlayerListAdapter;
+    TextView title;
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,8 +48,9 @@ public class RoomAct extends AppCompatActivity implements Target {
         siteState=new int[4];
         idlePlayerView=(ListView)findViewById(R.id.playerInRoom);
         idlePlayerListData=new LinkedList<>();
-        idlePlayerListAdapter=new SimpleAdapter(getApplicationContext(),idlePlayerListData,R.layout.conteng_room_player_list_item,new String[] {"name","score"},new int[] {R.id.nameInRoom,R.id.scoreInRoom});
+        idlePlayerListAdapter=new SimpleAdapter(getApplicationContext(),idlePlayerListData,R.layout.content_player_list_item,new String[] {"name","score"},new int[] {R.id.nameInRoom,R.id.scoreInRoom});
         idlePlayerView.setAdapter(idlePlayerListAdapter);
+        title=(TextView)findViewById(R.id.title);
         //trigger
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,7 +60,7 @@ public class RoomAct extends AppCompatActivity implements Target {
                     Toast.makeText(getApplicationContext(),"some one is not ready!",Toast.LENGTH_SHORT).show();
                 else{
                     Game.replayManager.startRecord();
-                    if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
+                    if(Game.dataManager.getGameMode()!=DataManager.GM_LOCAL){
                         if(Game.dataManager.getHostId().compareTo(Game.dataManager.getMyId())!=0){
                             Toast.makeText(getApplicationContext(),"wait for room host",Toast.LENGTH_SHORT).show();
                             return;
@@ -74,7 +78,7 @@ public class RoomAct extends AppCompatActivity implements Target {
             @Override
             public void onClick(View v) {
                 Game.soundManager.playSound(SoundManager.BUTTON);
-                if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
+                if(Game.dataManager.getGameMode()!=DataManager.GM_LOCAL){
                     Game.socketManager.send(DataPack.R_ROOM_EXIT,Game.dataManager.getMyId(),Game.dataManager.getRoomId(),Game.playersData.get(Game.dataManager.getMyId()).color);
                     startActivity(new Intent(getApplicationContext(),GameInfoAct.class));
                 }
@@ -144,7 +148,7 @@ public class RoomAct extends AppCompatActivity implements Target {
             }
         });
         //internet init
-        if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
+        if(Game.dataManager.getGameMode()!=DataManager.GM_LOCAL){
             Game.socketManager.registerActivity(DataPack.E_ROOM_POSITION_SELECT,this);
             Game.socketManager.registerActivity(DataPack.E_GAME_START,this);
             Game.socketManager.registerActivity(DataPack.A_ROOM_ENTER,this);
@@ -196,6 +200,18 @@ public class RoomAct extends AppCompatActivity implements Target {
             i+=4;
         }
         idlePlayerListAdapter.notifyDataSetChanged();
+        ////////////setting
+        title.setTypeface(Game.getFont());
+        for(int i=0;i<4;i++){
+            site[i].setTypeface(Game.getFont());
+            addRobotButton[i].setTypeface(Game.getFont());
+        }
+        startButton.setTypeface(Game.getFont());
+    }
+    @Override
+    public void onStart(){
+        super.onStart();
+        Game.soundManager.resumeMusic(SoundManager.BACKGROUND);
     }
     @Override
     public void onStop(){
@@ -254,7 +270,7 @@ public class RoomAct extends AppCompatActivity implements Target {
                             site[i].post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    site[tmp].setText("");
+                                    site[tmp].setText("JOIN");
                                     siteState[tmp]=-1;
                                 }
                             });
@@ -285,7 +301,7 @@ public class RoomAct extends AppCompatActivity implements Target {
                         site[0].post(new Runnable() {
                             @Override
                             public void run() {
-                                site[-id-1].setText("");
+                                site[-id-1].setText("JOIN");
                                 addRobotButton[-id-1].setText("+");
                             }
                         });
@@ -305,7 +321,7 @@ public class RoomAct extends AppCompatActivity implements Target {
                             site[0].post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    site[tmp].setText("");
+                                    site[tmp].setText("JOIN");
                                     siteState[tmp] = -1;
                                 }
                             });
@@ -353,7 +369,7 @@ public class RoomAct extends AppCompatActivity implements Target {
 
     private void chooseSite(int color){
         if(siteState[color]==-1) {
-            if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
+            if(Game.dataManager.getGameMode()!=DataManager.GM_LOCAL){
                 Game.socketManager.send(DataPack.R_ROOM_POSITION_SELECT,Game.dataManager.getMyId(),Game.dataManager.getRoomId(),Game.playersData.get(Game.dataManager.getMyId()).name,Game.playersData.get(Game.dataManager.getMyId()).score,color);
             }
             else if(Game.dataManager.getGameMode()==DataManager.GM_LOCAL){
@@ -362,7 +378,7 @@ public class RoomAct extends AppCompatActivity implements Target {
                     idlePlayerListAdapter.notifyDataSetChanged();
                 }
                 else{
-                    site[Game.playersData.get(Game.dataManager.getMyId()).color].setText("");
+                    site[Game.playersData.get(Game.dataManager.getMyId()).color].setText("JOIN");
                     siteState[Game.playersData.get(Game.dataManager.getMyId()).color]=-1;
                 }
                 Game.playersData.get(Game.dataManager.getMyId()).color=color;
@@ -381,7 +397,7 @@ public class RoomAct extends AppCompatActivity implements Target {
                 Toast.makeText(getApplicationContext(),"add robot failed!",Toast.LENGTH_SHORT).show();
             }
             else {
-                if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
+                if(Game.dataManager.getGameMode()!=DataManager.GM_LOCAL){
                     LinkedList<String> msgs=new LinkedList<>();
                     msgs.addLast(String.format("%d",-color-1));
                     msgs.addLast(Game.dataManager.getRoomId());
@@ -403,7 +419,7 @@ public class RoomAct extends AppCompatActivity implements Target {
                         Game.playersData.put(String.format("%d",-color-1),new Role(String.format("%d",-color-1),"robot","0",color,Role.ROBOT,false));
                     }
                     else{
-                        site[color].setText("");
+                        site[color].setText("JOIN");
                         siteState[color]=-1;
                         addRobotButton[color].setText("+");
                         Game.playersData.remove(String.format("%d",-color-1));
@@ -418,7 +434,7 @@ public class RoomAct extends AppCompatActivity implements Target {
 
     private void exit(){
         Game.socketManager.send(DataPack.R_ROOM_EXIT,Game.dataManager.getMyId(),Game.dataManager.getRoomId(),Game.playersData.get(Game.dataManager.getMyId()).color);
-        if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
+        if(Game.dataManager.getGameMode()!=DataManager.GM_LOCAL){
             Intent intent=new Intent(getApplicationContext(),GameInfoAct.class);
             startActivity(intent);
         }

@@ -32,7 +32,7 @@ public class DataManager {//数据存储类
     public DataManager(){//加载本地数据
         autoLogin=false;
         giveUp=false;
-        File file = new File(Environment.getExternalStorageDirectory().getPath()+"/ksymphony.com/FlyingChess/data.dat");
+        File file = new File(Environment.getExternalStorageDirectory().getPath()+"/FlashMinds.com/FlyingChess/data.dat");
         if(file.exists()){
             try {
                 FileInputStream fis=new FileInputStream(file);
@@ -46,7 +46,7 @@ public class DataManager {//数据存储类
             }
         }
         else{
-            File file2 = new File(Environment.getExternalStorageDirectory().getPath()+"/ksymphony.com/FlyingChess");
+            File file2 = new File(Environment.getExternalStorageDirectory().getPath()+"/FlashMinds.com/FlyingChess");
             file2.mkdirs();
             try {
                 file.createNewFile();

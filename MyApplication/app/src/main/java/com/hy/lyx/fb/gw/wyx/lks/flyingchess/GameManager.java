@@ -46,6 +46,13 @@ public class GameManager implements Target {//game process control
         }
         if(role!=null) {//此颜色有玩家
             Game.logManager.p("turn to:",role.name," color is:",role.color);
+            Message msg = new Message();
+            Bundle b = new Bundle();
+            b.putInt("color",color);
+            msg.setData(b);
+            msg.what=6;
+            board.handler.sendMessage(msg);
+
             whichPlane=-1;
             Game.logManager.p("turn to:","waite for dice");
 
@@ -58,7 +65,7 @@ public class GameManager implements Target {//game process control
 
             Game.replayManager.saveDice(dice);
             Game.logManager.p("turn to:","dice is :",dice);
-            if(!Game.replayManager.isReplay) {
+            if(!Game.replayManager.isReplay&&Game.dataManager.getGameMode()!=DataManager.GM_LOCAL) {
                 if ((role.offline || role.type == Role.ROBOT) && Game.dataManager.getHostId().compareTo(Game.dataManager.getMyId()) == 0 || role.type == Role.ME) {
                     Game.socketManager.send(DataPack.R_GAME_PROCEED_DICE, role.id, Game.dataManager.getRoomId(), dice);
                     Game.logManager.p("turn to:", "send dice:", dice);
@@ -82,11 +89,12 @@ public class GameManager implements Target {//game process control
                     } while (!role.move());
                 }
                 canFly = true;
+                Game.replayManager.saveWhichPlane(whichPlane);
             } else if(role.type==Role.ME){
                 toast("sad...I can not move");
                 Game.logManager.p("turn to: i can not fly");
             }
-            if(!Game.replayManager.isReplay){
+            if(!Game.replayManager.isReplay&&Game.dataManager.getGameMode()!=DataManager.GM_LOCAL){
                 if((role.offline||role.type!=Role.PLAYER)&&Game.dataManager.getHostId().compareTo(Game.dataManager.getMyId())==0||role.type==Role.ME){
                     Game.socketManager.send(DataPack.R_GAME_PROCEED_PLANE, role.id, Game.dataManager.getRoomId(), whichPlane);
                     Game.logManager.p("turn to: send which plane :",whichPlane);
@@ -151,7 +159,7 @@ public class GameManager implements Target {//game process control
         for(int i=0;i<10;i++){
             Message msg = new Message();
             Bundle b = new Bundle();
-            b.putString("dice",String.format("%d",Game.chessBoard.getDice().roll()));
+            b.putInt("dice",Game.chessBoard.getDice().roll());
             msg.setData(b);
             msg.what=2;
             board.handler.sendMessage(msg);
@@ -163,7 +171,7 @@ public class GameManager implements Target {//game process control
         }
         Message msg = new Message();
         Bundle b = new Bundle();
-        b.putString("dice",String.format("%d",dice));
+        b.putInt("dice",dice);
         msg.setData(b);
         msg.what=2;
         board.handler.sendMessage(msg);
@@ -366,6 +374,7 @@ class GameWorker implements Runnable{
 
     @Override
     public void run() {
+        run=true;
         int i=0;
         while(run){//control round
             i=(i%4);//轮询颜色

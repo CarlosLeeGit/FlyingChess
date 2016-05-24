@@ -19,5 +19,6 @@
         android:id="@+id/wait"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:translationZ="1dp" />
+        android:translationZ="1dp"
+        android:background="@drawable/w0" />
 </RelativeLayout>

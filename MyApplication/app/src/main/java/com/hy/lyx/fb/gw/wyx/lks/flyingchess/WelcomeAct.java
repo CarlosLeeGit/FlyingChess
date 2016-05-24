@@ -70,7 +70,6 @@ public class WelcomeAct extends AppCompatActivity {
             public void run() {
                 Intent intent = new Intent(getApplicationContext(), ChooseModeAct.class);
                 startActivity(intent);//switch activity
-                mediaPlayer.release();
                 mediaPlayer=null;
                 sv=null;
 

@@ -79,11 +79,13 @@ public class LoginAct extends AppCompatActivity implements Target {
                     Game.socketManager.send(DataPack.R_REGISTER,_myName.getText().toString(),_pw.getText().toString());
                     waitBackground.setVisibility(View.VISIBLE);
                     waitView.setVisibility(View.VISIBLE);
+                    Game.startWaitAnimation(waitView);
                 }
                 else{// login
                     Game.socketManager.send(DataPack.R_LOGIN,_myName.getText().toString(),_pw.getText().toString());
                     waitBackground.setVisibility(View.VISIBLE);
                     waitView.setVisibility(View.VISIBLE);
+                    Game.startWaitAnimation(waitView);
                     Game.dataManager.setMyName(_myName.getText().toString());
                     Game.dataManager.setPassword(_pw.getText().toString());
                 }
@@ -130,7 +132,6 @@ public class LoginAct extends AppCompatActivity implements Target {
         imageView.setImageBitmap(Game.loadBitmap(R.raw.cloud));
         waitView.setVisibility(View.INVISIBLE);
         waitBackground.setVisibility(View.INVISIBLE);
-        waitView.setBackground(Game.getWaitAnimation());
         login.setTypeface(Typeface.createFromAsset(getAssets(),"fonts/comici.ttf"));
         register.setTypeface(Typeface.createFromAsset(getAssets(),"fonts/comici.ttf"));
         myName.setTypeface(Typeface.createFromAsset(getAssets(),"fonts/comici.ttf"));
@@ -171,6 +172,7 @@ public class LoginAct extends AppCompatActivity implements Target {
                     }
                 });
             }
+            Game.stopWaitAnimation();
         }
         else if(dataPack.getCommand()==DataPack.A_REGISTER){
             if(dataPack.isSuccessful()){
@@ -198,6 +200,7 @@ public class LoginAct extends AppCompatActivity implements Target {
                     }
                 });
             }
+            Game.stopWaitAnimation();
         }
     }
 

@@ -27,6 +27,7 @@ public class ChooseModeAct extends AppCompatActivity implements Target{
     ImageView bk,bk2;
     ImageView waitImage;
     Button waitBackground;
+    Button records;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //ui setting
@@ -46,6 +47,7 @@ public class ChooseModeAct extends AppCompatActivity implements Target{
         bk2=(ImageView)findViewById(R.id.backgroud2);
         waitImage=(ImageView)findViewById(R.id.wait);
         waitBackground = (Button)findViewById(R.id.waitbackground);
+        records = (Button)findViewById(R.id.records);
         //trigger
         local.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,18 +73,27 @@ public class ChooseModeAct extends AppCompatActivity implements Target{
                 Game.dataManager.setGameMode(DataManager.GM_LAN);
                 Intent intent=new Intent(getApplicationContext(),GameInfoAct.class);
                 startActivity(intent);
+                Game.localServer.startListen();
             }
         });
         wlan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Game.soundManager.playSound(SoundManager.BUTTON);
-                Game.socketManager.connectToServer();
+                Game.socketManager.connectToRemoteServer();
                 local.setVisibility(View.INVISIBLE);
                 lan.setVisibility(View.INVISIBLE);
                 wlan.setVisibility(View.INVISIBLE);
+                records.setVisibility(View.INVISIBLE);
                 waitImage.setVisibility(View.VISIBLE);
                 waitBackground.setVisibility(View.VISIBLE);
+                Game.startWaitAnimation(waitImage);
+            }
+        });
+        records.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(),RecordsAct.class));
             }
         });
         //internet init
@@ -92,13 +103,12 @@ public class ChooseModeAct extends AppCompatActivity implements Target{
         Game.updateManager.checkUpdate();
         waitImage.setVisibility(View.INVISIBLE);
         waitBackground.setVisibility(View.INVISIBLE);
-        waitImage.setBackground(Game.getWaitAnimation());
         //background img
         bk.setImageBitmap(Game.loadBitmap(R.raw.choosemodebk));
         bk2.setImageBitmap(Game.loadBitmap(R.raw.cloud));
-        lan.setTypeface(Typeface.createFromAsset(getAssets(),"fonts/comici.ttf"));
-        wlan.setTypeface(Typeface.createFromAsset(getAssets(),"fonts/comici.ttf"));
-        local.setTypeface(Typeface.createFromAsset(getAssets(),"fonts/comici.ttf"));
+        lan.setTypeface(Game.getFont());
+        wlan.setTypeface(Game.getFont());
+        local.setTypeface(Game.getFont());
     }
 
     @Override
@@ -153,11 +163,13 @@ public class ChooseModeAct extends AppCompatActivity implements Target{
                         local.setVisibility(View.VISIBLE);
                         lan.setVisibility(View.VISIBLE);
                         wlan.setVisibility(View.VISIBLE);
+                        records.setVisibility(View.VISIBLE);
                         waitBackground.setVisibility(View.INVISIBLE);
                         waitImage.setVisibility(View.INVISIBLE);
                     }
                 });
             }
+            Game.stopWaitAnimation();
         }
     }
 }

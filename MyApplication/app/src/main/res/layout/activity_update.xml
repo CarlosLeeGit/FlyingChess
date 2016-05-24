@@ -7,7 +7,8 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.hy.lyx.fb.gw.wyx.lks.flyingchess.UpdateAct">
+    tools:context="com.hy.lyx.fb.gw.wyx.lks.flyingchess.UpdateAct"
+    android:background="@drawable/list">
 
     <Button
         android:layout_width="wrap_content"
@@ -18,7 +19,9 @@
         android:padding="5sp"
         android:layout_below="@+id/space"
         android:layout_toStartOf="@+id/textView8"
-        android:layout_marginBottom="20sp" />
+        android:layout_marginBottom="20sp"
+        android:background="@drawable/button_normal"
+        android:layout_marginTop="10sp" />
 
     <Button
         android:layout_width="wrap_content"
@@ -29,7 +32,9 @@
         android:padding="5sp"
         android:layout_below="@+id/space"
         android:layout_toEndOf="@+id/textView8"
-        android:layout_marginBottom="20sp" />
+        android:layout_marginBottom="20sp"
+        android:background="@drawable/button_normal"
+        android:layout_marginTop="10sp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -40,7 +45,8 @@
         android:textSize="30sp"
         android:layout_below="@+id/textView8"
         android:layout_centerHorizontal="true"
-        android:textAlignment="center" />
+        android:textAlignment="center"
+        android:textColor="#8f0808" />
 
     <TextView
         android:layout_width="wrap_content"

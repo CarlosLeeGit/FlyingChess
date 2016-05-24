@@ -87,4 +87,14 @@
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />
 
+    <Button
+        android:layout_width="45sp"
+        android:layout_height="40sp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:background="@drawable/records"
+        android:layout_marginTop="2sp"
+        android:layout_marginRight="5sp"
+        android:id="@+id/records" />
+
 </RelativeLayout>

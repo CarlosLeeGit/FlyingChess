@@ -1,5 +1,6 @@
 package com.hy.lyx.fb.gw.wyx.lks.flyingchess;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -13,7 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-public class GameEndAct extends AppCompatActivity {
+public class GameEndAct extends Activity {
     Button con;
     TextView winner;
     SimpleAdapter playerListAdapter;
@@ -60,5 +61,10 @@ public class GameEndAct extends AppCompatActivity {
             playerListData.addLast(map);
         }
         playerListView.setAdapter(playerListAdapter);
+    }
+    @Override
+    public void onStart(){
+        super.onStart();
+        Game.soundManager.resumeMusic(SoundManager.BACKGROUND);
     }
 }

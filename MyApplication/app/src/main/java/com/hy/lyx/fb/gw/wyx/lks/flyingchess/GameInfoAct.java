@@ -2,6 +2,7 @@ package com.hy.lyx.fb.gw.wyx.lks.flyingchess;
 
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -15,6 +16,8 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -56,9 +59,14 @@ public class GameInfoAct extends AppCompatActivity implements Target{
             @Override
             public void onClick(View v) {//start a new game
                 Game.soundManager.playSound(SoundManager.BUTTON);
-                Game.socketManager.send(DataPack.R_ROOM_CREATE,Game.dataManager.getMyId(),Game.dataManager.getMyName()+"'s Room");
-                if(Game.dataManager.getGameMode()==DataManager.GM_LAN){
-
+                if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
+                    Game.socketManager.send(DataPack.R_ROOM_CREATE,Game.dataManager.getMyId(),Game.dataManager.getMyName()+"'s Room");
+                }
+                else if(Game.dataManager.getGameMode()==DataManager.GM_LAN){
+                    Game.localServer.startHost();
+                    Game.socketManager.connectToLocalServer();
+                    Game.delay(500);
+                    Game.socketManager.send(DataPack.R_LOGIN,new Build().MODEL.toString(),"123");
                 }
             }
         });
@@ -97,13 +105,17 @@ public class GameInfoAct extends AppCompatActivity implements Target{
             }
         });
         //network init
-        if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
+        if(Game.dataManager.getGameMode()!=DataManager.GM_LOCAL){
             Game.socketManager.registerActivity(DataPack.A_ROOM_LOOKUP,this);
             Game.socketManager.registerActivity(DataPack.A_ROOM_CREATE,this);
             Game.socketManager.registerActivity(DataPack.A_ROOM_ENTER,this);
-            new Thread(worker).start();
+            if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
+                new Thread(worker).start();
+            }
         }
-        title.setTypeface(Typeface.createFromAsset(getAssets(),"fonts/hksn.ttf"));
+        title.setTypeface(Typeface.createFromAsset(getAssets(),"fonts/comici.ttf"));
+        joinButton.setTypeface(Typeface.createFromAsset(getAssets(),"fonts/comici.ttf"));
+        createButton.setTypeface(Typeface.createFromAsset(getAssets(),"fonts/comici.ttf"));
     }
 
     @Override
@@ -184,9 +196,15 @@ public class GameInfoAct extends AppCompatActivity implements Target{
         }
         else if(dataPack.getCommand()==DataPack.A_ROOM_ENTER){
             if(dataPack.isSuccessful()){
-                Game.dataManager.setRoomId(roomId);
+                if(Game.dataManager.getGameMode()==DataManager.GM_LAN){
+                    Game.dataManager.setMyId(dataPack.getMessage(0));
+                }
+                Game.dataManager.setRoomId("0");
                 Intent intent = new Intent(getApplicationContext(), RoomAct.class);
                 ArrayList<String> msgs = new ArrayList<>(dataPack.getMessageList());
+                if(Game.dataManager.getGameMode()==DataManager.GM_LAN){//取出自己的ID
+                    msgs.remove(0);
+                }
                 intent.putStringArrayListExtra("msgs",msgs);
                 startActivity(intent);//switch wo chess board activity
             }

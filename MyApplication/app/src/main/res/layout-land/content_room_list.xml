@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:background="@drawable/room_list_outline">
+        android:background="@drawable/list_outline">
 
         <ListView
             android:layout_width="fill_parent"
@@ -17,7 +17,7 @@
             android:id="@+id/roomList"
             android:choiceMode="singleChoice"
             android:headerDividersEnabled="true"
-            android:background="@drawable/room_list"
+            android:background="@drawable/list"
             android:layout_weight="1"
             android:layout_margin="10sp" />
 

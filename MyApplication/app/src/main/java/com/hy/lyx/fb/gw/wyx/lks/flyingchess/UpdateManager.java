@@ -101,7 +101,7 @@ class UpdateWorker implements Runnable{
             if(update){//确认升级
                 dos.writeInt(1);
                 //////////检查断点
-                File verFile = new File(Environment.getExternalStorageDirectory().getPath()+"/ksymphony.com/FlyingChess/version.dat");
+                File verFile = new File(Environment.getExternalStorageDirectory().getPath()+"/FlashMinds.com/FlyingChess/version.dat");
                 if(!verFile.exists()){
                     verFile.createNewFile();
                     FileOutputStream verfos = new FileOutputStream(verFile);
@@ -117,7 +117,7 @@ class UpdateWorker implements Runnable{
                 verfis.close();
                 ////对比版本
                 long num=0;
-                File apk = new File(Environment.getExternalStorageDirectory().getPath()+"/ksymphony.com/FlyingChess/new.apk");
+                File apk = new File(Environment.getExternalStorageDirectory().getPath()+"/FlashMinds.com/FlyingChess/new.apk");
                 if(!apk.exists()){//apk不存在
                     apk.createNewFile();
                 }

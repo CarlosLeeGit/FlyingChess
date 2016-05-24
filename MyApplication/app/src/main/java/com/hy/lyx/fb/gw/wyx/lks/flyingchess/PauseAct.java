@@ -10,7 +10,7 @@ import android.widget.Button;
 
 import java.util.LinkedList;
 
-public class PauseAct extends AppCompatActivity {
+public class PauseAct extends Activity {
     Button resume,robot,exit;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,7 +19,6 @@ public class PauseAct extends AppCompatActivity {
         setContentView(R.layout.activity_pause);
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);//Activity切换动画
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        Game.activityManager.add(this);
         //init
         resume=(Button)findViewById(R.id.resume);
         robot=(Button)findViewById(R.id.robot);
@@ -36,11 +35,11 @@ public class PauseAct extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(!Game.dataManager.isGiveUp()){
-                    robot.setText("取消托管");
+                    robot.setText("Cancel auto");
                     Game.dataManager.giveUp(true);
                 }
                 else{
-                    robot.setText("托管");
+                    robot.setText("Auto");
                     Game.dataManager.giveUp(false);
                 }
             }
@@ -49,8 +48,15 @@ public class PauseAct extends AppCompatActivity {
         exit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Game.socketManager.send(DataPack.R_GAME_EXIT,Game.dataManager.getMyId(),Game.dataManager.getRoomId());
+                if(Game.dataManager.getGameMode()!=DataManager.GM_LOCAL){
+                    Game.socketManager.send(DataPack.R_GAME_EXIT, Game.dataManager.getMyId(), Game.dataManager.getRoomId());
+                }
+                if(Game.replayManager.isReplay == false) {
+                    Game.replayManager.closeRecord();
+                    Game.replayManager.clearRecord();
+                }
                 Game.gameManager.gameOver();
+                Game.replayManager.stopReplay();
                 if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
                     startActivity(new Intent(getApplicationContext(),GameInfoAct.class));
                 }
@@ -62,7 +68,15 @@ public class PauseAct extends AppCompatActivity {
             }
         });
         if(Game.dataManager.isGiveUp()){
-            robot.setText("取消托管");
+            robot.setText("Cancel auto");
         }
+        resume.setTypeface(Game.getFont());
+        robot.setTypeface(Game.getFont());
+        exit.setTypeface(Game.getFont());
+    }
+    @Override
+    public void onStart(){
+        super.onStart();
+        Game.soundManager.resumeMusic(SoundManager.BACKGROUND);
     }
 }

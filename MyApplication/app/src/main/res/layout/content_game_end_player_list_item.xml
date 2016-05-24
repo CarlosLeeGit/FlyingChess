@@ -4,46 +4,41 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         android:text="Name"
         android:id="@+id/name"
         android:textSize="30sp"
         android:layout_weight="1"
-        android:background="@drawable/list_item"
-        android:textColor="#ffffff"
-        android:layout_margin="1sp" />
+        android:textColor="#870707" />
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         android:text="state"
         android:id="@+id/state"
         android:textSize="30sp"
         android:layout_weight="1"
-        android:background="@drawable/list_item"
-        android:textColor="#ffffff"
+        android:textColor="#870707"
         android:layout_margin="1sp" />
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         android:text="action"
         android:id="@+id/action"
         android:textSize="30sp"
         android:layout_weight="1"
-        android:background="@drawable/list_item"
-        android:textColor="#ffffff"
+        android:textColor="#870707"
         android:layout_margin="1sp" />
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         android:text="score"
         android:id="@+id/score"
         android:textSize="30sp"
         android:layout_weight="1"
-        android:background="@drawable/list_item"
-        android:textColor="#ffffff"
+        android:textColor="#870707"
         android:layout_margin="1sp" />
 </LinearLayout>
