@@ -9,7 +9,7 @@
         android:layout_height="match_parent">
 
         <TextView
-            android:layout_weight="1.3"
+            android:layout_weight="1.15"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:textAppearance="?android:attr/textAppearanceLarge"
@@ -17,7 +17,7 @@
             android:id="@+id/roomId"
             android:textColor="#f7c600"
             android:textAlignment="center"
-            android:textSize="50sp"
+            android:textSize="45sp"
             android:layout_marginTop="3sp" />
 
         <RelativeLayout

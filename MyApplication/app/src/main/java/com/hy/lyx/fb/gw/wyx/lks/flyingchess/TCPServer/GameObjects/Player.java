@@ -32,6 +32,11 @@ public class Player {
         return player;
     }
 
+    public static Player createRobot(int id){
+        Player player = new Player(id,"Robot");
+        return player;
+    }
+
     public String getName(){
         return this.userName;
     }

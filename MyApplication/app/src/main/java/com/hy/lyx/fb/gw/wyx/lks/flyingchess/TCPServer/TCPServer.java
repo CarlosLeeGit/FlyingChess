@@ -1,6 +1,8 @@
 package com.hy.lyx.fb.gw.wyx.lks.flyingchess.TCPServer;
 
 
+import android.os.Build;
+
 import com.hy.lyx.fb.gw.wyx.lks.flyingchess.Server.LocalServer;
 import com.hy.lyx.fb.gw.wyx.lks.flyingchess.TCPServer.GameObjects.Player;
 import com.hy.lyx.fb.gw.wyx.lks.flyingchess.TCPServer.GameObjects.Room;
@@ -10,15 +12,17 @@ import com.hy.lyx.fb.gw.wyx.lks.flyingchess.dataPack.DataPack;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import java.net.SocketTimeoutException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
 public class TCPServer {
-    private ServerSocket server = null;
+    private ServerSocket serverSocket = null;
     private ExecutorService socketExecutor = null;
     private LocalServer parent = null;
-    private Room myRoom = null;
+    private Room selfRoom = null;
+    private boolean isRunning = true;
 
 
     public TCPServer(LocalServer parent){
@@ -28,17 +32,22 @@ public class TCPServer {
 
     public void start() {
         try {
-            if(server == null || !server.isBound() || server.isClosed())
-                this.server = new ServerSocket(6666);
+            if(serverSocket == null || !serverSocket.isBound() || serverSocket.isClosed())
+                this.serverSocket = new ServerSocket(6666);
 
-            this.myRoom = new Room("Myroom",this);
-            this.roomChanged(myRoom);
+            this.selfRoom = new Room(new Build().MODEL, this);
+            this.onRoomChanged(selfRoom);
 
+            serverSocket.setSoTimeout(1000);
 
-            while(true){
-                Socket sock = server.accept();
-                Runnable socketRunnable = new DataPackSocketRunnable(new DataPackTcpSocket(sock),this);
-                this.socketExecutor.submit(socketRunnable);
+            while(isRunning){
+                try{
+                    Socket sock = serverSocket.accept();
+                    Runnable socketRunnable = new DataPackSocketRunnable(new DataPackTcpSocket(sock),this);
+                    this.socketExecutor.submit(socketRunnable);
+                } catch(SocketTimeoutException e){
+
+                }
             }
 
         } catch (Exception e){
@@ -46,28 +55,30 @@ public class TCPServer {
         }
     }
 
-    Room getSelfRoom(){
-        return this.myRoom;
+    public Room getSelfRoom(){
+        return this.selfRoom;
     }
 
-    public void roomChanged(Room room){
-        this.myRoom = room;
+    public void onRoomChanged(Room room){
+        this.selfRoom = room;
         parent.setRoomInfoForBroadCast(room);
     }
 
-
-    public void shutdown(){
-        try{
-            // send shutdown datapack to ever online users
-            // and close the socket.
-            for(Player player : this.myRoom.getAllPlayers()){
-                player.getSocket().send(new DataPack(DataPack.TERMINATE));
-                player.getSocket().close();
-            }
-
-        } catch(Exception e){
-            e.printStackTrace();
-        }
+    public Room stop() {
+//        try {
+//            // send shutdown datapack to ever online users
+//            // and stop the socket.
+//            for (Player player : this.selfRoom.getAllPlayers()) {
+//                player.getSocket().send(new DataPack(DataPack.TERMINATE));
+//                player.getSocket().close();
+//            }
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+        Room room = this.selfRoom;
+        this.isRunning = false;
+        this.selfRoom = null;
+        return room;
     }
-
 }

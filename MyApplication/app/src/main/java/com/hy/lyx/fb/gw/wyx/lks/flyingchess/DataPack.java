@@ -60,6 +60,8 @@ public class DataPack {
     public final static int E_GAME_FINISHED = 4109;
 
     public final static int TERMINATE = 5000;
+    public final static int E_ROOM_CREATE_BROADCAST = 5100;
+    public final static int E_ROOM_REMOVE_BROADCAST = 5101;
     public final static int CONNECTED=6000;
 
 

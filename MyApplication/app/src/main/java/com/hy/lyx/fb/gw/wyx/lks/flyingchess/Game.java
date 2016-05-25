@@ -13,6 +13,7 @@ import android.widget.ImageView;
 
 import com.hy.lyx.fb.gw.wyx.lks.flyingchess.Server.LocalServer;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 
@@ -69,7 +70,30 @@ public class Game{
         opt.outWidth=dm.widthPixels;
         opt.outHeight=dm.heightPixels;
         InputStream is = activity.getApplicationContext().getResources().openRawResource(id);
-        return BitmapFactory.decodeStream(is,null,opt);
+        Bitmap bitmap = BitmapFactory.decodeStream(is,null,opt);
+        try {
+            is.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return bitmap;
+    }
+
+    public static Bitmap loadRectBitMap(int id){
+        DisplayMetrics dm=new DisplayMetrics();
+        activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
+        BitmapFactory.Options opt= new BitmapFactory.Options();
+        opt.inPreferredConfig = Bitmap.Config.RGB_565;
+        opt.outWidth=dm.heightPixels;
+        opt.outHeight=dm.heightPixels;
+        InputStream is = activity.getApplicationContext().getResources().openRawResource(id);
+        Bitmap bitmap = BitmapFactory.decodeStream(is,null,opt);
+        try {
+            is.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return bitmap;
     }
 
     public static void startWaitAnimation(View view){

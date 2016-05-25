@@ -2,7 +2,7 @@ package com.hy.lyx.fb.gw.wyx.lks.flyingchess.UDPServer;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.hy.lyx.fb.gw.wyx.lks.flyingchess.dataPack.DataPack;
+import com.hy.lyx.fb.gw.wyx.lks.flyingchess.DataPack;
 
 
 import java.io.IOException;

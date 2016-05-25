@@ -78,9 +78,6 @@ public class SocketManager extends MsgHandler{
                     e.printStackTrace();
                     connected = false;
                 }
-                DataPack dataPack=new DataPack(DataPack.CONNECTED,null);
-                dataPack.setSuccessful(connected);
-                processDataPack(dataPack);
             }
         }).start();
     }

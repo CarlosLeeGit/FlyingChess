@@ -81,6 +81,9 @@ public class RoomAct extends AppCompatActivity implements Target {
                 if(Game.dataManager.getGameMode()!=DataManager.GM_LOCAL){
                     Game.socketManager.send(DataPack.R_ROOM_EXIT,Game.dataManager.getMyId(),Game.dataManager.getRoomId(),Game.playersData.get(Game.dataManager.getMyId()).color);
                     startActivity(new Intent(getApplicationContext(),GameInfoAct.class));
+                    if(Game.dataManager.getGameMode()==DataManager.GM_LAN){
+                        Game.localServer.stopHost();
+                    }
                 }
                 else if(Game.dataManager.getGameMode()==DataManager.GM_LOCAL){
                     startActivity(new Intent(getApplicationContext(),ChooseModeAct.class));
@@ -437,6 +440,9 @@ public class RoomAct extends AppCompatActivity implements Target {
         if(Game.dataManager.getGameMode()!=DataManager.GM_LOCAL){
             Intent intent=new Intent(getApplicationContext(),GameInfoAct.class);
             startActivity(intent);
+            if(Game.dataManager.getGameMode()==DataManager.GM_LAN){
+                Game.localServer.stopHost();
+            }
         }
         else if(Game.dataManager.getGameMode()==DataManager.GM_LOCAL){
             Intent intent=new Intent(getApplicationContext(),ChooseModeAct.class);

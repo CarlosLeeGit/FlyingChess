@@ -56,9 +56,9 @@ public class DataPack {
     public final static int R_GAME_FINISHED = 4009;
     public final static int E_GAME_FINISHED = 4109;
 
-    public final static int E_ROOM_BROADCAST = 5100;
-
     public final static int TERMINATE = 5000;
+    public final static int E_ROOM_CREATE_BROADCAST = 5100;
+    public final static int E_ROOM_REMOVE_BROADCAST = 5101;
 
     private int command = 0;
     private Date date = null;

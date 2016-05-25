@@ -53,12 +53,11 @@ public class Room {
      */
     public void addPlayer(Player player) {
         this.players.put(player.getId(), player);
-
         player.setRoom(this);
 
         // notify other players
         broadcastToOthers(player, new DataPack(DataPack.E_ROOM_ENTER, DataPackUtil.getPlayerInfoMessage(player)));
-        parent.roomChanged(this);
+        parent.onRoomChanged(this);
     }
 
     public Player getPlayer(int playerId){
@@ -105,7 +104,7 @@ public class Room {
                 if(player.isRobot()){
                     player.setRoom(this);
                     players.remove(player.getId());
-                    parent.roomChanged(this);
+                    parent.onRoomChanged(this);
                 }
                 break;
             }
@@ -122,7 +121,7 @@ public class Room {
             if(player.isRobot()){
                 player.setRoom(this);
                 players.put(player.getId(), player);
-                parent.roomChanged(this);
+                parent.onRoomChanged(this);
             }
         }
 
@@ -170,7 +169,7 @@ public class Room {
         }
         player.setRoom(null);
         this.players.remove(player.getId());
-        parent.roomChanged(this);
+        parent.onRoomChanged(this);
     }
 
     public void startGame() {

@@ -1,7 +1,12 @@
 package com.hy.lyx.fb.gw.wyx.lks.flyingchess.UDPServer;
 
-import com.hy.lyx.fb.gw.wyx.lks.flyingchess.dataPack.*;
 
+
+
+import com.hy.lyx.fb.gw.wyx.lks.flyingchess.DataPack;
+import com.hy.lyx.fb.gw.wyx.lks.flyingchess.Game;
+
+import java.io.IOException;
 import java.net.DatagramSocket;
 
 /**
@@ -26,7 +31,7 @@ public class BroadcastReceiver implements Runnable{
         while (isRunning){
             try{
                 if(this.receiveSocket == null)
-                    continue;
+                    Game.delay(500);
                 DataPack dataPack = this.receiveSocket.receive();
                 parent.dataPackReceived(dataPack);
             }catch (Exception e){
@@ -35,8 +40,14 @@ public class BroadcastReceiver implements Runnable{
         }
     }
 
-    public void close(){
+    public void stop(){
         isRunning = false;
+        try {
+            receiveSocket.close();
+            receiveSocket=null;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

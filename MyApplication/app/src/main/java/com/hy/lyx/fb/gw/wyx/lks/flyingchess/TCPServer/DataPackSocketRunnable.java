@@ -82,16 +82,28 @@ public class DataPackSocketRunnable implements Runnable {
                     return;
                 }
                 case DataPack.R_LOGOUT:{
-                    Player player = Player.createPlayer(dataPack.getMessage(0));
+                    Player player = null;
+                    int id = Integer.valueOf(dataPack.getMessage(0));
+                    if(id < 0 && id >= -4)
+                        player = Player.createPlayer("Robot");
+                    else
+                        player = this.parent.getSelfRoom().getPlayer(id);
+
                     if(player != null){
                         parent.getSelfRoom().removePlayer(player);
                     }
                     return;
                 }
                 case DataPack.R_ROOM_POSITION_SELECT:{
-                    Player player = parent.getSelfRoom().getPlayer(Integer.valueOf(dataPack.getMessage(0)));
                     Room room = parent.getSelfRoom();
+                    Player player = null;
+                    int id = Integer.valueOf(dataPack.getMessage(0));
                     int position = Integer.valueOf(dataPack.getMessage(4));
+                    if(id < 0){
+                        player = Player.createRobot(id);
+                    }
+                    else
+                        player = this.parent.getSelfRoom().getPlayer(id);
 
                     boolean isSuccessful = room.playerSelectPosition(player, position);
 
@@ -103,13 +115,25 @@ public class DataPackSocketRunnable implements Runnable {
                     return;
                 }
                 case DataPack.R_ROOM_EXIT:{
-                    Player player = parent.getSelfRoom().getPlayer(Integer.valueOf(dataPack.getMessage(0)));
+                    Player player = null;
+                    int id = Integer.valueOf(dataPack.getMessage(0));
+                    if(id < 0 && id >= -4)
+                        player = Player.createPlayer("Robot");
+                    else
+                        player = this.parent.getSelfRoom().getPlayer(id);
+
                     Room room = parent.getSelfRoom();
                     room.removePlayer(player);
                     return;
                 }
                 case DataPack.R_GAME_START:{
-                    Player player = parent.getSelfRoom().getPlayer(Integer.valueOf(dataPack.getMessage(0)));
+                    Player player = null;
+                    int id = Integer.valueOf(dataPack.getMessage(0));
+                    if(id < 0 && id >= -4)
+                        player = Player.createPlayer("Robot");
+                    else
+                        player = this.parent.getSelfRoom().getPlayer(id);
+
                     Room room = parent.getSelfRoom();
                     if(player.isHost() && room.containsPlayer(player)){
                         room.startGame();
@@ -118,7 +142,13 @@ public class DataPackSocketRunnable implements Runnable {
                 }
                 // the following 2 commands' logic is basically the same(simply forward the datapack)
                 case DataPack.R_GAME_FINISHED:{
-                    Player player = parent.getSelfRoom().getPlayer(Integer.valueOf(dataPack.getMessage(0)));
+                    Player player = null;
+                    int id = Integer.valueOf(dataPack.getMessage(0));
+                    if(id < 0 && id >= -4)
+                        player = Player.createPlayer("Robot");
+                    else
+                        player = this.parent.getSelfRoom().getPlayer(id);
+
                     Room room = parent.getSelfRoom();
                     room.finishGame();
                     for(Player roomPlayer : room.getPlayers()){
@@ -135,7 +165,13 @@ public class DataPackSocketRunnable implements Runnable {
                     return;
                 }
                 case DataPack.R_GAME_PROCEED_DICE:{
-                    Player player = parent.getSelfRoom().getPlayer(Integer.valueOf(dataPack.getMessage(0)));
+                    Player player = null;
+                    int id = Integer.valueOf(dataPack.getMessage(0));
+                    if(id < 0 && id >= -4)
+                        player = Player.createPlayer("Robot");
+                    else
+                        player = this.parent.getSelfRoom().getPlayer(id);
+
                     Room room = parent.getSelfRoom();
                     // set the command
                     dataPack.setCommand(DataPack.E_GAME_PROCEED_DICE);
@@ -147,7 +183,13 @@ public class DataPackSocketRunnable implements Runnable {
                     return;
                 }
                 case DataPack.R_GAME_PROCEED_PLANE:{
-                    Player player = parent.getSelfRoom().getPlayer(Integer.valueOf(dataPack.getMessage(0)));
+                    Player player = null;
+                    int id = Integer.valueOf(dataPack.getMessage(0));
+                    if(id < 0 && id >= -4)
+                        player = Player.createPlayer("Robot");
+                    else
+                        player = this.parent.getSelfRoom().getPlayer(id);
+
                     Room room = parent.getSelfRoom();
 
                     // set the command
@@ -160,7 +202,13 @@ public class DataPackSocketRunnable implements Runnable {
                     return;
                 }
                 case DataPack.R_GAME_EXIT:{
-                    Player player = parent.getSelfRoom().getPlayer(Integer.valueOf(dataPack.getMessage(0)));
+                    Player player = null;
+                    int id = Integer.valueOf(dataPack.getMessage(0));
+                    if(id < 0 && id >= -4)
+                        player = Player.createPlayer("Robot");
+                    else
+                        player = this.parent.getSelfRoom().getPlayer(id);
+
                     Room room = parent.getSelfRoom();
 
                     // generate datapack

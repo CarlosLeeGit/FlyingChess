@@ -30,7 +30,9 @@ public class GameInfoAct extends AppCompatActivity implements Target{
     LinkedList<HashMap<String,String>> roomListData;
     Worker worker;
     String roomId;
+    int roomIndex;
     TextView title;
+    LinkedList<String> roomUUID;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //ui setting
@@ -53,7 +55,9 @@ public class GameInfoAct extends AppCompatActivity implements Target{
         worker=new Worker();
         onlineLayout=(LinearLayout)findViewById(R.id.onlineLayout);
         roomId="";
+        roomIndex=-1;
         title = (TextView)findViewById(R.id.room_title);
+        roomUUID=new LinkedList<>();
         //trigger
         createButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -66,7 +70,7 @@ public class GameInfoAct extends AppCompatActivity implements Target{
                     Game.localServer.startHost();
                     Game.socketManager.connectToLocalServer();
                     Game.delay(500);
-                    Game.socketManager.send(DataPack.R_LOGIN,new Build().MODEL.toString(),"123");
+                    Game.socketManager.send(DataPack.R_LOGIN,new Build().MODEL,"123");
                 }
             }
         });
@@ -81,6 +85,7 @@ public class GameInfoAct extends AppCompatActivity implements Target{
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 roomId=roomListData.get(position).get("id");
+                roomIndex=position;
                 view.setSelected(true);
             }
         });
@@ -88,19 +93,26 @@ public class GameInfoAct extends AppCompatActivity implements Target{
             @Override
             public void onClick(View v) {
                 Game.soundManager.playSound(SoundManager.BUTTON);
-                boolean find=false;
-                synchronized (roomListData){
-                    for(HashMap<String,String> map:roomListData){
-                        if(map.get("id").compareTo(roomId)==0){
-                            if(map.get("state").compareTo("waiting")==0) {
-                                Game.socketManager.send(DataPack.R_ROOM_ENTER,Game.dataManager.getMyId(),roomId);
-                                find=true;
+                if(Game.dataManager.getGameMode()==DataManager.GM_LAN){
+                    Game.socketManager.connectLanServer(Game.localServer.getRoomIp(roomUUID.get(roomIndex)));
+                    Game.delay(500);
+                    Game.socketManager.send(DataPack.R_LOGIN,new Build().MODEL,"123");
+                }
+                else{
+                    boolean find=false;
+                    synchronized (roomListData){
+                        for(HashMap<String,String> map:roomListData){
+                            if(map.get("id").compareTo(roomId)==0){
+                                if(map.get("state").compareTo("waiting")==0) {
+                                    Game.socketManager.send(DataPack.R_ROOM_ENTER,Game.dataManager.getMyId(),roomId);
+                                    find=true;
+                                }
+                                break;
                             }
-                            break;
                         }
+                        if(!find)
+                            Toast.makeText(getApplicationContext(),"join room failed",Toast.LENGTH_SHORT).show();
                     }
-                    if(!find)
-                        Toast.makeText(getApplicationContext(),"join room failed",Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -109,8 +121,9 @@ public class GameInfoAct extends AppCompatActivity implements Target{
             Game.socketManager.registerActivity(DataPack.A_ROOM_LOOKUP,this);
             Game.socketManager.registerActivity(DataPack.A_ROOM_CREATE,this);
             Game.socketManager.registerActivity(DataPack.A_ROOM_ENTER,this);
-            if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
-                new Thread(worker).start();
+            new Thread(worker).start();
+            if(Game.dataManager.getGameMode()==DataManager.GM_LAN){
+                Game.localServer.registerMsg(this);
             }
         }
         title.setTypeface(Typeface.createFromAsset(getAssets(),"fonts/comici.ttf"));
@@ -142,8 +155,13 @@ public class GameInfoAct extends AppCompatActivity implements Target{
     }
 
     private void goBack(){
-        Game.socketManager.send(DataPack.R_LOGOUT,Game.dataManager.getMyId());
+        if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
+            Game.socketManager.send(DataPack.R_LOGOUT,Game.dataManager.getMyId());
+        }
         startActivity(new Intent(getApplicationContext(),ChooseModeAct.class));
+        if(Game.dataManager.getGameMode()==DataManager.GM_LAN){
+            Game.localServer.stop();
+        }
     }
 
     @Override
@@ -151,10 +169,13 @@ public class GameInfoAct extends AppCompatActivity implements Target{
         if(dataPack.getCommand()==DataPack.A_ROOM_LOOKUP){
             synchronized(roomListData){
                 roomListData.clear();
+                roomUUID.clear();
                 for(int i=0;i<dataPack.getMessageList().size();){
                     HashMap<String,String> data=new HashMap<>();
+                    String str = dataPack.getMessage(i);
+                    roomUUID.addLast(str);
                     data.put("room",dataPack.getMessage(i+1));
-                    data.put("id",dataPack.getMessage(i));
+                    data.put("id",str.substring(str.length()-3));
                     data.put("player",dataPack.getMessage(i+2));
                     if(dataPack.getMessage(i+3).compareTo("0")==0){
                         data.put("state","waiting");
@@ -224,7 +245,12 @@ class Worker implements Runnable{
     private boolean exit;
     @Override
     public void run() {
-        DataPack dataPack= new DataPack(DataPack.R_ROOM_LOOKUP,null);
-        Game.socketManager.send(dataPack);
+        if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
+            DataPack dataPack= new DataPack(DataPack.R_ROOM_LOOKUP,null);
+            Game.socketManager.send(dataPack);
+        }
+        else if(Game.dataManager.getGameMode()==DataManager.GM_LAN){
+            Game.localServer.updateRoomListImmediately();
+        }
     }
 }

@@ -5,6 +5,7 @@ import android.content.res.AssetFileDescriptor;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.os.Handler;
@@ -42,6 +43,7 @@ public class ChessBoardAct extends AppCompatActivity {
     Drawable d[];
     int n;
     TextView xt[],xname[],xscore[];
+    Bitmap oldMap;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //ui setting
@@ -107,7 +109,9 @@ public class ChessBoardAct extends AppCompatActivity {
         boardWidth=dm.heightPixels;
         n=19;
         dx=boardWidth/n+0.8f;
-        map.setImageBitmap(Game.loadBitmap(R.raw.map));
+        oldMap=null;
+        oldMap=Game.loadRectBitMap(R.raw.map_min);
+        map.setImageBitmap(oldMap);
         //trigger
         pauseButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -210,16 +214,39 @@ public class ChessBoardAct extends AppCompatActivity {
     }
 
     public void exit(){
-        Game.socketManager.send(DataPack.R_GAME_EXIT,Game.dataManager.getMyId(),Game.dataManager.getRoomId());
-        Game.gameManager.gameOver();
         if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
+            Game.socketManager.send(DataPack.R_GAME_EXIT,Game.dataManager.getMyId(),Game.dataManager.getRoomId());
+        }
+        Game.gameManager.gameOver();
+        if(Game.dataManager.getGameMode()!=DataManager.GM_LOCAL){
             startActivity(new Intent(getApplicationContext(),GameInfoAct.class));
+            if(Game.dataManager.getGameMode()==DataManager.GM_LAN){
+                Game.localServer.stopHost();
+            }
         }
         else{
             startActivity(new Intent(getApplicationContext(),ChooseModeAct.class));
         }
         Game.dataManager.giveUp(false);
         Game.soundManager.playMusic(SoundManager.BACKGROUND);
+        map.setImageBitmap(null);
+        if(oldMap!=null){
+            oldMap.recycle();
+        }
+        throwDiceButton.setBackground(null);
+        Bitmap bit = ((BitmapDrawable)d[0]).getBitmap();
+        bit.recycle();
+        bit = ((BitmapDrawable)d[1]).getBitmap();
+        bit.recycle();
+        bit = ((BitmapDrawable)d[2]).getBitmap();
+        bit.recycle();
+        bit = ((BitmapDrawable)d[3]).getBitmap();
+        bit.recycle();
+        bit = ((BitmapDrawable)d[4]).getBitmap();
+        bit.recycle();
+        bit = ((BitmapDrawable)d[5]).getBitmap();
+        bit.recycle();
+        System.gc();
     }
 
     public void moveTo(Button plane,int x,int y){

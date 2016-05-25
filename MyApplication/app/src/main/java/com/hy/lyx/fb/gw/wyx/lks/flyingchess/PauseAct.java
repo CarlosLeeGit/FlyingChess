@@ -48,7 +48,7 @@ public class PauseAct extends Activity {
         exit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(Game.dataManager.getGameMode()!=DataManager.GM_LOCAL){
+                if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
                     Game.socketManager.send(DataPack.R_GAME_EXIT, Game.dataManager.getMyId(), Game.dataManager.getRoomId());
                 }
                 if(Game.replayManager.isReplay == false) {
@@ -57,8 +57,11 @@ public class PauseAct extends Activity {
                 }
                 Game.gameManager.gameOver();
                 Game.replayManager.stopReplay();
-                if(Game.dataManager.getGameMode()==DataManager.GM_WLAN){
+                if(Game.dataManager.getGameMode()!=DataManager.GM_LOCAL){
                     startActivity(new Intent(getApplicationContext(),GameInfoAct.class));
+                    if(Game.dataManager.getGameMode()==DataManager.GM_LAN){
+                        Game.localServer.stopHost();
+                    }
                 }
                 else{
                     startActivity(new Intent(getApplicationContext(),ChooseModeAct.class));

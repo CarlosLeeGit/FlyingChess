@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.graphics.drawable.AnimationDrawable;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -28,6 +29,7 @@ public class ChooseModeAct extends AppCompatActivity implements Target{
     ImageView waitImage;
     Button waitBackground;
     Button records;
+    Bitmap bkg1,bkg2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //ui setting
@@ -64,6 +66,7 @@ public class ChooseModeAct extends AppCompatActivity implements Target{
                 msgs.add("-1");
                 intent.putStringArrayListExtra("msgs",msgs);
                 startActivity(intent);//switch wo chess board activity
+                clean();
             }
         });
         lan.setOnClickListener(new View.OnClickListener() {
@@ -73,7 +76,9 @@ public class ChooseModeAct extends AppCompatActivity implements Target{
                 Game.dataManager.setGameMode(DataManager.GM_LAN);
                 Intent intent=new Intent(getApplicationContext(),GameInfoAct.class);
                 startActivity(intent);
+                Game.dataManager.setMyName(new Build().MODEL);
                 Game.localServer.startListen();
+                clean();
             }
         });
         wlan.setOnClickListener(new View.OnClickListener() {
@@ -88,6 +93,7 @@ public class ChooseModeAct extends AppCompatActivity implements Target{
                 waitImage.setVisibility(View.VISIBLE);
                 waitBackground.setVisibility(View.VISIBLE);
                 Game.startWaitAnimation(waitImage);
+                clean();
             }
         });
         records.setOnClickListener(new View.OnClickListener() {
@@ -104,8 +110,10 @@ public class ChooseModeAct extends AppCompatActivity implements Target{
         waitImage.setVisibility(View.INVISIBLE);
         waitBackground.setVisibility(View.INVISIBLE);
         //background img
-        bk.setImageBitmap(Game.loadBitmap(R.raw.choosemodebk));
-        bk2.setImageBitmap(Game.loadBitmap(R.raw.cloud));
+        bkg1 = Game.loadBitmap(R.raw.choosemodebk);
+        bk.setImageBitmap(bkg1);
+        bkg2 = Game.loadBitmap(R.raw.cloud);
+        bk2.setImageBitmap(bkg2);
         lan.setTypeface(Game.getFont());
         wlan.setTypeface(Game.getFont());
         local.setTypeface(Game.getFont());
@@ -121,6 +129,13 @@ public class ChooseModeAct extends AppCompatActivity implements Target{
     public void onStop(){
         super.onStop();
         Game.soundManager.pauseMusic();
+    }
+
+    public void clean(){
+        bk.setImageBitmap(null);
+        bk2.setImageBitmap(null);
+        bkg1.recycle();
+        bkg2.recycle();
     }
 
     @Override
