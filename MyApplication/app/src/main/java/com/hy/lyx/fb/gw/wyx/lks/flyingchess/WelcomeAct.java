@@ -60,7 +60,9 @@ public class WelcomeAct extends AppCompatActivity {
 
             @Override
             public void surfaceDestroyed(SurfaceHolder holder) {
-
+                if(mediaPlayer.isPlaying()){
+                    mediaPlayer.release();
+                }
             }
         });
 

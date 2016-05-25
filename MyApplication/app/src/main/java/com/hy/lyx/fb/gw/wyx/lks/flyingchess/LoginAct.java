@@ -129,7 +129,7 @@ public class LoginAct extends AppCompatActivity implements Target {
             _myName.setText(Game.dataManager.getMyName());
             _pw.setText(Game.dataManager.getPassword());
         }
-        imageView.setImageBitmap(Game.loadBitmap(R.raw.cloud));
+        imageView.setImageBitmap(Game.getBitmap(R.raw.cloud));
         waitView.setVisibility(View.INVISIBLE);
         waitBackground.setVisibility(View.INVISIBLE);
         login.setTypeface(Typeface.createFromAsset(getAssets(),"fonts/comici.ttf"));

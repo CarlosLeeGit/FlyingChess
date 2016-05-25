@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.graphics.drawable.AnimationDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
@@ -32,10 +33,12 @@ public class Game{
     public static LogManager logManager;
     public static ReplayManager replayManager;
     public static LocalServer localServer;
+    public static Drawable d[];
 
     private static AppCompatActivity activity;
     private static RotateAnimationWorker rotateAnimationWorker;
     private static Typeface typeface;
+    private static HashMap<Integer,Bitmap> bitmaps;
 
     public static void init(AppCompatActivity activity){
         Game.activity=activity;
@@ -52,6 +55,8 @@ public class Game{
         localServer = new LocalServer(activity);
         rotateAnimationWorker = new RotateAnimationWorker();
         typeface = Typeface.createFromAsset(activity.getAssets(),"fonts/comici.ttf");
+        bitmaps=new HashMap<>();
+        initBitmap();
     }
 
     public static void delay(int interval){
@@ -62,7 +67,24 @@ public class Game{
         }
     }
 
-    public static Bitmap loadBitmap(int id){
+    public static Bitmap getBitmap(int id){
+        return bitmaps.get(id);
+    }
+
+    public static void initBitmap(){
+        bitmaps.put(R.raw.choosemodebk,Game.loadBitmap(R.raw.choosemodebk));
+        bitmaps.put(R.raw.cloud,Game.loadBitmap(R.raw.cloud));
+        bitmaps.put(R.raw.map_min,Game.loadRectBitMap(R.raw.map_min));
+        d=new Drawable[6];
+        d[0]=activity.getResources().getDrawable(R.drawable.dices,null);
+        d[1]=activity.getResources().getDrawable(R.drawable.dices2,null);
+        d[2]=activity.getResources().getDrawable(R.drawable.dices3,null);
+        d[3]=activity.getResources().getDrawable(R.drawable.dices4,null);
+        d[4]=activity.getResources().getDrawable(R.drawable.dices5,null);
+        d[5]=activity.getResources().getDrawable(R.drawable.dices6,null);
+    }
+
+    private static Bitmap loadBitmap(int id){
         DisplayMetrics dm=new DisplayMetrics();
         activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
         BitmapFactory.Options opt= new BitmapFactory.Options();
@@ -79,7 +101,7 @@ public class Game{
         return bitmap;
     }
 
-    public static Bitmap loadRectBitMap(int id){
+    private static Bitmap loadRectBitMap(int id){
         DisplayMetrics dm=new DisplayMetrics();
         activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
         BitmapFactory.Options opt= new BitmapFactory.Options();

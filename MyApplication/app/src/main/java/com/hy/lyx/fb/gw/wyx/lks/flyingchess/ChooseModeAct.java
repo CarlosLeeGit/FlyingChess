@@ -29,7 +29,6 @@ public class ChooseModeAct extends AppCompatActivity implements Target{
     ImageView waitImage;
     Button waitBackground;
     Button records;
-    Bitmap bkg1,bkg2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //ui setting
@@ -110,10 +109,8 @@ public class ChooseModeAct extends AppCompatActivity implements Target{
         waitImage.setVisibility(View.INVISIBLE);
         waitBackground.setVisibility(View.INVISIBLE);
         //background img
-        bkg1 = Game.loadBitmap(R.raw.choosemodebk);
-        bk.setImageBitmap(bkg1);
-        bkg2 = Game.loadBitmap(R.raw.cloud);
-        bk2.setImageBitmap(bkg2);
+        bk.setImageBitmap(Game.getBitmap(R.raw.choosemodebk));
+        bk2.setImageBitmap(Game.getBitmap(R.raw.cloud));
         lan.setTypeface(Game.getFont());
         wlan.setTypeface(Game.getFont());
         local.setTypeface(Game.getFont());
@@ -132,10 +129,6 @@ public class ChooseModeAct extends AppCompatActivity implements Target{
     }
 
     public void clean(){
-        bk.setImageBitmap(null);
-        bk2.setImageBitmap(null);
-        bkg1.recycle();
-        bkg2.recycle();
     }
 
     @Override

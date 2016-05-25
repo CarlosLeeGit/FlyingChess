@@ -40,10 +40,8 @@ public class ChessBoardAct extends AppCompatActivity {
     Handler handler;
     ImageView map;
     float dx;
-    Drawable d[];
     int n;
     TextView xt[],xname[],xscore[];
-    Bitmap oldMap;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //ui setting
@@ -96,22 +94,13 @@ public class ChessBoardAct extends AppCompatActivity {
         xscore[2]=(TextView)findViewById(R.id.bscore);
         xscore[3]=(TextView)findViewById(R.id.yscore);
 
-        d=new Drawable[6];
-        d[0]=getResources().getDrawable(R.drawable.dices,null);
-        d[1]=getResources().getDrawable(R.drawable.dices2,null);
-        d[2]=getResources().getDrawable(R.drawable.dices3,null);
-        d[3]=getResources().getDrawable(R.drawable.dices4,null);
-        d[4]=getResources().getDrawable(R.drawable.dices5,null);
-        d[5]=getResources().getDrawable(R.drawable.dices6,null);
         //set data
         DisplayMetrics dm=new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
         boardWidth=dm.heightPixels;
         n=19;
         dx=boardWidth/n+0.8f;
-        oldMap=null;
-        oldMap=Game.loadRectBitMap(R.raw.map_min);
-        map.setImageBitmap(oldMap);
+        map.setImageBitmap(Game.getBitmap(R.raw.map_min));
         //trigger
         pauseButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -188,7 +177,7 @@ public class ChessBoardAct extends AppCompatActivity {
             xname[i].setTypeface(Game.getFont());
             xscore[i].setTypeface(Game.getFont());
         }
-        throwDiceButton.setBackground(d[0]);
+        throwDiceButton.setBackground(Game.d[0]);
     }
     @Override
     public void onStart(){
@@ -229,24 +218,6 @@ public class ChessBoardAct extends AppCompatActivity {
         }
         Game.dataManager.giveUp(false);
         Game.soundManager.playMusic(SoundManager.BACKGROUND);
-        map.setImageBitmap(null);
-        if(oldMap!=null){
-            oldMap.recycle();
-        }
-        throwDiceButton.setBackground(null);
-        Bitmap bit = ((BitmapDrawable)d[0]).getBitmap();
-        bit.recycle();
-        bit = ((BitmapDrawable)d[1]).getBitmap();
-        bit.recycle();
-        bit = ((BitmapDrawable)d[2]).getBitmap();
-        bit.recycle();
-        bit = ((BitmapDrawable)d[3]).getBitmap();
-        bit.recycle();
-        bit = ((BitmapDrawable)d[4]).getBitmap();
-        bit.recycle();
-        bit = ((BitmapDrawable)d[5]).getBitmap();
-        bit.recycle();
-        System.gc();
     }
 
     public void moveTo(Button plane,int x,int y){
@@ -280,7 +251,7 @@ class MyHandler extends Handler{
             break;
             case 2://骰子
                 System.out.println(msg.getData().getInt("dice"));
-                parent.throwDiceButton.setBackground(parent.d[msg.getData().getInt("dice")-1]);
+                parent.throwDiceButton.setBackground(Game.d[msg.getData().getInt("dice")-1]);
                 break;
             case 3://显示消息
                 Toast.makeText(parent.getApplicationContext(),msg.getData().getString("msg"),Toast.LENGTH_SHORT).show();
