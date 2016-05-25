@@ -228,7 +228,7 @@ public class ChessBoardAct extends AppCompatActivity {
     }
 
     public void animMoveTo(Button plane, int x, int y) {
-        plane.animate().setDuration(500);
+        plane.animate().setDuration(300);
         plane.animate().translationX(x * dx);
         plane.animate().translationY(y * dx);
     }

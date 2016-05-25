@@ -42,6 +42,7 @@ public class SocketReader implements Runnable{
                 } catch(Exception e){
                     e.printStackTrace();
                     connected=false;
+                    Game.offlineTip();
                     break;
                 }
         }

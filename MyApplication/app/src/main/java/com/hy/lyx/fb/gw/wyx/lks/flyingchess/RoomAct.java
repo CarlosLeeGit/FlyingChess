@@ -162,8 +162,8 @@ public class RoomAct extends AppCompatActivity implements Target {
         siteState[2] = -1;
         siteState[3] = -1;
         HashMap<String,String> map=new HashMap<>();
-        map.put("name","name");
-        map.put("score","score");
+        map.put("name","Name");
+        map.put("score","Score");
         idlePlayerListData.addLast(map);
         Game.playersData.clear();
         Bundle bundle = getIntent().getExtras();

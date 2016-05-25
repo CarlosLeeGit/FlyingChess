@@ -1,5 +1,6 @@
 package com.hy.lyx.fb.gw.wyx.lks.flyingchess;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
@@ -83,6 +84,10 @@ public class Game{
 
     public static Typeface getFont(){
         return typeface;
+    }
+
+    public static void offlineTip(){
+        activity.startActivity(new Intent(activity.getApplicationContext(),ChooseModeAct.class));
     }
 
 }
