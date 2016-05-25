@@ -67,7 +67,6 @@ public class PauseAct extends Activity {
                     startActivity(new Intent(getApplicationContext(),ChooseModeAct.class));
                 }
                 Game.dataManager.giveUp(false);
-                Game.soundManager.playMusic(SoundManager.BACKGROUND);
             }
         });
         if(Game.dataManager.isGiveUp()){
@@ -80,6 +79,5 @@ public class PauseAct extends Activity {
     @Override
     public void onStart(){
         super.onStart();
-        Game.soundManager.resumeMusic(SoundManager.BACKGROUND);
     }
 }

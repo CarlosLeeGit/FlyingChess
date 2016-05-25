@@ -182,7 +182,7 @@ public class ChessBoardAct extends AppCompatActivity {
     @Override
     public void onStart(){
         super.onStart();
-        Game.soundManager.resumeMusic(SoundManager.BACKGROUND);
+        Game.soundManager.resumeMusic(SoundManager.GAME);
     }
     @Override
     public void onStop(){

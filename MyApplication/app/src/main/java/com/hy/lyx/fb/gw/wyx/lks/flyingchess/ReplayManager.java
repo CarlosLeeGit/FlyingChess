@@ -232,7 +232,9 @@ public class ReplayManager {
     }
 
     public void clearRecord() {
-        file.delete();
+        if(file.exists()){
+            file.delete();
+        }
     }
 }
 

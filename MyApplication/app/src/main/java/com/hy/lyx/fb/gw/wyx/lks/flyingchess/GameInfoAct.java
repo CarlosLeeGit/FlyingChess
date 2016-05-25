@@ -175,7 +175,12 @@ public class GameInfoAct extends AppCompatActivity implements Target{
                     String str = dataPack.getMessage(i);
                     roomUUID.addLast(str);
                     data.put("room",dataPack.getMessage(i+1));
-                    data.put("id",str.substring(str.length()-3));
+                    if(str.length()>3){
+                        data.put("id",str.substring(str.length()-3));
+                    }
+                    else{
+                        data.put("id",str);
+                    }
                     data.put("player",dataPack.getMessage(i+2));
                     if(dataPack.getMessage(i+3).compareTo("0")==0){
                         data.put("state","waiting");
@@ -220,7 +225,7 @@ public class GameInfoAct extends AppCompatActivity implements Target{
                 if(Game.dataManager.getGameMode()==DataManager.GM_LAN){
                     Game.dataManager.setMyId(dataPack.getMessage(0));
                 }
-                Game.dataManager.setRoomId("0");
+                Game.dataManager.setRoomId(roomId);
                 Intent intent = new Intent(getApplicationContext(), RoomAct.class);
                 ArrayList<String> msgs = new ArrayList<>(dataPack.getMessageList());
                 if(Game.dataManager.getGameMode()==DataManager.GM_LAN){//取出自己的ID

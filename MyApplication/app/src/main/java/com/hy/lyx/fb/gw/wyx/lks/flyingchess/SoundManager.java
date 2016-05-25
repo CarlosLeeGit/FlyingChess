@@ -36,7 +36,7 @@ public class SoundManager {
     private MediaPlayer mediaPlayer,bk,game;
     private AssetManager assetManager;
     private LinkedList<MediaPlayer> mediaPlayers;
-    private Map<Integer,String> soundMap; //音效资源id与加载过后的音源id的映射关系表
+    private Map<Integer,String> soundMap;
 
     public SoundManager(AppCompatActivity activity){
         bk = new MediaPlayer();
@@ -58,7 +58,7 @@ public class SoundManager {
         soundMap.put(FLYMID,"music/flymid.ogg");
         soundMap.put(WIN,"music/win.ogg");
         soundMap.put(LOSE,"music/lose.ogg");
-        soundMap.put(GAME,"music/gamemusic.ogg");
+        soundMap.put(GAME,"music/gamemusic.mp3");
     }
 
     public void playSound(int type)
@@ -88,7 +88,7 @@ public class SoundManager {
                         bk.reset();
                         AssetFileDescriptor assetFileDescriptor =  assetManager.openFd(soundMap.get(type));
                         bk.setDataSource(assetFileDescriptor.getFileDescriptor(),assetFileDescriptor.getStartOffset(),assetFileDescriptor.getLength());
-                        bk.setLooping(false);
+                        bk.setLooping(true);
                         bk.prepare();
                         bk.start();
                     }
@@ -106,7 +106,7 @@ public class SoundManager {
                         game.reset();
                         AssetFileDescriptor assetFileDescriptor =  assetManager.openFd(soundMap.get(type));
                         game.setDataSource(assetFileDescriptor.getFileDescriptor(),assetFileDescriptor.getStartOffset(),assetFileDescriptor.getLength());
-                        game.setLooping(false);
+                        game.setLooping(true);
                         game.prepare();
                         game.start();
                     }
