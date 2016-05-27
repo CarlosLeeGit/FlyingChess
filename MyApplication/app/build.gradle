@@ -7,7 +7,7 @@ android {
 
     defaultConfig {
         applicationId "com.hy.lyx.fb.gw.wyx.lks.flyingchess"
-        minSdkVersion 21
+        minSdkVersion 14
         targetSdkVersion 23
         versionCode 4
         versionName "v5.25.2016"
