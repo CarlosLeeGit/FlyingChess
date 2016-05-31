@@ -1,6 +1,12 @@
-#**Flying Chess**
-##An android game
-It has three game mode:
-* **local**  play with robot,and you have local score.
-* **lan** play with friend use bluetooth or wifi.
-* **wlan** play with player over internet,and you should own an account first.
+## **Flying Chess**
+#### By Flash Minds
+With pride we present the famous game in Android™. 
+
+It is officially hostsed at [http://flyingchess.xyz](http://flyingchess.xyz).
+
+With server backend at [FlyingChess-Server](https://github.com/RyanWangGit/FlyingChess-Server).
+
+## Game Modes
+* **Local** You can play with any number of robots in offline mode.
+* **Lan** Search and play with friends via Wifi.
+* **Wlan** Enjoy the game over the Internet with all sorts of friends or strangers.
