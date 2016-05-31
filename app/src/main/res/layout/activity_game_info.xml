@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:id="@+id/gameInfo"
+    tools:context="com.hy.lyx.fb.gw.wyx.lks.flyingchess.GameInfoAct"
+    android:background="@drawable/sky_color">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="3.8"
+            android:background="@drawable/title"
+            android:layout_marginLeft="10sp"
+            android:layout_marginRight="10sp">
+
+            <Button
+                android:layout_width="30sp"
+                android:layout_height="30sp"
+                android:background="@drawable/button_back"
+                android:id="@+id/back"
+                android:visibility="visible"
+                android:layout_marginLeft="5sp"
+                android:layout_marginTop="2sp" />
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Room List"
+                android:id="@+id/room_title"
+                android:layout_marginRight="80sp"
+                android:textStyle="bold"
+                android:typeface="serif"
+                android:textAlignment="center"
+                android:textColor="#6b7d64"
+                android:layout_marginTop="5sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <include
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                layout="@layout/content_room_list"
+                android:layout_toStartOf="@+id/create"
+                android:layout_above="@+id/join"
+                android:layout_below="@+id/back"
+                android:layout_marginTop="20sp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginLeft="20sp"
+                android:layout_marginRight="20sp"
+                android:layout_weight="1" />
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1.5">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    android:id="@+id/imageView3"
+                    android:layout_gravity="center_horizontal"
+                    android:src="@drawable/lady"
+                    android:scaleType="fitXY"
+                    android:layout_marginRight="70sp"
+                    android:layout_marginTop="20sp"
+                    android:layout_marginBottom="25sp"
+                    android:layout_marginLeft="30sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="3.75">
+
+            <Space
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1" />
+
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="join In"
+                android:id="@+id/join"
+                android:layout_alignParentBottom="true"
+                android:background="@drawable/button_normal"
+                android:layout_toStartOf="@+id/create"
+                android:layout_weight="2"
+                android:layout_marginRight="15sp"
+                android:layout_marginBottom="10sp"
+                android:textColor="#686436" />
+
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="createRoom"
+                android:id="@+id/create"
+                android:background="@drawable/button_normal"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:layout_weight="2"
+                android:layout_marginRight="15sp"
+                android:layout_marginBottom="10sp"
+                android:textColor="#686436" />
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>
