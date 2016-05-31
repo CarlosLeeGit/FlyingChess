@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.hy.lyx.fb.gw.wyx.lks.flyingchess">
+    package="com.flashminds.flyingchess">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -16,7 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".WelcomeAct"
+            android:name="com.flashminds.flyingchess.WelcomeAct"
             android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,34 +25,34 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ChooseModeAct"
+            android:name="com.flashminds.flyingchess.ChooseModeAct"
             android:screenOrientation="landscape" />
         <activity
-            android:name=".LoginAct"
+            android:name="com.flashminds.flyingchess.LoginAct"
             android:screenOrientation="landscape" />
         <activity
-            android:name=".GameInfoAct"
+            android:name="com.flashminds.flyingchess.GameInfoAct"
             android:screenOrientation="landscape" />
         <activity
-            android:name=".ChessBoardAct"
+            android:name="com.flashminds.flyingchess.ChessBoardAct"
             android:screenOrientation="landscape" />
         <activity
-            android:name=".PauseAct"
+            android:name="com.flashminds.flyingchess.PauseAct"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.Light.Dialog.Alert" />
         <activity
-            android:name=".RoomAct"
+            android:name="com.flashminds.flyingchess.RoomAct"
             android:screenOrientation="landscape" />
         <activity
-            android:name=".GameEndAct"
+            android:name="com.flashminds.flyingchess.GameEndAct"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.Light.Dialog.Alert" />
         <activity
-            android:name=".UpdateAct"
+            android:name="com.flashminds.flyingchess.UpdateAct"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.Light.Dialog.Alert" />
         <activity
-            android:name=".RecordsAct"
+            android:name="com.flashminds.flyingchess.RecordsAct"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.Light.Dialog.Alert"/>
     </application>

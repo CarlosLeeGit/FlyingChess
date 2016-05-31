@@ -6,8 +6,8 @@ android {
     buildToolsVersion "23.0.3"
 
     defaultConfig {
-        applicationId "com.hy.lyx.fb.gw.wyx.lks.flyingchess"
-        minSdkVersion 14
+        applicationId "com.flashminds.flyingchess"
+        minSdkVersion 21
         targetSdkVersion 23
         versionCode 4
         versionName "v5.25.2016"
@@ -24,7 +24,7 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.2.1'
-    compile files('libs/gson-2.6.2.jar')
+    compile group: 'com.google.code.gson', name: 'gson', version: '2.6.2'
     compile 'com.android.support:design:23.2.0'
     compile 'com.android.support:appcompat-v7:23.2.0'
 }
