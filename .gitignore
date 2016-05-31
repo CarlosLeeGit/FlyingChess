@@ -1,8 +1,11 @@
-*.iml
-/.idea/workspace.xml
-/.idea/libraries
+# OSX
 .DS_Store
+
 /captures
+
+# IDEA
+*.iml
+.idea/
 
 # Built application files
 *.apk
