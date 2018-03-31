@@ -94,6 +94,11 @@ public class GameInfoAct extends AppCompatActivity implements Target {
             @Override
             public void onClick(View v) {
                 Game.soundManager.playSound(SoundManager.BUTTON);
+                if (roomUUID.size() == 0){
+                    Toast.makeText(GameInfoAct.this,"未选择可进入的房间",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 if (Game.dataManager.getGameMode() == DataManager.GM_LAN) {
                     Game.socketManager.connectLanServer(Game.localServer.getRoomIp(roomUUID.get(roomIndex)));
                     Game.delay(500);
