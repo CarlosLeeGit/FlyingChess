@@ -8,7 +8,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:id="@+id/welcome"
-    tools:context=".WelcomeAct">
+    tools:context=".activity.WelcomeActivity">
 
     <SurfaceView
         android:layout_width="fill_parent"

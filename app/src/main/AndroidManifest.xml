@@ -6,8 +6,8 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <application
         android:allowBackup="true"
@@ -15,46 +15,52 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <activity
-            android:name="com.flashminds.flyingchess.WelcomeAct"
+            android:name=".activity.RequestPermissionActivity"
             android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
-            android:name="com.flashminds.flyingchess.ChooseModeAct"
+            android:name=".activity.WelcomeActivity"
+            android:screenOrientation="landscape">
+        </activity>
+
+        <activity
+            android:name=".activity.ChooseModeActivity"
             android:screenOrientation="landscape" />
         <activity
-            android:name="com.flashminds.flyingchess.LoginAct"
+            android:name=".activity.LoginActivity"
             android:screenOrientation="landscape" />
         <activity
-            android:name="com.flashminds.flyingchess.GameInfoAct"
+            android:name=".activity.GameInfoActivity"
             android:screenOrientation="landscape" />
         <activity
-            android:name="com.flashminds.flyingchess.ChessBoardAct"
+            android:name=".activity.ChessBoardActivity"
             android:screenOrientation="landscape" />
         <activity
-            android:name="com.flashminds.flyingchess.PauseAct"
+            android:name=".activity.PauseActivity"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.Light.Dialog.Alert" />
         <activity
-            android:name="com.flashminds.flyingchess.RoomAct"
+            android:name=".activity.RoomActivity"
             android:screenOrientation="landscape" />
         <activity
-            android:name="com.flashminds.flyingchess.GameEndAct"
+            android:name=".activity.GameEndActivity"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.Light.Dialog.Alert" />
         <activity
-            android:name="com.flashminds.flyingchess.UpdateAct"
+            android:name=".activity.UpdateActivity"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.Light.Dialog.Alert" />
         <activity
-            android:name="com.flashminds.flyingchess.RecordsAct"
+            android:name=".activity.RecordsActivity"
             android:screenOrientation="landscape"
-            android:theme="@style/Theme.AppCompat.Light.Dialog.Alert"/>
+            android:theme="@style/Theme.AppCompat.Light.Dialog.Alert" />
     </application>
 
 </manifest>
