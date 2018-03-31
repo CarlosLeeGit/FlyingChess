@@ -17,7 +17,7 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".Activity.RequestPermissionActivity"
+            android:name=".activity.RequestPermissionActivity"
             android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,39 +26,39 @@
         </activity>
 
         <activity
-            android:name=".WelcomeAct"
+            android:name=".activity.WelcomeActivity"
             android:screenOrientation="landscape">
         </activity>
 
         <activity
-            android:name=".ChooseModeAct"
+            android:name=".activity.ChooseModeActivity"
             android:screenOrientation="landscape" />
         <activity
-            android:name=".LoginAct"
+            android:name=".activity.LoginActivity"
             android:screenOrientation="landscape" />
         <activity
-            android:name=".GameInfoAct"
+            android:name=".activity.GameInfoActivity"
             android:screenOrientation="landscape" />
         <activity
-            android:name=".ChessBoardAct"
+            android:name=".activity.ChessBoardActivity"
             android:screenOrientation="landscape" />
         <activity
-            android:name=".PauseAct"
+            android:name=".activity.PauseActivity"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.Light.Dialog.Alert" />
         <activity
-            android:name=".RoomAct"
+            android:name=".activity.RoomActivity"
             android:screenOrientation="landscape" />
         <activity
-            android:name=".GameEndAct"
+            android:name=".activity.GameEndActivity"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.Light.Dialog.Alert" />
         <activity
-            android:name=".UpdateAct"
+            android:name=".activity.UpdateActivity"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.Light.Dialog.Alert" />
         <activity
-            android:name=".RecordsAct"
+            android:name=".activity.RecordsActivity"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.Light.Dialog.Alert" />
     </application>
