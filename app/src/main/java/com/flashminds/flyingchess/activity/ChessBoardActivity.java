@@ -22,6 +22,9 @@ import com.flashminds.flyingchess.manager.SoundManager;
 
 import java.util.ArrayList;
 
+/**
+ * Edited by IACJ on 2018/4/1.
+ */
 public class ChessBoardActivity extends AppCompatActivity {
     Button pauseButton;
     Button throwDiceButton;
@@ -219,7 +222,7 @@ public class ChessBoardActivity extends AppCompatActivity {
     }
 
     public void animMoveTo(Button plane, int x, int y) {
-        plane.animate().setDuration(300);
+        plane.animate().setDuration(100);
         plane.animate().translationX(x * dx);
         plane.animate().translationY(y * dx);
     }
@@ -234,7 +237,7 @@ class MyHandler extends Handler {
     }
 
     @Override
-    public void handleMessage(Message msg) {//事件回掉
+    public void handleMessage(Message msg) {//事件回调
         switch (msg.what) {
             case 1://飞机
             {
